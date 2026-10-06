@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/resources.js"></script>
+<script src="/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/classical-602d74cf-5ba2-41d5-b912-d66c664fbecc/styles.css">
+<script src="_ds/classical-602d74cf-5ba2-41d5-b912-d66c664fbecc/_ds_bundle.js"></script>
+<script src="pg-engine-v2.js"></script>
+</helmet>
+<sc-if value="{{ ready }}" hint-placeholder-val="{{ true }}">
+<div style="padding:28px 32px 64px;max-width:1440px;margin:0 auto;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;flex-direction:column;gap:6px;max-width:820px"><h1 style="font-size:24px">{{ headline }}</h1><p style="font-size:14px;color:#4a5263">Search genealogy, size the exposure and apply scoped holds.</p><details style="font-size:13px;color:#4a5263"><summary style="cursor:pointer;color:#4f5bd5;font-weight:500;list-style:none;display:inline-flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>About this page</summary><p style="margin-top:8px;line-height:1.55;padding:10px 12px;border-radius:8px;background:#fff;border:1px solid #eef0f3">{{ blurb }}</p></details></div>
+
+  <sc-if value="{{ notB }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:12px;max-width:820px">
+      <sc-if value="{{ fExposure }}" hint-placeholder-val="{{ false }}"><div style="padding:16px 18px;border-radius:12px;background:#fef3f2;border:1px solid #fecdca;display:flex;flex-direction:column;gap:4px"><span style="font-size:13.5px;font-weight:600;color:#b42318">{{ fx.title }}</span><span style="font-size:13px;color:#7a271a">{{ fx.text }}</span><span style="font-size:12.5px;color:#b42318">{{ fx.hold }}</span></div></sc-if>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 14px;border-radius:10px;background:#f9fafb;border:1px solid #eef0f3;max-width:980px;color:#8a93a3"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg><span style="font-size:13px;color:#4a5263;flex:1 1 320px;line-height:1.45">{{ otherNote }}</span><button onClick="{{ goB }}" style="height:28px;padding:0 10px;border-radius:7px;background:transparent;color:#4f5bd5;border:0;font-size:12.5px;font-weight:500;cursor:pointer" style-hover="background:#eef0fc">Open escape genealogy</button></div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isB }}" hint-placeholder-val="{{ true }}">
+    <div style="padding:14px 18px;border-radius:12px;background:#0d1321;color:#fff;display:flex;flex-wrap:wrap;gap:8px 24px;align-items:center">
+      <span style="display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 8px;border-radius:999px;font-size:11.5px;font-weight:500;background:#3b1513;color:#fda29b;border:1px solid #7a271a"><span style="flex:none;width:6px;height:6px;border-radius:50%;background:#f04438"></span>Incident CMP-0017</span>
+      <span style="font-size:13.5px;flex:1 1 420px;line-height:1.5;color:#e4e7ec">{{ cmp.text }}</span>
+      <span style="font-size:12px;color:#98a2b3;font-family:'Geist Mono',monospace">{{ cmp.serial }} · SHP-2201 · {{ cmp.at }}</span>
+    </div>
+
+    <section style="background:#fff;border:1px solid #e6e8ec;border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <div style="flex:1 1 320px;display:flex;align-items:center;gap:10px;height:42px;padding:0 14px;border-radius:10px;border:1px solid #d5d9e0;background:#fff">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8a93a3" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+          <input value="{{ q }}" onChange="{{ onQ }}" onKeyDown="{{ onKey }}" placeholder="Serial, lot, reel, program, setup, panel or incident" style="flex:1;border:0;outline:none;font-size:14px;background:transparent;font-family:'Geist Mono',monospace">
+        </div>
+        <button onClick="{{ run }}" style="height:42px;padding:0 18px;border-radius:10px;background:#4f5bd5;color:#fff;border:1px solid #4350c4;font-size:13.5px;font-weight:500;cursor:pointer" style-hover="background:#4350c4">Search genealogy</button>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+        <span style="font-size:12px;color:#8a93a3;margin-right:4px">Try</span>
+        <sc-for list="{{ chips }}" as="c" hint-placeholder-count="7"><button onClick="{{ c.go }}" style="height:26px;padding:0 10px;border-radius:999px;border:1px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:12px;cursor:pointer;font-family:'Geist Mono',monospace" style-hover="border-color:#4f5bd5">{{ c.v }}</button></sc-for>
+      </div>
+      <span style="font-size:12.5px;color:#4a5263;line-height:1.5">{{ basis }}</span>
+    </section>
+
+    <sc-if value="{{ isSerial }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+        <section style="flex:2 1 460px;min-width:0;background:#fff;border:1px solid #e6e8ec;border-radius:12px">
+          <div style="padding:14px 18px;border-bottom:1px solid #eef0f3;display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h3 style="font-size:14px">Genealogy · <span style="font-family:'Geist Mono',monospace">{{ ser.serial }}</span></h3><span style="margin-left:auto;display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:999px;font-size:11.5px;font-weight:500;background:{{ ser.p.bg }};color:{{ ser.p.fg }};border:1px solid {{ ser.p.bd }}"><span style="flex:none;width:5px;height:5px;border-radius:50%;background:{{ ser.p.dot }}"></span>{{ ser.p.label }}</span></div>
+          <div style="padding:10px 18px 14px">
+            <sc-for list="{{ ser.tree }}" as="n" hint-placeholder-count="12">
+              <div style="display:grid;grid-template-columns:{{ n.indent }} 180px 1fr;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid #f2f4f7">
+                <span style="height:100%;border-left:1px solid #e6e8ec;justify-self:end;min-height:18px"></span>
+                <span style="font-size:12px;color:#8a93a3">{{ n.k }}</span>
+                <span style="font-size:13px;font-weight:{{ n.w }};color:{{ n.c }};font-family:{{ n.f }}">{{ n.v }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="padding:0 18px 16px;display:flex;gap:8px;flex-wrap:wrap"><button onClick="{{ expand }}" style="height:34px;padding:0 14px;border-radius:8px;background:#4f5bd5;color:#fff;border:1px solid #4350c4;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#4350c4">Expand exposure to same setup and program</button><button onClick="{{ panelQ }}" style="height:34px;padding:0 14px;border-radius:8px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">Show panel siblings</button></div>
+        </section>
+        <section style="flex:1 1 300px;min-width:0;background:#fff;border:1px solid #e6e8ec;border-radius:12px">
+          <div style="padding:14px 18px;border-bottom:1px solid #eef0f3"><h3 style="font-size:14px">Inspection history</h3></div>
+          <div style="padding:4px 18px 10px"><sc-for list="{{ ser.insp }}" as="i" hint-placeholder-count="5"><div style="display:grid;grid-template-columns:12px 1fr;gap:10px;padding:9px 0;border-bottom:1px solid #f2f4f7"><span style="flex:none;width:8px;height:8px;border-radius:50%;margin-top:5px;background:{{ i.dot }}"></span><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:13px;font-weight:500">{{ i.k }}</span><span style="font-size:12px;color:{{ i.c }};line-height:1.4">{{ i.v }}</span></span></div></sc-for></div>
+        </section>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isCohort }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px">
+        <div style="background:#fff;border:1px solid #fecdca;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:4px"><span style="font-size:12.5px;color:#b42318;font-weight:500">Confirmed defective</span><span style="font-size:32px;font-weight:600;letter-spacing:-0.02em;color:#b42318">{{ co.confirmed }}</span><span style="font-size:12px;color:#4a5263">Return analysis on record</span></div>
+        <div style="background:#fff;border:1px solid #e6e8ec;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:4px"><span style="font-size:12.5px;color:#4a5263;font-weight:500">Potentially exposed</span><span style="font-size:32px;font-weight:600;letter-spacing:-0.02em">{{ co.exposed }}</span><span style="font-size:12px;color:#4a5263">Not independently confirmed</span></div>
+        <div style="background:#fff;border:1px solid {{ co.ubd }};border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:4px"><span style="font-size:12.5px;color:#4a5263;font-weight:500">Exact and uncertain</span><span style="font-size:24px;font-weight:600;letter-spacing:-0.02em">{{ co.exact }} + {{ co.uncertain }}</span><span style="font-size:12px;color:{{ co.wc }}">{{ co.warn }}</span></div>
+        <sc-for list="{{ co.ships }}" as="s" hint-placeholder-count="3"><div style="background:#fff;border:1px solid #e6e8ec;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:4px"><span style="font-size:12.5px;color:#4a5263;font-weight:500">{{ s.ship }}</span><span style="font-size:24px;font-weight:600;letter-spacing:-0.02em">{{ s.n }}</span><span style="display:inline-flex;align-self:flex-start;align-items:center;height:20px;padding:0 7px;border-radius:999px;font-size:11px;font-weight:500;background:{{ s.p.bg }};color:{{ s.p.fg }};border:1px solid {{ s.p.bd }}">{{ s.p.label }}</span></div></sc-for>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <button onClick="{{ manifest }}" style="height:34px;padding:0 14px;border-radius:8px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">Generate affected-unit manifest</button>
+        <button onClick="{{ hold }}" style="height:34px;padding:0 14px;border-radius:8px;background:#4f5bd5;color:#fff;border:1px solid #4350c4;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#4350c4">Apply scoped hold</button>
+        <button onClick="{{ dl }}" style="height:34px;padding:0 14px;border-radius:8px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">Download manifest CSV</button>
+        <span style="font-size:12.5px;color:#4a5263">{{ mf }}</span>
+      </div>
+      <sc-if value="{{ hasHold }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px">
+          <div style="padding:14px 16px;border-radius:12px;background:#f6fef9;border:1px solid #abefc6;display:flex;flex-direction:column;gap:4px"><span style="font-size:13px;font-weight:600;color:#067647">{{ hd.id }} active</span><span style="font-size:13px">{{ hd.scope }}</span><span style="font-size:12px;color:#4a5263">{{ hd.meta }}</span></div>
+          <div style="padding:14px 16px;border-radius:12px;background:#fffaeb;border:1px solid #fedf89;display:flex;flex-direction:column;gap:4px"><span style="font-size:13px;font-weight:600;color:#b54708">Shipped exposure</span><span style="font-size:13px">{{ hd.recall }}</span><span style="font-size:12px;color:#4a5263">A software hold does not stop equipment or shipping. A physical line-stop or ERP interlock needs a later validated integration.</span></div>
+        </div>
+      </sc-if>
+      <section style="background:#fff;border:1px solid #e6e8ec;border-radius:12px;overflow:hidden">
+        <div style="overflow-x:auto"><div style="min-width:880px">
+          <div style="display:grid;grid-template-columns:110px 100px 70px 100px 100px 110px 100px 1fr;gap:10px;padding:9px 18px;background:#f9fafb;border-bottom:1px solid #eef0f3;font-size:12px;color:#8a93a3;font-weight:500"><span>Serial</span><span>Panel</span><span>Position</span><span>Lot</span><span>U3 reel</span><span>Shipment</span><span>Scope</span><span>Status</span></div>
+          <sc-for list="{{ co.rows }}" as="r" hint-placeholder-count="12"><button onClick="{{ r.go }}" style="width:100%;display:grid;grid-template-columns:110px 100px 70px 100px 100px 110px 100px 1fr;gap:10px;padding:8px 18px;border:0;border-bottom:1px solid #f2f4f7;background:transparent;text-align:left;cursor:pointer;font-size:12.5px;color:#0d1321;align-items:center" style-hover="background:#f9fafb"><span style="font-family:'Geist Mono',monospace;font-weight:500">{{ r.serial }}</span><span style="font-family:'Geist Mono',monospace">{{ r.panel }}</span><span>{{ r.pos }}</span><span style="font-family:'Geist Mono',monospace">{{ r.lot }}</span><span style="font-family:'Geist Mono',monospace;color:{{ r.rc }}">{{ r.reel }}</span><span>{{ r.ship }}</span><span>{{ r.scope }}</span><span style="display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:999px;font-size:11.5px;font-weight:500;justify-self:start;background:{{ r.p.bg }};color:{{ r.p.fg }};border:1px solid {{ r.p.bd }}"><span style="flex:none;width:5px;height:5px;border-radius:50%;background:{{ r.p.dot }}"></span>{{ r.p.label }}</span></button></sc-for>
+        </div></div>
+        <div style="padding:10px 18px;font-size:12px;color:#8a93a3">{{ co.more }}</div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isNone }}" hint-placeholder-val="{{ false }}"><div style="padding:20px;border-radius:12px;background:#fff;border:1px solid #e6e8ec;font-size:13.5px;color:#4a5263">{{ basis }}</div></sc-if>
+  </sc-if>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { q: '' };
+  componentDidMount() { const go = () => { if (window.PG) { this.u = PG.subscribe(() => this.forceUpdate()); this.setState({ q: PG.st.B.query.value || '' }); } else this.t = setTimeout(go, 40); }; go(); }
+  componentWillUnmount() { this.u && this.u(); clearTimeout(this.t); }
+  renderVals() { try { return this.rv(); } catch (e) { console.log('RV-ERR ' + e.message); return { ready: false }; } }
+  rv() {
+    const P = window.PG; if (!P) return { ready: false };
+    const st = P.st, sc = st.scen, isB = sc === 'B', b = st.B;
+    const base = { ready: true, isB, notB: !isB, goB: () => { P.setScen('B'); P.nav('trace'); } };
+    if (!isB) { const f = st.F, inc = sc === 'F' && f.incidents[0]; return Object.assign(base, { headline: 'Traceability', blurb: 'Search a serial, lot, reel, program or incident, traverse genealogy, generate the affected-unit manifest and apply scoped holds.', otherNote: sc === 'F' ? (inc ? 'The late functional test failure created a scoped hold on MB-F-0088 and the FT-02 window. Shipped exposure is flagged; nothing is recalled automatically.' : 'Import the late FT file in Data and configuration to see a late-evidence exposure here.') : 'The seeded genealogy cohort is WO-23602 (Scenario B): 1,200 serials across 200 panels, two lots, two U3 reels and two shipments.', fExposure: !!inc, fx: inc ? { title: inc.id + ', ' + inc.serial, text: inc.text, hold: f.shipment.exposure ? f.shipment.exposure.status : '' } : {} }); }
+    const q = b.query, r = P.queryB(q.type, q.value);
+    const run = v => { this.setState({ q: v }); P.act('queryB', { value: v }); };
+    const chips = ['MB-A-1437', 'CMP-0017', 'SET-0918', 'PLC-MB-A r5', 'R-U3-5521', 'LOT-U3-H1', 'PNL-H-0073'].map(v => { const on = (q.value || '').toUpperCase() === v.toUpperCase(); return { v, go: () => run(v), bg: on ? '#eef0fc' : '#fff', fg: on ? '#3640a8' : '#344054', bd: on ? '#c7cdf5' : '#e6e8ec' }; });
+    const out = Object.assign(base, { headline: 'Traceability · WO-23602', blurb: 'Every board carries a child serial and panel position linked to material lots, program revisions and inspection history. Confirmed defective units stay distinct from potentially exposed units.', cmp: { at: P.fmtT(b.complaint.received), text: b.complaint.text.replace('180°', '180 degrees'), serial: b.complaint.serial }, q: this.state.q, onQ: e => this.setState({ q: e.target.value }), onKey: e => { if (e.key === 'Enter') P.act('queryB', { value: this.state.q }); }, run: () => P.act('queryB', { value: this.state.q }), chips, basis: r.basis, isSerial: r.kind === 'serial', isCohort: r.kind === 'cohort' && r.total > 0, isNone: r.kind === 'none' });
+    if (r.kind === 'serial') {
+      const s = r.serial, M = "'Geist Mono',monospace";
+      out.ser = { serial: s.serial, p: P.pill(s.confirmed ? 'Confirmed defective' : 'Potentially exposed', s.confirmed ? 'crit' : 'warn'), tree: [['2px', 'Customer and order', 'Customer A · WO-23602'], ['2px', 'Product', 'MB-7420 rev B, historical'], ['16px', 'Lot', s.lot, 0, M], ['30px', 'Panel and position', `${s.panel}, position ${s.pos}`, 0, M], ['44px', 'Board serial', s.serial, 1, M], ['44px', 'U3 reel or tray lot', s.reel || 'Missing link, scan not recorded', s.reel ? 0 : 2, M], ['44px', 'PCB lot', s.pcb, 0, M], ['44px', 'Paste lot', s.paste, 0, M], ['44px', 'Placement program', s.program, 0, M], ['44px', 'Setup', s.setup, 0, M], ['44px', 'Built', P.fmtT(s.built)], ['44px', 'Shipment', s.ship || 'Finished-goods stock']].map(x => ({ indent: x[0], k: x[1], v: x[2], w: x[3] === 1 ? 600 : 400, c: x[3] === 2 ? '#b42318' : '#0d1321', f: x[4] || 'inherit' })),
+        insp: [['SPI-01', 'Pass, panel basis', 0], ['AOI-MB-A v3', s.aoi ? 'Pass, but no U3 Pin 1 feature in the program' : 'No record; released by override', 1], ['X-ray', 'U7 hidden joints accepted; not a Pin 1 control', 1], ['Functional test TP-MB-A 1.0', 'Pass on FT-01 to FT-11; no U3 case', 1], ['Final QA', 'Released on REL-2201', 0]].map(x => ({ k: x[0], v: x[1], c: x[2] ? '#b54708' : '#4a5263', dot: x[2] ? '#f79009' : '#32d583' })) };
+      out.expand = () => run('SET-0918'); out.panelQ = () => run(s.panel);
+    }
+    if (r.kind === 'cohort' && r.total) {
+      const held = b.holds.find(h => h.status === 'Active');
+      const all = r.exact.map(x => [x, 'Exact']).concat(r.uncertain.map(x => [x, 'Uncertain']));
+      all.sort((x, y) => (y[0].confirmed - x[0].confirmed) || ((y[1] === 'Uncertain') - (x[1] === 'Uncertain')));
+      out.co = { confirmed: r.confirmed, exposed: (r.total - r.confirmed).toLocaleString('en-US'), exact: r.exact.length.toLocaleString('en-US'), uncertain: r.uncertain.length, warn: r.warn || 'Genealogy complete for this query', wc: r.warn ? '#b54708' : '#4a5263', ubd: r.warn ? '#fedf89' : '#e6e8ec',
+        ships: r.byShip.map(s => ({ ship: s.ship, n: s.n, p: s.ship === 'Finished-goods stock' ? P.pill(held ? 'Held' : 'Not held', held ? 'ok' : 'warn') : P.pill(b.recall ? 'Recall review' : 'At customer', b.recall ? 'warn' : 'neutral') })),
+        rows: all.slice(0, 40).map(([x, scope]) => ({ serial: x.serial, panel: x.panel, pos: x.pos, lot: x.lot, reel: x.reel || 'Missing', rc: x.reel ? '#0d1321' : '#b42318', ship: x.ship || 'FG stock', scope, p: x.confirmed ? P.pill('Confirmed defective', 'crit') : !x.ship && held ? P.pill('Exposed, held', 'ok') : x.ship && b.recall ? P.pill('Exposed, recall review', 'warn') : P.pill('Potentially exposed', 'warn'), go: () => P.openDrawer('serial', x.serial) })),
+        more: all.length > 40 ? `Showing 40 of ${all.length.toLocaleString('en-US')} serials. The CSV manifest lists every serial with scope and status.` : '' };
+      out.manifest = () => P.act('manifestB'); out.hold = () => P.act('holdB'); out.dl = () => P.download('manifest');
+      out.mf = b.manifest ? `${b.manifest.id}, ${b.manifest.total} serials, by ${P.uname(b.manifest.by)} at ${P.fmtT(b.manifest.at)}` : 'No manifest generated yet.';
+      out.hasHold = !!held; out.hd = held ? { id: held.id, scope: held.scope, meta: `${P.uname(held.by)}, ${P.fmtT(held.at)}. Unrelated clean units unchanged.`, recall: `${b.recall.shipped} serials in SHP-2201 and SHP-2202: ${b.recall.status}` } : {};
+    }
+    return out;
+  }
+}
+</script>
+</body>
+</html>

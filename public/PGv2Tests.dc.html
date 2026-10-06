@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/resources.js"></script>
+<script src="/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/classical-602d74cf-5ba2-41d5-b912-d66c664fbecc/styles.css">
+<script src="_ds/classical-602d74cf-5ba2-41d5-b912-d66c664fbecc/_ds_bundle.js"></script>
+<script src="pg-engine-v2.js"></script>
+</helmet>
+<sc-if value="{{ ready }}" hint-placeholder-val="{{ true }}">
+<div style="padding:28px 32px 64px;max-width:1440px;margin:0 auto;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px">
+    <div style="display:flex;flex-direction:column;gap:6px;max-width:780px"><h1 style="font-size:24px">Acceptance tests</h1><p style="font-size:14px;color:#4a5263">Run the twelve BRD acceptance tests against a fresh seeded copy.</p><details style="font-size:13px;color:#4a5263"><summary style="cursor:pointer;color:#4f5bd5;font-weight:500;list-style:none;display:inline-flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>About this page</summary><p style="margin-top:8px;line-height:1.55;padding:10px 12px;border-radius:8px;background:#fff;border:1px solid #eef0f3">Each test runs against a fresh seeded copy of all scenarios through the same evaluation service the screens use, so the live workspace is untouched. Direct API checks call the service without the interface.</p></details></div>
+    <button onClick="{{ run }}" style="height:36px;padding:0 16px;border-radius:8px;background:#4f5bd5;color:#fff;border:1px solid #4350c4;font-size:13.5px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:8px" style-hover="background:#4350c4"><svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"></path></svg>{{ runLabel }}</button>
+  </div>
+  <div style="background:#fff;border:1px solid #e6e8ec;border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+    <span style="font-size:22px;font-weight:600;letter-spacing:-0.02em">{{ summary }}</span>
+    <div style="flex:1 1 300px;height:8px;border-radius:4px;background:#eef0f3;overflow:hidden"><div style="height:100%;width:{{ pct }};background:{{ barC }};border-radius:4px;transition:width .3s"></div></div>
+    <span style="font-size:12.5px;color:#8a93a3">{{ when }}</span>
+  </div>
+  <section style="background:#fff;border:1px solid #e6e8ec;border-radius:12px;overflow:hidden">
+    <sc-for list="{{ tests }}" as="t" hint-placeholder-count="12">
+      <div style="display:grid;grid-template-columns:28px 70px minmax(160px,0.8fr) minmax(0,1.4fr) minmax(0,1.6fr);gap:14px;padding:14px 18px;border-bottom:1px solid #f2f4f7;align-items:start">
+        <span style="flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:{{ t.bg }}"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="{{ t.ic }}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="{{ t.icon }}"></path></svg></span>
+        <span style="font-family:'Geist Mono',monospace;font-size:12.5px;font-weight:500;padding-top:2px">{{ t.id }}</span>
+        <span style="font-size:13.5px;font-weight:500;padding-top:1px">{{ t.name }}</span>
+        <span style="font-size:12.5px;color:#4a5263;line-height:1.5">{{ t.crit }}</span>
+        <span style="font-size:12px;color:{{ t.dc }};line-height:1.5;font-family:'Geist Mono',monospace">{{ t.detail }}</span>
+      </div>
+    </sc-for>
+  </section>
+  <p style="font-size:12.5px;color:#8a93a3;max-width:900px;line-height:1.55">Nonfunctional targets (50,000 boards, 500,000 events, p95 dashboard under 3 s, genealogy under 5 s, a 10,000-row import under 60 s) are acceptance targets for the database-backed build, not measured results of this prototype.</p>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { res: null, at: null };
+  componentDidMount() { const go = () => { if (window.PG) { this.u = PG.subscribe(() => this.forceUpdate()); this.forceUpdate(); } else this.t = setTimeout(go, 40); }; go(); }
+  componentWillUnmount() { this.u && this.u(); clearTimeout(this.t); }
+  renderVals() {
+    const P = window.PG; if (!P) return { ready: false };
+    const CRIT = { AT01: 'Release request fails with CTQ ID, source conflict and required owner action; no approval is fabricated.', AT02: 'One user cannot sign both engineering and QA, and a direct API attempt also fails.', AT03: 'A program change after sign-off makes approvals stale and blocks further batch release.', AT04: 'A missing functional method stays Unknown, Not applicable needs route justification and a concession stays visible.', AT05: 'A suspect-setup query returns exactly the seeded exposure set; incomplete genealogy broadens scope with uncertainty.', AT06: 'A duplicate import changes no counts, invalid rows quarantine and retests preserve the first failure and fixture metrics.', AT07: 'Seeded drift triggers before the specification crossing; prediction declares synthetic status and refuses future or insufficient data.', AT08: 'A held serial cannot release; mixed shipments exclude held units or block as configured; clean units stay unaltered.', AT09: 'Implementation alone cannot close a CAPA; a missed criterion or recurrence blocks closure and reopens review.', AT10: 'CSV reports match screen totals, list scope and keep synthetic badges and as-of dates.', AT11: 'The audit trail is append-only and customers cannot access another customer’s records.', AT12: 'A late failure preserves prior release history, creates a hold and flags dispatched exposure for review.' };
+    const NAMES = { AT01: 'U3 ambiguity', AT02: 'Independent approval', AT03: 'Revision change', AT04: 'Missing SOP and N/A', AT05: 'Genealogy', AT06: 'Import and retries', AT07: 'SPC and AI', AT08: 'Scoped holds', AT09: 'CAPA closure', AT10: 'Export integrity', AT11: 'Audit and roles', AT12: 'Late evidence' };
+    const res = this.state.res;
+    const tests = Object.keys(CRIT).map(id => { const r = res && res.find(x => x.id === id); return { id, name: NAMES[id], crit: CRIT[id], detail: r ? r.detail.replace(/→/g, 'to') : 'Not run yet', dc: r ? (r.pass ? '#067647' : '#b42318') : '#98a2b3', bg: r ? (r.pass ? '#ecfdf3' : '#fef3f2') : '#f2f4f7', ic: r ? (r.pass ? '#12b76a' : '#d92d20') : '#98a2b3', icon: r ? (r.pass ? 'M20 6 9 17l-5-5' : 'M18 6 6 18M6 6l12 12') : 'M8 12h8' }; });
+    const passed = res ? res.filter(r => r.pass).length : 0;
+    return { ready: true, tests, summary: res ? `${passed} of ${res.length} passed` : '12 tests ready', pct: res ? (passed / res.length * 100) + '%' : '0%', barC: res && passed === res.length ? '#12b76a' : '#f04438', when: res ? 'Last run ' + this.state.at : 'Not run in this session', runLabel: res ? 'Run again' : 'Run all tests', run: () => this.setState({ res: P.runAT(), at: new Date().toLocaleTimeString('en-GB') }) };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,535 @@
+PCB Assembly Quality Intelligence
+Business requirements for a ProcessGrit demonstration
+Prepared for the ProcessGrit development team and the prospective PCB assembly customer. Build a working demo that connects approved product requirements to first-article approval, production evidence, release decisions and corrective-action effectiveness.
+The central scenario is the reported U3 orientation incident involving 1,200 affected units. Demonstrate how an ambiguous requirement is identified before release, how missing inspection coverage is exposed, and how affected serial numbers are contained when a defect is discovered.
+What the customer must be able to see
+Business question
+Visible demonstration
+Can we prevent the wrong setup from entering production?
+A controlled Pin 1 requirement, independent verification and a blocked first-article release.
+Why did the defect escape?
+A gate-by-gate coverage and evidence map separating occurrence from escape.
+Which boards are exposed?
+Serial and panel genealogy linked to material lots, program revisions and inspection history.
+Can we act before yield deteriorates?
+SPC drift warnings and a clearly labelled predictive-risk example.
+Did the fix work?
+Corrective-action evidence, repeat inspections and an effectiveness review across subsequent lots.
+Scope and evidence boundary
+Inputs reviewed: the user’s 8D review narrative and the two supplied flow images. The underlying 8D, U3 manufacturer part number, actual production records and machine interfaces were not supplied. Do not portray an escape mechanism, machine capability, numerical limit or model accuracy as a verified customer fact.
+Scope is contract PCB assembly and motherboard assembly, from order/specification alignment to dispatch and feedback. Bare-board fabrication, automatic machine control and a full ERP replacement are outside the demo. All proposed controls require plant confirmation before live use.
+Deliverable: a resettable application with linked screens, synthetic records, working gates, imports, calculations, reports and acceptance tests. This BRD defines the build; it does not claim that the tool or a production AI model already exists.
+2  Process gaps to validate with the plant
+Treat the following as observations from the supplied diagrams or hypotheses to investigate. The diagrams are process descriptions, not evidence that each control ran on the affected batch.
+Observation
+Risk or question
+Required demo response
+First-article flow permits appearance and solder checks when the customer supplies no functional SOP.
+What functions and critical failure modes remain unverified?
+Explicit test-coverage gap; request an agreed test plan or controlled customer concession.
+Batch flow calls for 100% functional testing.
+Does this apply to every product, and what happens when no SOP exists?
+Use one revision-controlled test applicability matrix for first article and production.
+DIP Yes branch appears to bypass insertion; No appears to enter insertion.
+Branch labels look reversed. Confirm the intended route.
+Proposed route: Yes → insertion/wave; No → depanel/clean. Keep this configurable.
+AOI/X-ray are shown near placement and reflow without an unambiguous inspection location.
+Pre-reflow and post-reflow checks have different purposes.
+Separate station positions; use post-reflow solder inspection in the proposed route.
+Placement program creation refers to Gerber files.
+What BOM, centroid/placement data and side/rotation conventions are actually used?
+Require an approved manufacturing package and explicit orientation mapping.
+AOI checks listed do not explicitly include U3 Pin 1.
+Was U3 orientation programmed, observable and validated?
+Coverage matrix by component, failure mode, inspection method and program version.
+First article has dual review and customer approval.
+Are approvals tied to exact revisions and invalidated by changes?
+Bind approvals to immutable revision hashes and reject self-approval.
+Rework, holds, traceability and effectiveness checks are not shown.
+Where are retries, dispositions and affected units recorded?
+Add genealogy, quarantine, repeat verification and CAPA follow-through.
+Important distinction: inspecting 100% of boards is not the same as detecting 100% of defect types. AOI, X-ray and functional tests require demonstrated coverage; none should be assumed to detect every orientation or solder defect.
+3  Proposed route and release logic
+Proposed configurable route: specification alignment → incoming material and setup → paste print/SPI where available → SMT placement → reflow → post-reflow AOI → required X-ray → DIP/wave when applicable → depanel and cleaning → agreed electrical/functional test → final QA release → dispatch. The first article traverses its applicable route before approvals authorize batch production.
+Gate
+Required evidence
+Block condition
+G0 Engineering readiness
+Approved BOM, placement/assembly package, CTQ register, test plan and orientation decisions.
+Unresolved revision or orientation conflict; missing required test coverage.
+G1 Setup readiness
+Material/feeder scan, qualified program versions, approved profile and equipment status.
+Wrong material, stale program, unapproved setup or overdue required calibration.
+G2 First article
+Serial-linked CTQ results, applicable inspection/test evidence, engineering and QA approvals, customer approval when required.
+Any required CTQ fails or is unknown; same person signs engineering and QA.
+G3 Production continuation
+Valid G2 snapshot, complete route events, inspection status and no applicable hold.
+Revision change invalidates approval; critical defect or missing required evidence.
+G4 Dispatch release
+Quantity reconciliation, serial-level required tests, closed dispositions, QA authorization.
+Held/unverified serial, expired concession or unaccounted quantity.
+State machine and exceptions
+Order states: Draft → Engineering review → Ready for first article → First article pending → Customer approval pending if required → Released for batch → In production → Final QA pending → Released for dispatch → Closed. A hold can suspend any active state; resolving it returns the record to the appropriate review stage, not directly to release.
+CTQ outcomes are Pass, Fail, Unknown or Not applicable. Missing evidence is Unknown. Not applicable requires a route-based reason and approval. A concession is a separate, visible authorization with scope, expiry, quantity, approvers and compensating controls; it never rewrites a failed result as Pass. Non-waivable controls remain blocked.
+Changes to the BOM, footprint/orientation, placement or inspection program, critical material, reflow profile or test plan trigger an impact review. Reverify affected CTQs and obtain fresh approvals before further release. Record what changed and which existing units are exposed.
+The demo blocks actions inside the application. A physical line-stop or ERP shipping interlock requires a later validated integration; do not imply a software hold alone stops equipment.
+4  Specification alignment and first article
+S01  Order and engineering alignment
+Pain point: Conflicting documents and experience-based interpretation can propagate the same error into placement and inspection.
+CTQs and controls: Approved product/revision, BOM and MPN; component side, Pin 1 and orientation; contractual acceptance class and revision; measurable test limits; explicit coverage for every critical failure mode.
+KPIs
+Data acquisition and fallback
+K01 CTQ definition completeness; K02 validated critical coverage; unresolved engineering conflicts count.
+Import BOM and placement CSV; upload datasheet/assembly drawing and agreed test plan. Engineering manually resolves missing fields and marks the source page/section. No package means G0 is blocked.
+Analysis and response: Compare revisions and orientation fields, list mismatches and assign an engineering query. Authoritative evidence is an approved product-specific manufacturing package reconciled against the exact manufacturer package drawing; silkscreen or Gerber alone does not resolve a conflict.
+S02  First article verification and approval
+Pain point: A golden board or two signatures can reproduce the same assumption if there is no independent reference.
+CTQs and controls: Verify each critical CTQ against approved source evidence; record U3 Pin 1 photograph, side and coordinate convention, independent engineering/QA review, applicable AOI/X-ray/test results and customer approval.
+KPIs
+Data acquisition and fallback
+K03 first-article first-pass approval; K04 approval lead time; K02 critical coverage.
+Serial-linked digital checklist, reference and actual photos, machine result import, named approvals and customer email attachment. If no test SOP exists, agree one or route an explicit concession; appearance inspection does not count as functional testing.
+Analysis and response: Display reference versus actual image and missing coverage. First article remains blocked until required results and distinct approvals exist. Reject stale approval evidence following a revision change.
+U3 orientation record required for the demo
+CTQ-U3-ORI: product revision; RefDes U3; manufacturer part and package; package drawing revision; top/bottom viewing convention; footprint Pin 1; board datum; source rotation and machine rotation mapping; expected Pin 1 location; reference image; evidence method; check frequency; applicability; engineering owner; approvers; reaction plan. Store orientation as a mapped relationship, not merely “0 degrees”.
+5  Material setup and paste printing
+S03  Incoming material and storage
+Pain point: Wrong parts, mixed reels, moisture exposure or expired material can create intermittent defects.
+CTQs and controls: MPN/BOM match, supplier/reel/PCB lot identity, material acceptance status, moisture handling where applicable, paste expiry and approved storage conditions.
+KPIs
+Data acquisition and fallback
+K05 incoming lot rejection; K06 material genealogy completeness; expired or unidentified material holds.
+ERP/store CSV plus barcode scans and supplier certificates; manual receipt form if no ERP. Moisture/paste clocks from timestamped issue/return records. If exposure history is absent, show Unknown and require disposition.
+Analysis and response: Stratify later defects by supplier and material lot; do not infer supplier causation from correlation. Block rejected, unidentified or expired material pending authorized review.
+S04  Line setup and program verification
+Pain point: Correct parts may be placed with an incorrect feeder, side, program or rotation.
+CTQs and controls: Feeder-to-BOM mapping, program/revision hash, machine coordinate convention, approved setup, required calibration and ESD verification.
+KPIs
+Data acquisition and fallback
+K07 setup first-pass conformance; program mismatch count; K06 traceability completeness.
+Machine setup export/API where supported; scan reel and feeder positions. Fallback: versioned setup checklist, program file checksum and independent verifier. Screenshot evidence alone cannot establish every placed component.
+Analysis and response: Compare expected and actual setup; block start for any critical mismatch. Repeat verification after changeover, feeder reload or engineering change as defined by the control plan.
+S05  Solder paste printing and SPI
+Pain point: Paste variation may be discovered only after reflow. This stage is an addition to the supplied flow, subject to plant confirmation.
+CTQs and controls: Approved stencil/paste, deposit volume/height/area and offset where measured; printing settings and paste exposure time.
+KPIs
+Data acquisition and fallback
+K08 SPI first-pass yield; K09 paste CTQ out-of-spec rate; continuous trend by pad family.
+SPI export with panel/board/pad IDs and numeric units. Without SPI use documented sample measurement or visual results; classify visual results as categorical and sampled. No numeric SPI means no paste capability index.
+Analysis and response: Trend comparable pads and detect shifts; inspect stencil condition, paste and printing setup. Authorized process engineer approves adjustments and verifies the next article.
+6  Placement and reflow control
+S06  SMT placement
+Pain point: Missing, wrong or rotated components can replicate across the entire batch.
+CTQs and controls: Correct MPN, location and side; Pin 1/polarity; placement X/Y/rotation within approved limits; feeder and program identity.
+KPIs
+Data acquisition and fallback
+K10 verified orientation defect PPM; placement first-pass yield using K08; mismatch count.
+Placement program/setup and event export; inspection results with RefDes. If placement telemetry is unavailable, link feeder scan and program snapshot to the batch and use per-board AOI or manual verification evidence. Program commands are not proof of actual placement.
+Analysis and response: Hard-block known U3 mismatch. Pareto confirmed defects by RefDes, feeder, program and material lot; inspect the station and compare physical evidence. Use only validated orientation detection coverage.
+S07  Reflow soldering
+Pain point: An oven setpoint may look normal while the board’s actual thermal profile is outside the approved window.
+CTQs and controls: Product-specific measured peak, time above liquidus, ramp/soak where required, conveyor speed and recipe identity. Limits come from qualified materials/product requirements, not generic values.
+KPIs
+Data acquisition and fallback
+K11 qualified profile conformance; K12 recipe/telemetry excursion rate; SPC trend on suitable continuous parameters.
+Profiler CSV with thermocouple positions and profile ID; oven temperature/speed logs linked by time and route. Manual periodic profiling and recipe checks if no live export. Oven air temperature is a proxy, not a measured joint temperature.
+Analysis and response: Compare profile measurements with approved limits; associate boards with recipe and time window. Flag drift for engineer review. Hold the exposure window after a critical excursion and determine the affected interval using the last verified good condition.
+Example reaction rule
+If CTQ-U3-ORI fails, create a critical NCR, prevent application release, identify all units using the suspect setup/program since the last verified conforming check, and request independent inspection. A good average process score or a low model risk must never override this failure.
+Measurement validity
+Store units, measurement method, calibration status and measurement uncertainty where applicable. Evaluate numeric measurement repeatability and inspector agreement before relying on small shifts. Orientation is categorical; do not compute Cp/Cpk for it.
+7  Optical and hidden joint inspection
+S08  AOI and operator adjudication
+Pain point: Inspection may omit the failure mode, use an incorrect reference, or permit unjustified overrides.
+CTQs and controls: Program revision and inspected feature coverage; observable Pin 1/polarity; component presence and placement; visible solder conditions; mandatory review of alarms.
+KPIs
+Data acquisition and fallback
+K13 AOI false-call fraction; K14 audited miss rate; K15 required inspection completion; K10 orientation defect PPM.
+Board/RefDes-level AOI result and images plus reviewer disposition. Fallback CSV or manual results with annotated photos. Distinguish machine calls from confirmed defects and preserve initial results. Without independent audit labels, miss rate is Unknown.
+Analysis and response: Pareto confirmed defects and false calls separately; compare programs and reviewers. A validated challenge/reference set should include orientation errors where feasible. Do not assume optical inspection can certify hidden joints or metallurgical solder quality.
+S09  X ray inspection where required
+Pain point: Hidden-joint defects can escape surface inspection; the extent of X-ray coverage may be unclear.
+CTQs and controls: Applicable BGA/QFN or other hidden-joint features; approved acceptance criteria; recipe/image quality; inspected sites and review results. X-ray is not automatically a Pin 1 control.
+KPIs
+Data acquisition and fallback
+K15 X-ray required coverage; K16 confirmed hidden-joint defect rate; void/feature measurements where the agreed method supports them.
+AXI/X-ray results and images linked to board/component/joint. If no integration, upload report and image references. If equipment is unavailable, use an approved external inspection or hold required units; a visual check is not an equivalent substitute.
+Analysis and response: Compare by package, paste and profile. Report sampled coverage separately from 100% coverage. The supplied image states all hidden joints; adopt that as the demo default for applicable boards and confirm actual feasibility with QA.
+Required escape coverage matrix
+Failure mode
+Gate capability to verify
+Evidence required
+U3 wrong orientation
+First-article independent check; AOI if Pin 1 is visible; a targeted electrical test if designed to detect it.
+Approved source, actual image, tested program and linked test-case coverage.
+Hidden solder open
+X-ray method where capable; electrical connectivity/functional tests where covered.
+Inspection recipe and joint coverage; test-net or function mapping.
+Wrong firmware or incomplete function
+Programming verification and agreed functional sequence.
+Firmware hash/version and recorded test-case results.
+8  Through hole assembly and finishing
+S10  DIP insertion and wave soldering
+Pain point: Polarity, missing parts and poor joints may be introduced after SMT inspection.
+CTQs and controls: Correct through-hole part, orientation, seating and insertion; approved wave/selective/manual solder process; accessible joint acceptance and relevant thermal settings.
+KPIs
+Data acquisition and fallback
+K17 through-hole first-pass yield; polarity defect count; process-setting conformance.
+Insertion checklist, solder equipment export and post-solder inspection. Manual serial-linked records and photos if equipment cannot export. Product route defines applicability; no through-hole components means approved Not applicable.
+Analysis and response: Add a post-DIP inspection gate. Stratify joint and polarity defects by component/process. Do not carry forward an earlier SMT pass as proof that newly inserted components conform.
+S11  Depaneling and cleaning
+Pain point: Mechanical stress, board damage or residues can be missed when the route records only completion.
+CTQs and controls: No visible board/component damage; approved depanel method and settings; cleanliness/residue limits where required; drying and handling criteria.
+KPIs
+Data acquisition and fallback
+K18 finishing damage rate; K19 cleanliness compliance; rework quantity.
+Serial-level inspection and cleaning batch/recipe records; numeric cleanliness results where specified. Fallback sampled external/lab test and documented visual examination. Record sampling scope; visual cleanliness does not establish ionic cleanliness.
+Analysis and response: Trend by panel position, equipment and cleaning batch. Hold affected boards on critical damage or failed required cleanliness results. Reinspect after corrective work with the specified method.
+Panel and board genealogy
+Assign each panel a parent ID and every board a child serial and panel position. Preserve this mapping after depaneling. A panel-level pass applies to a child board only when that position and its required features were included. Missing or excluded positions remain unverified.
+Rework loop
+Failed board → NCR and hold → authorized rework instruction → technician execution → required repeat inspection and test → independent disposition. Store every attempt and the original failure. Rework never erases first-pass failure or automatically clears related material/batch holds.
+When a board is scrapped, record serial, defect, quantity basis and authorized disposition. Reconcile started units into good, held, rework, scrapped and WIP states without double counting.
+9  Testing final release and customer feedback
+S12  Electrical and functional testing
+Pain point: A power-on pass may cover only a small part of the motherboard’s required functions.
+CTQs and controls: Approved supply rails/current, boot/firmware, required interfaces, memory and specified functions; U3-related function/net where applicable; approved fixture and test software. ICT/flying probe and other tests are optional route elements, not assumed installed.
+KPIs
+Data acquisition and fallback
+K20 functional first-pass yield; K21 retest recovery; K02 validated test coverage; K15 required test completion.
+Tester CSV/API with serial, run/attempt, test-case ID, value/unit/limits, firmware, fixture and program revision. Manual instrument readings with a controlled test form if necessary. No agreed test method means a coverage gap, not a pass.
+Analysis and response: Analyze failing test steps and parametric drift; separate board faults from fixture faults. Detect passing only after retries. Product engineer approves limits and test coverage, with QA controlling release.
+S13  Final quality and dispatch
+Pain point: Incomplete tests, unresolved holds or untraceable boards may be shipped through administrative oversight.
+CTQs and controls: All required route results current, serial identity, closed required NCRs, approved deviations, quantity reconciliation, packaging/label and release evidence.
+KPIs
+Data acquisition and fallback
+K22 release dossier completeness; K23 first-pass route yield; K06 genealogy completeness; K24 customer defect PPM.
+Join production ledger, inspection/test runs, NCRs and shipment manifest. Fallback serial scan plus uploaded release checklist. If records cannot be reconciled, hold the release; do not fill missing results with estimates.
+Analysis and response: Generate the shipment release dossier and explicit blockers. Customer complaints link to shipment and serial cohort; distinguish confirmed defective units from potentially exposed units.
+S14  NCR and corrective action effectiveness
+Pain point: Closure may record an action without demonstrating that occurrence and escape controls improved.
+CTQs and controls: Separate validated occurrence and escape causes, implemented control changes, PFMEA/control-plan revision and independent effectiveness review.
+KPIs
+Data acquisition and fallback
+K25 containment lead time; K26 CAPA effectiveness completion; K27 recurrence rate; K28 data readiness.
+NCR/CAPA records plus post-action lot results and challenge checks. Manual structured workflow works without machines. Missing post-action observations keep effectiveness pending.
+Analysis and response: Track recurrence, coverage and execution across the agreed validation window; reopen failed actions and horizontally assess similar components/products.
+10  KPI definitions for the calculation engine
+Use the definitions below across screens and exports. Each KPI stores numerator, denominator, period/cohort, exclusions and evidence links. Percentages are multiplied by 100; PPM by 1,000,000. A zero denominator displays Not available. Never average percentages across unequal populations.
+ID
+Calculation and unit
+K01
+Approved CTQs with all mandatory fields ÷ applicable CTQs × 100%.
+K02
+Critical failure modes with approved, validated detection controls ÷ applicable critical failure modes × 100%. Show gate-level breakdown.
+K03
+First articles approved without correction or rerun ÷ completed first-article reviews × 100%.
+K04
+Median elapsed hours from complete first-article submission to final approval; show open age separately.
+K05
+Rejected incoming lots ÷ dispositioned incoming lots × 100%; report held/pending lots separately.
+K06
+Boards with all required genealogy links ÷ boards expected in selected cohort × 100%.
+K07
+Setups passing all applicable checks at initial review ÷ completed initial setup reviews × 100%.
+K08
+Units passing a stage on first attempt ÷ units with a completed first attempt × 100%; specify SPI panel or board basis.
+K09
+Out-of-spec valid paste feature measurements ÷ applicable measured features × 100%; track missing measurements separately.
+K10
+Confirmed wrong-orientation placements ÷ orientation-controlled placements actually verified × 1,000,000. Not all placements unless all verified.
+K11
+Measured profile runs meeting every required profile CTQ ÷ valid evaluated profile runs × 100%.
+K12
+Monitored time outside approved telemetry limits ÷ valid monitored production time × 100%; also show unmonitored duration.
+K13
+AOI flagged sites adjudicated as conforming ÷ adjudicated AOI flagged sites × 100%. Pending calls excluded and shown.
+K14
+Confirmed defects among independently audited AOI-pass sites ÷ audited AOI-pass sites × 100%. This is an audited miss fraction, not population sensitivity.
+K15
+Completed valid required checks ÷ required checks due in the cohort × 100%. Separate board coverage and site/test-case coverage.
+K16
+Confirmed defective hidden joints ÷ inspected hidden joints × 100%; sampled and fully inspected cohorts separated.
+Avoid misleading improvement claims
+First-pass yield remains unchanged after rework. Final yield may be reported separately. Do not multiply stage yields with different denominators and label the result actual route yield. Financial benefit is optional and uses user-entered scrap, rework and return costs with visible assumptions; no guaranteed savings.
+11  Yield response and data readiness metrics
+ID
+Calculation and unit
+K17
+Boards passing post-DIP inspection first time ÷ applicable boards first inspected × 100%.
+K18
+Boards confirmed damaged at finishing ÷ boards inspected at finishing × 100%.
+K19
+Valid cleanliness tests meeting requirements ÷ valid required cleanliness tests performed × 100%; show test completion separately.
+K20
+Boards passing all required functional cases on first completed run ÷ boards completing a first functional run × 100%.
+K21
+Initially failed boards later passing an authorized retest ÷ initially failed boards with completed disposition × 100%; show unresolved failures.
+K22
+Required current release evidence items satisfied ÷ required release evidence items × 100%; one critical missing item can still block release.
+K23
+Boards completing all applicable route stages first time with no repair/retest ÷ boards in the completed-route cohort × 100%; WIP excluded and shown.
+K24
+Distinct confirmed customer-defective boards ÷ shipped boards from the same shipment cohort × 1,000,000; display observation cutoff and outstanding exposure.
+K25
+Median minutes from detection to documented containment completion; also show time to initial hold and overdue open cases.
+K26
+Actions passing independent effectiveness review ÷ actions due for effectiveness review × 100%; overdue/pending actions remain in denominator.
+K27
+Post-action inspected boards with the same confirmed failure mode ÷ relevant post-action inspected boards × 100%; identify lot window.
+K28
+Valid required records received on time ÷ required records expected by cutoff × 100%; show completeness, freshness and invalid-record counts separately.
+Common dimension and ownership rules
+Filter by customer, product/revision, order, lot, line, machine, shift, RefDes, component/material lot and program revision when available. Engineering owns K01–K02; QA owns acceptance/yield/escape metrics; process engineering owns process CTQs; data steward owns K28. Each stage owner reviews its KPI daily or per lot, with critical alerts evaluated on event receipt.
+Targets are customer-configurable. Mandatory release evidence and critical coverage use a demo target of 100%. Defect, yield and response targets require a baseline and plant agreement. Do not invent a customer target or compare unlike products without stratification.
+12  Data acquisition and unavailable data
+Each KPI card has a data badge: Direct machine data, Manual verified data, Proxy, Synthetic demo, Missing or Not applicable. A proxy may support a warning but cannot silently satisfy a required direct-measurement CTQ.
+Data group and KPIs
+Preferred path
+If unavailable
+Engineering and approvalsK01–K04
+BOM/placement CSV, controlled documents and approval events.
+Manual CTQ register and signed evidence; missing authoritative decisions block readiness.
+Materials and setupK05–K07
+ERP export, reel/feeder scans and program snapshots.
+Forms with IDs and photos. Assign serial/lot labels before processing; batch-only history limits containment precision.
+SPI and placementK08–K10
+SPI measurement export; placement/AOI RefDes records.
+Manual inspection data for available characteristics. Paste volume and placement numeric capability remain unavailable without measurements.
+ReflowK11–K12
+Profiler files plus timestamped oven logs.
+Periodic profiling and documented checks; no continuous excursion claim from intermittent readings.
+AOI and X-rayK13–K16
+Machine result CSV/API, images and independent audit labels.
+Manual import and review. No audit labels means no measured miss fraction; required absent inspection produces a hold.
+DIP and finishingK17–K19
+Process/inspection exports and cleanliness lab records.
+Controlled checklists and lab attachments; show sampling scope and unmeasured characteristics.
+Test and releaseK20–K24
+Test-run logs, serial ledger and dispatch/customer records.
+Structured test forms, scanned serials and manifest CSV. No SOP triggers a coverage decision, not fabricated values.
+Response and readinessK25–K28
+Workflow timestamps, post-action results and expected-event ledger.
+Manual recorded timestamps with source and confidence; impossible-to-reconstruct intervals show Unknown.
+Three practical onboarding levels
+Level 1 demo: synthetic records, CSV upload and forms. Level 2 pilot: real exports and barcode capture; no dependency on live machine APIs. Level 3 integration: validated read-only machine/ERP/tester connectors, negotiated per vendor. Never promise a protocol or connector until the machine model and export sample are inspected.
+The Data Readiness screen identifies each missing field, affected KPIs/control gates, data owner, capture method, frequency and due date. Offline entry can queue records, but final release waits for synchronized, validated evidence. Record both event time and ingestion time.
+13  Data model and import contract
+Entity
+Minimum fields and relationships
+Product and configuration
+Customer, product, revision, BOM/placement/route/test-plan IDs and hashes; source documents; effective dates.
+CTQ and control
+CTQ ID, RefDes/feature, failure mode, source locator, type/unit/limits, method, frequency, coverage, owner, reaction plan, revision.
+Order lot panel board
+Order and lot IDs, product revision, quantity; panel ID, board serial and panel position; line and planned route.
+Material and process event
+Material/reel/PCB lot; machine/station, program/profile/fixture versions; start/end time, operator, related serials.
+Inspection and test result
+Run/attempt ID, board/panel/site, CTQ/test-case ID, measured value/unit, limits snapshot, initial result, adjudication, evidence.
+Approval and release
+Stage, actor/role, time, decision, scope, evidence/configuration hash, expiry, reason; superseded approval link.
+NCR CAPA and exposure
+Failure mode, occurrence/escape hypotheses, proof, serial exposure set, disposition, action owner/due date, effectiveness plan/results.
+Alert prediction and audit
+Trigger, score type/version, feature snapshot, as-of time, evidence, status/owner; append-only actor/action/before/after log.
+Canonical event and sample
+Required event fields: event_id, source_system, event_time with timezone, ingestion_time, product_revision, lot_id, station_id, event_type, entity_type and entity_id. Board-level events also require board_serial. RefDes/CTQ/test-case and run/attempt fields depend on event type.
+Illustrative row: EVT-0042 | DEMO-AOI | 2026-10-02T10:15:00+05:30 | MB-DEMO-A | LOT-U3-NEW | AOI-01 | inspection | board | MB-A-0001 | U3 | CTQ-U3-ORI | run 1 | expected PIN1-NW | observed PIN1-SE | Fail | evidence IMG-0042. Directions are synthetic board-datum labels, not actual U3 specifications.
+Import behavior
+Provide BOM, units/genealogy, measurements, inspections, test results and approvals/CAPA CSV templates. Preview column mapping, units and counts. Reject unknown revisions, missing keys, invalid units and impossible timestamps into a quarantine list with row-specific reasons. Never silently drop failed rows.
+Deduplicate by source_system + event_id; conflicting duplicates require review. Repeated imports must not inflate KPIs. Retests append new attempts. Maintain raw file checksum and line number. Late events recompute analytics and re-evaluate impacted releases without altering the historical approval record.
+14  Analysis and corrective recommendation engine
+Analysis sequence
+First validate the evidence. Then segment comparable products/revisions and plot defects, yield and coverage. Use Pareto views to prioritize failure modes and stratify by material, program, station and time. Drill from every chart to the source records. Show correlation as a hypothesis until an engineering investigation validates causation.
+Analysis
+Implementation and output
+Rules and coverage
+Compare measured results with approved limits; detect program/revision mismatches, skipped gates and missing critical evidence. These are deterministic controls.
+SPC early warning
+Use I-MR for suitable individual continuous values, X-bar/R for rational subgroups, and p charts for proportions with changing sample counts. Never pool unrelated CTQs or revisions.
+Demo SPC rule set
+Versioned rules: one point beyond 3 sigma, eight consecutive points on one side, or six monotonically increasing/decreasing. Show which rule fired and its baseline.
+Capability
+Only evaluate suitable numeric CTQs with approved specifications, valid measurements and a stable process. Show sample size, period and assumptions. Suppress capability for unstable, sparse or inappropriate data [R1].
+Escape analysis
+Map each applicable gate: expected detection, execution, capability validation, result/override and evidence. Distinguish not run, not capable, misconfigured, missed, overridden and unknown.
+Recommendation
+Use approved reaction plans to suggest containment and verification. Link evidence and uncertainties; assign owner and due date. Human approval is required for process changes.
+SPC implementation details
+For the demo, require at least 30 eligible individual baseline observations or 25 rational subgroups; mark shorter histories “baseline pending”. These are demo rules, not universal adequacy criteria. Baselines are reviewed and frozen by the process engineer; do not recalculate limits automatically after a defect.
+Control limits describe baseline variation; specification limits define acceptability. Display them separately. An in-spec drift can trigger investigation, and an out-of-spec result remains a failure even if statistically expected. EWMA can be added later for smaller shifts.
+Cp uses specification width divided by six times the estimated within-process standard deviation. Cpk uses the smaller distance from the mean to either specification limit divided by three times that deviation. State the estimator, assess distribution/measurement assumptions and report uncertainty; do not infer capability from pass/fail counts [R1].
+15  Predictive AI requirements
+Provide three visibly different outputs: rule-based release blockers, statistical early warnings, and model-based predictions. For the initial demo, use a reproducible synthetic-data model or an explicitly labelled simulated prediction. Never show a synthetic score as validated plant performance.
+Use case
+Inputs and target
+Action and readiness
+Next-board defect risk
+At pre-reflow decision time: available SPI summaries, paste age, setup/material context and prior-only process history. Target: subsequent confirmed solder defect for that board.
+Recommend targeted inspection or engineer review. Requires serial-linked upstream features and independently adjudicated downstream labels.
+Profile drift forecast
+Past-only qualified process/telemetry series. Target: specified variable crossing its limit within next 30 minutes.
+Show horizon and uncertainty; review profile/oven condition. Irregular periodic measurements may be insufficient for this horizon.
+Escape vulnerability
+Critical CTQs without validated coverage, changed programs and unresolved evidence gaps.
+Use an explainable rule-based vulnerability indicator initially; it is not a defect probability.
+RCA assistance
+Approved documents, NCRs, coverage map and linked event evidence.
+AI drafts occurrence and escape hypotheses, similar cases and report text with record citations. QA validates; AI cannot sign or close actions.
+Training and evaluation contract
+Start with an interpretable logistic baseline and compare a tree model only if useful. Split by time and hold out complete lots; keep all observations/retests from a board together. Features must exist before the prediction timestamp. Exclude downstream test results, final dispositions and future aggregates from upstream models.
+Report held-out lot count, class balance, precision, recall, PR-AUC, calibration and false alerts per 1,000 boards at the chosen threshold. Compare against the rules-only baseline. Plant QA sets the missed-defect tolerance and alert workload; do not promise a universal accuracy target or arbitrary minimum row count.
+A prediction stores model version, as-of timestamp, horizon, available features, missingness, risk band, score type and main contributors. Probability is shown only for an appropriately validated/calibrated model. Unseen products, stale inputs, drift or insufficient defect labels produce “prediction unavailable” with a reason.
+Before live use, run shadow evaluation over representative lots and shifts; approve thresholds and monitoring with QA. Retrain only after review. AI suggests actions; it cannot waive a CTQ, approve a customer concession, alter machine settings or certify a root cause.
+16  NCR reporting and effectiveness closure
+Occurrence and escape remain separate
+For U3, “orientation was interpreted incorrectly” is an occurrence hypothesis until confirmed against the approved source and setup evidence. Potential escape hypotheses include omitted AOI polarity coverage, a wrong golden reference, untested U3 function, or release without current evidence. These are demo investigation paths, not conclusions about the customer.
+Report section
+Required content
+Problem and scope
+Product/revision, failure mode, detected-at gate, evidence, confirmed defective count, potentially exposed count and shipment/WIP status.
+Immediate containment
+Hold scope, serial manifest, material/program/time filters, owner, start/completion times and verification. Broaden scope when genealogy is incomplete.
+Occurrence investigation
+Evidence-backed 5-Why chain, competing explanations, tests performed, verified causal factor and prevention action.
+Escape investigation
+Gate coverage/execution map, independent detection evidence, missed/overridden checks, verified escape cause and detection action.
+Correction and prevention
+Disposition/rework of affected units versus permanent process/control change; owner, due date, approval and implementation evidence.
+System updates
+Linked PFMEA/control-plan/CTQ revisions, training and program changes; horizontal applicability review across similar parts/products.
+Effectiveness decision
+Predefined cohort/window and criteria, actual results, recurrence and coverage, reviewer decision, residual risk and customer evidence if required.
+Sample U3 correction report behavior
+Generate a draft stating: a critical orientation mismatch requires containment; approved orientation evidence and detection coverage must be verified; affected units are identified by exact setup/program scope where possible. Include expected versus observed orientation and links to the original events. Every AI-written conclusion is marked Draft pending QA review.
+Effectiveness plan for the demo
+Illustrative plan: validate corrected orientation mapping and detection challenge cases, inspect all required U3 placements, then monitor three consecutive 200-board lots across relevant setups/shifts. Require zero confirmed U3 orientation defects, 100% required evidence and no unauthorized bypass. This 600-board example is a demo plan, not a universal closure rule or proof of zero future defects.
+If no failures occur in 600 independent representative observations, the approximate one-sided 95% upper defect-rate bound is 3/600, about 0.5%; clustered board failures weaken that inference. QA must agree the actual validation exposure, independence assumptions and customer return observation period before closure.
+17  Application screens and user permissions
+Screen
+Required interaction and drilldown
+01 Quality command centre
+Select product/lot; see release status, FPY, CTQ coverage, holds, SPC alerts and data readiness. Every tile links to contributing records.
+02 Engineering and CTQ register
+Compare source revisions; configure CTQs; map U3 Pin 1 and test/inspection coverage; resolve ambiguity with evidence.
+03 First article workbench
+Show reference and actual images, checklist, machine results and blocker list; engineering, QA and customer decisions tied to a snapshot.
+04 Live production board
+Route progress by serial/panel, hold/rework status and last data timestamp; expose skipped or unknown gates.
+05 SPC and defect explorer
+Parameter trends, limits, Pareto and filters; annotate changes; inspect source measurements and assumptions.
+06 Traceability and containment
+Search serial, lot, reel, program or incident; traverse genealogy; generate affected-unit manifest and apply scoped holds.
+07 NCR and 8D workspace
+Occurrence and escape trees, evidence, corrective actions, PFMEA/control-plan links and effectiveness monitoring.
+08 Predictive insights
+As-of risk, horizon, score type, data sufficiency, contributors and recommended review; acknowledge or assign action.
+09 Release and reports
+Display blockers, serial reconciliation, current approvals and concessions; produce release dossier and correction report.
+10 Data and configuration
+Import preview/error queue, source readiness, routes, roles, limits, demo scenarios and reset.
+Role boundaries
+Operator enters/scans data and executes authorized checks. Process engineer proposes CTQs, programs and process changes. QA independently approves gates, dispositions and effectiveness. Customer approver signs only assigned customer approvals. Management reads dashboards. Administrator configures users and imports but receives no automatic QA approval authority.
+Enforce permissions on the server, including direct API calls. Engineering and QA first-article signatures must be from different users. Log approval, override, hold, import and configuration changes with actor, time, scope and reason. Customer access is limited to its own products and approved evidence.
+Use clear status text as well as color. Keep a persistent Synthetic demo badge on simulated records and exports. Include empty, loading, stale, missing-data and access-denied states. The presentation should work on a laptop without explaining database internals to the customer.
+18  Seed scenarios and presentation sequence
+All quantities and technical settings below are synthetic demonstration fixtures except the user-reported 1,200-unit incident scope. Keep incident reconstruction, prevention replay and post-action validation as separate datasets so their numbers cannot be combined accidentally.
+Scenario
+Seed and expected behavior
+A Prevent before batch
+Order DEMO-PREVENT for 1,200 boards; one first article. Conflicting U3 orientation record and missing validated AOI coverage block G0/G2. Resolve mapping, verify actual article, validate coverage and obtain distinct approvals; batch release then becomes possible.
+B Reconstruct the escape
+Historical DEMO-ESCAPE cohort of 1,200 potentially exposed serials. Seed incomplete gate evidence and a customer complaint confirming one defect. Show confirmed 1 versus potentially exposed 1,200; do not label all 1,200 independently confirmed without records.
+C Drift before defect
+DEMO-DRIFT contains 200 boards. A separate 40-point stable baseline precedes a rising synthetic paste-volume sequence; eight observations remain above centre before an illustrative upper specification crossing. Early SPC alert precedes the failure.
+D Test coverage gap
+Order lacks customer functional SOP. First-article appearance passes, but required functional coverage remains Unknown. Release is blocked until approved plan/results or a scoped concession exists.
+E Effectiveness
+DEMO-VERIFY has three 200-board lots, 600 required U3 checks and zero U3 failures. Show 100% evidence and pending independent review; QA can close only after all predefined criteria pass.
+F Data integrity
+Replay a duplicate import, a missing serial, a wrong unit and a late critical failure. Counts remain stable; bad rows quarantine; the late failure triggers a new hold/escalation.
+Deterministic metric fixture
+For the 200-board test cohort: 180 boards pass functional test first time; 20 initially fail; 15 recover after authorized rework/retest; 5 are scrapped. K20 = 90%, K21 = 75%, final test yield = 97.5%. Preserve the 20 original failures. If another 10 boards required upstream rework, with no overlap, all-route first-pass count is 170 and K23 = 85%.
+Suggested customer walkthrough of 12 to 15 minutes
+Open the U3 risk and missing coverage → attempt release and see the blocker → resolve reference and first-article evidence → follow board genealogy and expose the historical escape → show drift warning and predictive explanation → create corrective report and containment manifest → verify subsequent lots and demonstrate controlled closure. End with the customer’s data-readiness checklist and pilot boundary.
+19  Developer implementation and acceptance
+Implement a database-backed demo with server-side release evaluation, persistent event history and deterministic seeded scenarios. Suggested components: browser UI, API, relational store, evidence file store, import worker, rules/KPI service and optional prediction/report service. The exact stack is a developer choice; retain these boundaries.
+Core actions: import and validate records; evaluate gate; record approval; create/resolve hold; retrieve genealogy; compute metrics; create NCR/action; record effectiveness review; export report; reset demo. Approvals and release changes are transactional, reject stale configuration versions and return a structured blocker list. Reset is demo-only and never available to ordinary live users.
+Test
+Acceptance result
+AT01 U3 ambiguity
+Release request fails with CTQ ID, source conflict and required owner action; no approval is silently fabricated.
+AT02 Independent approval
+One user cannot sign both engineering and QA; direct API attempt also fails.
+AT03 Revision change
+Approved program changes after sign-off; relevant approvals become stale and further batch release is blocked.
+AT04 Missing SOP and N/A
+Missing functional method stays Unknown; Not applicable needs approved route justification. A concession stays visible.
+AT05 Genealogy
+Query suspect setup returns exactly the seeded exposure set; incomplete genealogy broadens scope and displays uncertainty.
+AT06 Import and retries
+Duplicate event import changes no counts; invalid rows quarantine; retest preserves the first failure and expected fixture metrics.
+AT07 SPC and AI
+Seeded drift triggers before crossing specification; prediction screen declares synthetic/model status and refuses insufficient or future data.
+AT08 Scoped holds
+Held serial cannot release; mixed shipment excludes held units or blocks as configured. Unrelated clean units are not silently altered.
+AT09 CAPA closure
+Implementation alone cannot close CAPA; missed effectiveness criterion or recurrence blocks closure and opens review.
+AT10 Export integrity
+PDF/CSV reports match screen totals, list evidence and scope, and preserve synthetic badges and revision/as-of dates.
+AT11 Audit and roles
+Approval/edit trail is append-only through application APIs; customer users cannot access another customer’s records.
+AT12 Late evidence
+Late failure preserves prior release history, creates incident/hold and flags dispatched exposure for authorized recall/containment review.
+20  Delivery plan and pilot readiness
+Proposed build sequence
+Milestone
+Scope and exit condition
+1 Foundation
+Agree demo route and CTQs; build schema, roles, fixtures and import validation. Exit: records and genealogy reconcile.
+2 Prevent and release
+CTQ register, first article, coverage matrix, approvals, holds and release evaluator. Exit: AT01–AT04 and AT08 pass.
+3 Analyze and correct
+KPIs/SPC, traceability, NCR/CAPA, correction report and effectiveness. Exit: metric fixture and containment scope reconcile.
+4 Predict and demonstrate
+Labelled synthetic predictive view, report exports, scenario reset, visual polish and full walkthrough. Exit: all acceptance tests pass.
+Planning estimate: four weeks for a small product team with available QA and PCB process SME support, subject to team capacity. Live machine connectors, historical-data cleanup and production model qualification are separately scoped. This estimate is not a delivery commitment.
+Customer data request before pilot
+Request one representative product’s approved BOM, exact U3 MPN/datasheet, assembly/placement files and rotation conventions; the actual 8D; first-article report and approvals; one AOI/X-ray/test export with images; qualified reflow profile; serial/panel genealogy; three representative lot histories including defects/rework; PFMEA/control plan; dispatch/complaint links; machine models and export capabilities.
+Confirm functional test responsibility when no customer SOP exists; applicable workmanship criteria/class/revision; X-ray extent; authority for concessions and release; retention/access rules; source of time synchronization; and permitted process interlocks. Do not delay the synthetic demo while these pilot inputs are gathered.
+Nonfunctional requirements
+Demo target: 50,000 board records with at least 500,000 event rows; agreed benchmark environment; 95th-percentile filtered dashboard response under 3 seconds and genealogy query under 5 seconds. Import 10,000 rows within 60 seconds with a progress/error report. Measure and report actual results; these are acceptance targets, not measured performance.
+Use encrypted transport, role checks, customer isolation, protected evidence links, backup/restore and configurable retention. Store source timestamps with timezones. Keep raw evidence and configuration snapshots immutable through ordinary UI operations. Audit who changed a limit and why. Display last refresh and connector status.
+Definition of done
+A presenter can complete the full U3 prevention-to-effectiveness story without manually editing data between screens. Every KPI is reproducible, every block names a reason, every report links evidence, and every predictive output declares its data basis. Supply deployment instructions, CSV field dictionary, scenario reset, test results and a recorded or written demo script with the application.
+21  References assumptions and glossary
+Source and recommendation boundaries
+S1  Batch Production.png, supplied by the user. Read as the current described flow, with branch and inspection-location ambiguities flagged in this BRD.
+S2  First Article Production &amp; Approval Flow.png, supplied by the user. Source for independent engineering/quality checks, customer approval and the no-SOP branch.
+S3  User-provided 8D review narrative. Source for U3 orientation and the stated 1,200 affected units. The original 8D and case evidence were not available. Synthetic serial counts in the demo do not revise that reported incident scope.
+R1  NIST Engineering Statistics Handbook, What is Process Capability. Technical basis for evaluating capability against specifications using a stable process and appropriate distribution/sample assumptions. https://www.itl.nist.gov/div898/handbook/pmc/section1/pmc16.htm
+R2  IPC-1782B official title and scope information, manufacturing and supply-chain traceability for electronic products. Reference for traceability terminology; this BRD does not assert IPC compliance. https://www.electronics.org/TOC/IPC-1782B_TOC.pdf
+R3  IPC education syllabus, Introduction to IPC-A-610. Reference identifying IPC-A-610 as assembly acceptance guidance. The customer must supply the contracted, licensed criteria and applicable revision; no acceptance limits have been copied or inferred here. https://edu.ipc.org/hubfs/Education%20Course%20Syllabus/Intro%20to%20IPC-A-610%20Syllabus_FINAL_7.9.2025.pdf
+External references checked 02 October 2026. Gate design, KPI definitions, scenario fixtures, timing estimates and demo thresholds are ProcessGrit proposal requirements for this build, subject to customer validation.
+Working glossary
+Term
+Meaning
+CTQ / KPI
+Critical-to-quality characteristic / key performance indicator.
+PCB / PCBA / SMT
+Printed circuit board / assembled PCB / surface-mount technology.
+SPI / AOI / AXI
+Solder paste inspection / automated optical inspection / automated X-ray inspection.
+DIP / ICT / FT
+Dual in-line package or the plant’s through-hole stage label / in-circuit test / functional test.
+BOM / MPN / RefDes
+Bill of materials / manufacturer part number / component reference designator such as U3.
+SPC / FPY / PPM
+Statistical process control / first-pass yield / parts per million with a stated denominator.
+NCR / RCA / CAPA / 8D
+Nonconformance report / root-cause analysis / corrective and preventive action / eight-discipline problem solving.
+PFMEA / Control plan
+Process failure mode and effects analysis / approved characteristics, methods, frequency and reaction controls.

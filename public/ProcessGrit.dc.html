@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>ProcessGrit · PCBA Quality Intelligence</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/resources.js"></script>
+<script src="/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/classical-602d74cf-5ba2-41d5-b912-d66c664fbecc/styles.css">
+<script src="_ds/classical-602d74cf-5ba2-41d5-b912-d66c664fbecc/_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<script src="pg-engine-v2.js"></script>
+<style>
+html,body{margin:0;height:100%}
+body{background:#f6f7f9;color:#0d1321;font-family:'Geist',system-ui,sans-serif;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,h5,h6{font-family:'Geist',system-ui,sans-serif;font-weight:600;letter-spacing:-0.02em;margin:0;line-height:1.2;text-transform:none}
+p{margin:0}
+a{color:#4f5bd5;text-decoration:none}a:hover{color:#3640a8;text-decoration:underline}
+button,input,select{font-family:inherit}
+:focus{outline:none}:focus-visible{outline:2px solid #4f5bd5;outline-offset:2px}
+::selection{background:#c7cdf5}
+@keyframes pgshimmer{0%{background-position:-400px 0}100%{background-position:400px 0}}
+@keyframes pgslide{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}}
+@keyframes pgfade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@media print{body *{visibility:hidden!important}#pg-print,#pg-print *{visibility:visible!important}#pg-print{position:absolute!important;inset:0 auto auto 0!important;width:100%!important;box-shadow:none!important;border:0!important;max-height:none!important;overflow:visible!important}.pg-noprint{display:none!important}}
+</style>
+</helmet>
+<div style="display:flex;height:100vh;overflow:hidden;background:#f6f7f9">
+  <aside style="flex:none;width:{{ sideW }};background:#ffffff;border-right:1px solid #e6e8ec;display:flex;flex-direction:column;transition:width .18s ease;overflow:hidden">
+    <div style="height:56px;display:flex;align-items:center;gap:10px;padding:0 14px;border-bottom:1px solid #eef0f3;flex:none">
+      <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#4f5bd5,#2d3494);display:grid;place-items:center;flex:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.2)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M4 12h16M4 17h7"></path><circle cx="18" cy="7" r="2"></circle><circle cx="15" cy="17" r="2"></circle></svg>
+      </div>
+      <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;line-height:1.15;min-width:0">
+          <span style="font-weight:600;font-size:15px;letter-spacing:-0.01em">ProcessGrit</span>
+          <span style="font-size:11px;color:#8a93a3;white-space:nowrap">PCBA Quality Intelligence</span>
+        </div>
+      </sc-if>
+      <button onClick="{{ toggleSide }}" title="Collapse sidebar" style="margin-left:auto;width:28px;height:28px;border-radius:6px;border:0;background:transparent;color:#8a93a3;cursor:pointer;display:grid;place-items:center;flex:none" style-hover="background:#f2f4f7;color:#0d1321">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M9 3v18"></path></svg>
+      </button>
+    </div>
+
+    <div style="padding:12px 10px 6px;position:relative;flex:none">
+      <button onClick="{{ toggleScen }}" title="Switch scenario" style="width:100%;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;border:1px solid #e6e8ec;background:#f9fafb;cursor:pointer;text-align:left;color:#0d1321" style-hover="border-color:#d5d9e0;background:#f6f7f9">
+        <span style="width:24px;height:24px;border-radius:6px;background:#0d1321;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:600;flex:none">{{ scenId }}</span>
+        <sc-if value="{{ expanded }}" hint-placeholder-val="{{ true }}">
+          <span style="display:flex;flex-direction:column;min-width:0;flex:1;line-height:1.25">
+            <span style="font-size:11px;color:#8a93a3">Scenario workspace</span>
+            <span style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ scenName }}</span>
+          </span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8a93a3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"></path></svg>
+        </sc-if>
+      </button>
+      <sc-if value="{{ scenOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:10px;top:100%;z-index:90;width:300px;background:#fff;border:1px solid #e6e8ec;border-radius:12px;box-shadow:0 12px 32px rgba(16,24,40,.14),0 2px 6px rgba(16,24,40,.06);padding:6px;animation:pgfade .14s ease">
+          <span style="display:block;font-size:11px;font-weight:500;color:#8a93a3;padding:6px 10px">Scenarios</span>
+          <sc-for list="{{ scens }}" as="s" hint-placeholder-count="6">
+            <button onClick="{{ s.go }}" style="width:100%;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;border:0;cursor:pointer;text-align:left;color:#0d1321;background:{{ s.bg }}" style-hover="background:#f6f7f9">
+              <span style="width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-size:11px;font-weight:600;flex:none;background:{{ s.badgeBg }};color:{{ s.badgeFg }}">{{ s.id }}</span>
+              <span style="display:flex;flex-direction:column;line-height:1.25;flex:1;min-width:0"><span style="font-size:13px;font-weight:500">{{ s.name }}</span><span style="font-size:11px;color:#8a93a3;font-family:'Geist Mono',monospace">{{ s.order }} · {{ s.cust }}</span></span>
+              <span style="font-size:11px;color:{{ s.stateFg }}">{{ s.state }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+
+    <nav style="flex:1;min-height:0;overflow-y:auto;padding:6px 10px 12px">
+      <div style="display:flex;flex-direction:column;gap:2px">
+      <sc-for list="{{ nav }}" as="n" hint-placeholder-count="14">
+        <sc-if value="{{ n.isGroup }}" hint-placeholder-val="{{ false }}">
+          <span style="flex:none;display:block;font-size:11px;font-weight:500;color:#8a93a3;padding:14px 10px 4px;letter-spacing:.02em;white-space:nowrap;height:{{ n.gh }};overflow:hidden">{{ n.label }}</span>
+        </sc-if>
+        <sc-if value="{{ n.isItem }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ n.go }}" title="{{ n.label }}" style="flex:none;display:flex;align-items:center;gap:10px;height:34px;padding:0 10px;border-radius:7px;border:0;cursor:pointer;text-align:left;font-size:13.5px;font-weight:{{ n.fw }};background:{{ n.bg }};color:{{ n.fg }}" style-hover="background:#f2f4f7;color:#0d1321">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none;opacity:{{ n.io }}"><path d="{{ n.d }}"></path></svg>
+            <span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:{{ n.labelDisplay }}">{{ n.label }}</span>
+            <span style="font-size:11px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;display:{{ n.badgeDisplay }};align-items:center;justify-content:center;background:#fef3f2;color:#b42318;border:1px solid #fecdca">{{ n.badge }}</span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#98a2b3" stroke-width="2" style="display:{{ n.lockDisplay }}"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+          </button>
+        </sc-if>
+      </sc-for>
+      </div>
+    </nav>
+
+    <div style="border-top:1px solid #eef0f3;padding:10px;display:flex;flex-direction:column;gap:4px;position:relative;flex:none">
+      <button onClick="{{ toggleGuide }}" style="display:flex;align-items:center;gap:10px;height:34px;padding:0 10px;border-radius:7px;border:0;cursor:pointer;font-size:13.5px;color:{{ guideFg }};background:{{ guideBg }}" style-hover="background:#f2f4f7">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="12" cy="12" r="10"></circle><path d="m10 8 6 4-6 4z"></path></svg>
+        <span style="white-space:nowrap;display:{{ labelDisplay }}">Guided walkthrough</span>
+      </button>
+      <button onClick="{{ askReset }}" style="display:flex;align-items:center;gap:10px;height:34px;padding:0 10px;border-radius:7px;border:0;cursor:pointer;font-size:13.5px;color:#4a5263;background:transparent" style-hover="background:#f2f4f7;color:#0d1321">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"></path></svg>
+        <span style="white-space:nowrap;display:{{ labelDisplay }}">Reset scenarios</span>
+      </button>
+      <button onClick="{{ togglePersona }}" style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;border:1px solid #e6e8ec;background:#fff;cursor:pointer;text-align:left;margin-top:4px;color:#0d1321" style-hover="border-color:#d5d9e0;background:#f9fafb">
+        <span style="flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:600;flex:none;background:{{ me.av }};color:#fff">{{ me.ini }}</span>
+        <span style="display:{{ labelFlex }};flex-direction:column;line-height:1.2;min-width:0;flex:1"><span style="font-size:13px;font-weight:500;white-space:nowrap">{{ me.name }}</span><span style="font-size:11px;color:#8a93a3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ me.title }}</span></span>
+      </button>
+      <sc-if value="{{ personaOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:10px;bottom:calc(100% - 6px);z-index:90;width:300px;background:#fff;border:1px solid #e6e8ec;border-radius:12px;box-shadow:0 12px 32px rgba(16,24,40,.14),0 2px 6px rgba(16,24,40,.06);padding:6px;animation:pgfade .14s ease">
+          <span style="display:block;font-size:11px;font-weight:500;color:#8a93a3;padding:6px 10px">Act as a different user. Permissions change live.</span>
+          <sc-for list="{{ personas }}" as="p" hint-placeholder-count="8">
+            <button onClick="{{ p.pick }}" style="width:100%;display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:8px;border:0;cursor:pointer;text-align:left;color:#0d1321;background:{{ p.bg }}" style-hover="background:#f6f7f9">
+              <span style="flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:600;flex:none;background:{{ p.av }};color:#fff">{{ p.ini }}</span>
+              <span style="display:flex;flex-direction:column;line-height:1.25;flex:1;min-width:0"><span style="font-size:13px;font-weight:500">{{ p.name }}</span><span style="font-size:11px;color:#8a93a3">{{ p.title }}</span></span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4f5bd5" stroke-width="2.4" style="display:{{ p.check }}"><path d="M20 6 9 17l-5-5"></path></svg>
+            </button>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+  </aside>
+
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+    <header style="height:56px;flex:none;display:flex;align-items:center;gap:14px;padding:0 24px;background:#ffffff;border-bottom:1px solid #e6e8ec">
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;flex:none">
+        <span style="color:#8a93a3;white-space:nowrap">{{ crumbGroup }}</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c0c6d0" stroke-width="2"><path d="m9 18 6-6-6-6"></path></svg>
+        <span style="font-weight:500;white-space:nowrap">{{ crumbPage }}</span>
+      </div>
+      <button onClick="{{ openPalette }}" style="margin-left:auto;flex:0 1 340px;min-width:140px;height:34px;display:flex;align-items:center;gap:8px;padding:0 10px;border-radius:8px;border:1px solid #e6e8ec;background:#f9fafb;color:#8a93a3;cursor:pointer;font-size:13px;text-align:left" style-hover="border-color:#d5d9e0">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+        <span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Search pages, serials, lots, actions</span>
+        <span style="font-size:11px;font-family:'Geist Mono',monospace;padding:1px 6px;border:1px solid #e6e8ec;border-radius:5px;background:#fff">⌘K</span>
+      </button>
+      <span title="All records are synthetic demonstration fixtures" style="display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:999px;font-size:12px;font-weight:500;background:#fffaeb;color:#b54708;border:1px solid #fedf89;white-space:nowrap"><span style="flex:none;width:6px;height:6px;border-radius:50%;background:#f79009"></span>Synthetic demo</span>
+      <span style="font-size:12px;color:#8a93a3;white-space:nowrap;font-family:'Geist Mono',monospace">{{ demoDate }}</span>
+    </header>
+
+    <div style="flex:none;background:#ffffff;border-bottom:1px solid #e6e8ec;padding:12px 24px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 28px">
+      <div style="display:flex;flex-direction:column;gap:2px;min-width:240px;flex:1 1 260px">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <span style="font-family:'Geist Mono',monospace;font-size:15px;font-weight:500">{{ ctx.order }}</span>
+          <span style="display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:500;background:{{ ctx.st.bg }};color:{{ ctx.st.fg }};border:1px solid {{ ctx.st.bd }}"><span style="flex:none;width:6px;height:6px;border-radius:50%;background:{{ ctx.st.dot }}"></span>{{ ctx.st.label }}</span>
+        </div>
+        <span style="font-size:12px;color:#4a5263">{{ ctx.line }}</span>
+      </div>
+      <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px">
+        <sc-for list="{{ gateChips }}" as="g" hint-placeholder-count="5">
+          <button onClick="{{ g.go }}" title="{{ g.title }}" style="display:flex;align-items:center;gap:8px;height:34px;padding:0 10px 0 6px;border-radius:8px;border:1px solid {{ g.bd }};background:{{ g.bg }};cursor:pointer;color:#0d1321" style-hover="border-color:#c0c6d0">
+            <span style="flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:{{ g.dotBg }};color:{{ g.ic }};flex:none">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="{{ g.icon }}"></path></svg>
+            </span>
+            <span style="display:flex;flex-direction:column;line-height:1.15;text-align:left"><span style="font-size:11px;color:#8a93a3">{{ g.state }}</span><span style="font-size:12px;font-weight:500;white-space:nowrap">{{ g.short }}</span></span>
+          </button>
+        </sc-for>
+      </div>
+      <sc-if value="{{ hasNext }}" hint-placeholder-val="{{ true }}">
+        <div style="flex:1 1 100%;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 12px;border-radius:10px;background:#fafbff;border:1px solid #dfe3fb">
+          <span style="width:28px;height:28px;border-radius:8px;background:#4f5bd5;display:grid;place-items:center;flex:none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span>
+          <span style="display:flex;flex-direction:column;gap:1px;flex:1 1 320px;min-width:0"><span style="font-size:11.5px;color:#4f5bd5;font-weight:500">Next action · {{ nx.owner }}</span><span title="{{ nx.title }}" style="font-size:13.5px;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ nx.title }}</span><span style="font-size:12px;color:#4a5263;line-height:1.4;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical">{{ nx.detail }}</span></span>
+          <span style="display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:999px;font-size:11.5px;font-weight:500;background:{{ nx.p.bg }};color:{{ nx.p.fg }};border:1px solid {{ nx.p.bd }};white-space:nowrap">{{ nx.p.label }}</span>
+          <button onClick="{{ nx.go }}" style="height:32px;padding:0 14px;border-radius:8px;background:#4f5bd5;color:#fff;border:1px solid #4350c4;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap" style-hover="background:#4350c4">{{ nx.cta }}</button>
+        </div>
+      </sc-if>
+    </div>
+
+    <main style="flex:1;overflow-y:auto;overflow-x:hidden;position:relative">
+      <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:28px;max-width:1400px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
+          <div style="height:28px;width:280px;border-radius:6px;background:linear-gradient(90deg,#eef0f3 0,#f6f7f9 40%,#eef0f3 80%);background-size:800px 100%;animation:pgshimmer 1.2s linear infinite"></div>
+          <div style="height:14px;width:520px;max-width:100%;border-radius:6px;background:linear-gradient(90deg,#eef0f3 0,#f6f7f9 40%,#eef0f3 80%);background-size:800px 100%;animation:pgshimmer 1.2s linear infinite"></div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px">
+            <div style="height:120px;border-radius:12px;background:linear-gradient(90deg,#eef0f3 0,#f6f7f9 40%,#eef0f3 80%);background-size:800px 100%;animation:pgshimmer 1.2s linear infinite"></div><div style="height:120px;border-radius:12px;background:linear-gradient(90deg,#eef0f3 0,#f6f7f9 40%,#eef0f3 80%);background-size:800px 100%;animation:pgshimmer 1.2s linear infinite"></div><div style="height:120px;border-radius:12px;background:linear-gradient(90deg,#eef0f3 0,#f6f7f9 40%,#eef0f3 80%);background-size:800px 100%;animation:pgshimmer 1.2s linear infinite"></div><div style="height:120px;border-radius:12px;background:linear-gradient(90deg,#eef0f3 0,#f6f7f9 40%,#eef0f3 80%);background-size:800px 100%;animation:pgshimmer 1.2s linear infinite"></div>
+          </div>
+          <div style="height:280px;border-radius:12px;background:linear-gradient(90deg,#eef0f3 0,#f6f7f9 40%,#eef0f3 80%);background-size:800px 100%;animation:pgshimmer 1.2s linear infinite"></div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ denied }}" hint-placeholder-val="{{ false }}">
+        <div style="min-height:70vh;display:grid;place-items:center;padding:28px">
+          <div style="max-width:480px;background:#fff;border:1px solid #e6e8ec;border-radius:16px;padding:32px;display:flex;flex-direction:column;gap:14px;box-shadow:0 1px 2px rgba(16,24,40,.04)">
+            <span style="width:44px;height:44px;border-radius:12px;background:#fef3f2;border:1px solid #fecdca;display:grid;place-items:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d92d20" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg></span>
+            <span style="font-size:12px;font-family:'Geist Mono',monospace;color:#b42318">403 · Access denied</span>
+            <h2 style="font-size:20px">{{ deniedTitle }}</h2>
+            <p style="color:#4a5263;font-size:14px;line-height:1.6;text-wrap:pretty">{{ deniedBody }}</p>
+            <div style="display:flex;gap:8px;flex-wrap:wrap"><button onClick="{{ goCommand }}" style="height:34px;padding:0 14px;border-radius:8px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">Go to command centre</button><button onClick="{{ togglePersona }}" style="height:34px;padding:0 14px;border-radius:8px;background:#4f5bd5;color:#fff;border:1px solid #4350c4;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#4350c4">Switch user</button></div>
+            <span style="font-size:12px;color:#8a93a3;line-height:1.5">Enforced by the evaluation service as well as the interface. Direct API calls receive the same refusal and are logged.</span>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ show.command }}" hint-placeholder-val="{{ true }}"><dc-import name="PGv2Command" hint-size="100%,800px"></dc-import></sc-if>
+      <sc-if value="{{ show.eng }}" hint-placeholder-val="{{ false }}"><dc-import name="PGv2Engineering" hint-size="100%,800px"></dc-import></sc-if>
+      <sc-if value="{{ show.fa }}" hint-placeholder-val="{{ false }}"><dc-import name="PGv2FirstArticle" hint-size="100%,800px"></dc-import></sc-if>
+      <sc-if value="{{ show.prod }}" hint-placeholder-val="{{ false }}"><dc-import name="PGv2Production" hint-size="100%,800px"></dc-import></sc-if>
+      <sc-if value="{{ show.spc }}" hint-placeholder-val="{{ false }}"><dc-import name="PGv2SPC" hint-size="100%,800px"></dc-import></sc-if>
+      <sc-if value="{{ show.pred }}" hint-placeholder-val="{{ false }}"><dc-import name="PGv2Predict" hint-size="100%,800px"></dc-import></sc-if>
+      <sc-if value="{{ show.trace }}" hint-placeholder-val="{{ false }}"><dc-import name="PGv2Trace" hint-size="100%,800px"></dc-import></sc-if>
+      <sc-if value="{{ show.ncr }}" hint-placeholder-val="{{ false }}"><dc-import name="PGv2NCR" hint-size="100%,800px"></dc-import></sc-if>
+      <sc-if value="{{ show.release }}" hint-placeholder-val="{{ false }}"><dc-import name="PGv2Release" hint-size="100%,800px"></dc-import></sc-if>
+      <sc-if value="{{ show.data }}" hint-placeholder-val="{{ false }}"><dc-import name="PGv2Data" hint-size="100%,800px"></dc-import></sc-if>
+      <sc-if value="{{ show.at }}" hint-placeholder-val="{{ false }}"><dc-import name="PGv2Tests" hint-size="100%,800px"></dc-import></sc-if>
+    </main>
+  </div>
+
+  <div class="pg-noprint" style="position:fixed;top:68px;right:20px;z-index:120;display:flex;flex-direction:column;gap:8px;width:min(400px,calc(100vw - 40px));pointer-events:none">
+    <sc-for list="{{ toasts }}" as="t" hint-placeholder-count="0">
+      <div style="pointer-events:auto;background:#fff;border:1px solid #e6e8ec;border-radius:12px;box-shadow:0 12px 32px rgba(16,24,40,.12);padding:12px 14px;display:flex;gap:10px;align-items:flex-start;animation:pgfade .16s ease">
+        <span style="flex:none;width:22px;height:22px;border-radius:50%;flex:none;display:grid;place-items:center;background:{{ t.bg }};border:1px solid {{ t.bd }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="{{ t.fg }}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="{{ t.icon }}"></path></svg></span>
+        <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:13px;font-weight:600">{{ t.title }}</span><span style="font-size:13px;color:#4a5263;line-height:1.45">{{ t.msg }}</span></span>
+      </div>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{ hasDialog }}" hint-placeholder-val="{{ false }}">
+    <div class="pg-noprint" onClick="{{ closeDialog }}" style="position:fixed;inset:0;z-index:110;background:rgba(13,19,33,.32);display:flex;justify-content:flex-end">
+      <div onClick="{{ stop }}" style="width:min(520px,100%);height:100%;background:#fff;box-shadow:-12px 0 32px rgba(16,24,40,.12);display:flex;flex-direction:column;animation:pgslide .18s ease">
+        <div style="padding:20px 24px;border-bottom:1px solid #e6e8ec;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;gap:10px"><span style="width:32px;height:32px;border-radius:9px;background:#fef3f2;border:1px solid #fecdca;display:grid;place-items:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d92d20" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M5.6 5.6l12.8 12.8"></path></svg></span><h3 style="font-size:17px">{{ dialog.title }}</h3><button onClick="{{ closeDialog }}" style="margin-left:auto;width:30px;height:30px;border-radius:7px;border:0;background:transparent;cursor:pointer;color:#8a93a3;font-size:18px" style-hover="background:#f2f4f7">×</button></div>
+          <span style="font-size:13px;color:#4a5263">{{ dialog.count }} blockers returned by the release evaluator. No approval was created and the attempt is in the audit trail.</span>
+        </div>
+        <div style="flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:8px">
+          <sc-for list="{{ dialog.blockers }}" as="b" hint-placeholder-count="3">
+            <div style="border:1px solid #e6e8ec;border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-family:'Geist Mono',monospace;font-size:11px;padding:2px 6px;border-radius:5px;background:#fef3f2;color:#b42318;border:1px solid #fecdca">{{ b.code }}</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:#4a5263">{{ b.ctq }}</span></div>
+              <span style="font-size:13.5px;line-height:1.5;text-wrap:pretty">{{ b.msg }}</span>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12px;color:#8a93a3">Owner: {{ b.owner }}</span><button onClick="{{ b.go }}" style="margin-left:auto;height:28px;padding:0 10px;border-radius:7px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:12px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">{{ b.action }}</button></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ hasDrawer }}" hint-placeholder-val="{{ false }}">
+    <div class="pg-noprint" onClick="{{ closeDrawer }}" style="position:fixed;inset:0;z-index:112;background:rgba(13,19,33,.24);display:flex;justify-content:flex-end">
+      <div onClick="{{ stop }}" style="width:min(520px,100%);height:100%;background:#fff;box-shadow:-12px 0 32px rgba(16,24,40,.12);display:flex;flex-direction:column;animation:pgslide .18s ease">
+        <div style="padding:18px 22px;border-bottom:1px solid #e6e8ec;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;gap:10px"><span style="font-size:12px;color:#8a93a3">{{ dw.kicker }}</span><button onClick="{{ closeDrawer }}" style="margin-left:auto;width:30px;height:30px;border-radius:7px;border:0;background:transparent;cursor:pointer;color:#8a93a3;font-size:18px" style-hover="background:#f2f4f7">×</button></div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h3 style="font-size:19px;font-family:'Geist Mono',monospace;font-weight:500;letter-spacing:-0.01em">{{ dw.title }}</h3><span style="display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:999px;font-size:11.5px;font-weight:500;background:{{ dw.p.bg }};color:{{ dw.p.fg }};border:1px solid {{ dw.p.bd }}"><span style="flex:none;width:5px;height:5px;border-radius:50%;background:{{ dw.p.dot }}"></span>{{ dw.p.label }}</span></div>
+          <span style="font-size:13px;color:#4a5263">{{ dw.sub }}</span>
+        </div>
+        <div style="flex:1;overflow-y:auto;padding:8px 22px 20px;display:flex;flex-direction:column;gap:18px">
+          <sc-for list="{{ dw.sections }}" as="s" hint-placeholder-count="2">
+            <div style="display:flex;flex-direction:column"><span style="font-size:12px;font-weight:600;color:#344054;padding:10px 0 6px">{{ s.h }}</span>
+              <sc-for list="{{ s.rows }}" as="r" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:150px 1fr;gap:12px;padding:7px 0;border-bottom:1px solid #f2f4f7;font-size:12.5px;line-height:1.45"><span style="color:#8a93a3">{{ r.k }}</span><span>{{ r.v }}</span></div></sc-for>
+            </div>
+          </sc-for>
+          <div style="display:flex;flex-direction:column"><span style="font-size:12px;font-weight:600;color:#344054;padding:4px 0 6px">History</span>
+            <sc-if value="{{ dw.noTl }}" hint-placeholder-val="{{ false }}"><span style="font-size:12.5px;color:#8a93a3">No recorded events yet.</span></sc-if>
+            <sc-for list="{{ dw.timeline }}" as="t" hint-placeholder-count="2"><div style="display:grid;grid-template-columns:12px 1fr;gap:10px;padding:6px 0"><span style="flex:none;width:8px;height:8px;border-radius:50%;margin-top:5px;background:{{ t.dot }}"></span><span style="display:flex;flex-direction:column;gap:1px"><span style="font-size:12.5px;line-height:1.45">{{ t.what }}</span><span style="font-size:11.5px;color:#8a93a3">{{ t.who }} · {{ t.t }}</span></span></div></sc-for>
+          </div>
+        </div>
+        <div style="padding:14px 22px;border-top:1px solid #e6e8ec;display:flex;gap:8px;flex-wrap:wrap">
+          <sc-for list="{{ dw.actions }}" as="a" hint-placeholder-count="1"><button onClick="{{ a.go }}" style="height:34px;padding:0 14px;border-radius:8px;background:#4f5bd5;color:#fff;border:1px solid #4350c4;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#4350c4">{{ a.label }}</button></sc-for>
+          <button onClick="{{ closeDrawer }}" style="height:34px;padding:0 14px;border-radius:8px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">Close</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ paletteOpen }}" hint-placeholder-val="{{ false }}">
+    <div class="pg-noprint" onClick="{{ closePalette }}" style="position:fixed;inset:0;z-index:130;background:rgba(13,19,33,.28);display:flex;justify-content:center;align-items:flex-start;padding-top:12vh">
+      <div onClick="{{ stop }}" style="width:min(600px,calc(100vw - 32px));background:#fff;border:1px solid #e6e8ec;border-radius:14px;box-shadow:0 24px 48px rgba(16,24,40,.18);overflow:hidden;animation:pgfade .14s ease">
+        <div style="display:flex;align-items:center;gap:10px;padding:0 16px;border-bottom:1px solid #eef0f3">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8a93a3" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+          <input ref="{{ paletteRef }}" value="{{ pq }}" onChange="{{ onPq }}" onKeyDown="{{ onPKey }}" placeholder="Type a page, scenario, user, serial or action" style="flex:1;height:52px;border:0;outline:none;font-size:15px;background:transparent;color:#0d1321">
+          <span style="font-size:11px;font-family:'Geist Mono',monospace;color:#8a93a3;border:1px solid #e6e8ec;border-radius:5px;padding:1px 6px">Esc</span>
+        </div>
+        <div style="max-height:400px;overflow-y:auto;padding:6px">
+          <sc-for list="{{ pitems }}" as="i" hint-placeholder-count="6">
+            <button onClick="{{ i.go }}" style="width:100%;display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:8px;border:0;cursor:pointer;text-align:left;color:#0d1321;background:{{ i.bg }}" style-hover="background:#f6f7f9">
+              <span style="font-size:11px;font-weight:500;color:#8a93a3;width:72px;flex:none">{{ i.kind }}</span>
+              <span style="font-size:13.5px;flex:1">{{ i.label }}</span>
+              <span style="font-size:12px;color:#8a93a3">{{ i.hint }}</span>
+            </button>
+          </sc-for>
+          <sc-if value="{{ pEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:18px;font-size:13px;color:#8a93a3">No matches. Try a serial such as MB-A-1437 or a page name.</div></sc-if>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ confirmReset }}" hint-placeholder-val="{{ false }}">
+    <div class="pg-noprint" style="position:fixed;inset:0;z-index:130;background:rgba(13,19,33,.32);display:grid;place-items:center;padding:16px">
+      <div style="width:min(440px,100%);background:#fff;border-radius:14px;border:1px solid #e6e8ec;box-shadow:0 24px 48px rgba(16,24,40,.18);padding:22px;display:flex;flex-direction:column;gap:12px">
+        <h3 style="font-size:17px">Reset all scenarios?</h3>
+        <p style="font-size:14px;color:#4a5263;line-height:1.55">All six scenarios return to their seeded state and the audit trail is cleared. Reset is a presenter control and is never available to live users.</p>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px"><button onClick="{{ cancelReset }}" style="height:34px;padding:0 14px;border-radius:8px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">Cancel</button><button onClick="{{ doReset }}" style="height:34px;padding:0 14px;border-radius:8px;background:#4f5bd5;color:#fff;border:1px solid #4350c4;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#4350c4">Reset scenarios</button></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ guideOn }}" hint-placeholder-val="{{ false }}">
+    <aside class="pg-noprint" style="position:fixed;right:16px;bottom:16px;z-index:100;width:min(380px,calc(100vw - 32px));max-height:calc(100vh - 100px);background:#fff;border:1px solid #e6e8ec;border-radius:14px;box-shadow:0 20px 40px rgba(16,24,40,.16);display:flex;flex-direction:column;animation:pgslide .18s ease">
+      <div style="padding:14px 16px;border-bottom:1px solid #eef0f3;display:flex;align-items:center;gap:10px">
+        <span style="width:28px;height:28px;border-radius:8px;background:#eef0fc;border:1px solid #c7cdf5;display:grid;place-items:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="#4f5bd5"><path d="M8 5v14l11-7z"></path></svg></span>
+        <span style="display:flex;flex-direction:column;line-height:1.2"><span style="font-size:13px;font-weight:600">Customer walkthrough</span><span style="font-size:11px;color:#8a93a3">Step {{ g.n }} of {{ g.total }} · about 12 to 15 minutes</span></span>
+        <button onClick="{{ toggleGuide }}" style="margin-left:auto;width:28px;height:28px;border-radius:7px;border:0;background:transparent;cursor:pointer;color:#8a93a3;font-size:18px" style-hover="background:#f2f4f7">×</button>
+      </div>
+      <div style="height:3px;background:#eef0f3"><div style="height:100%;width:{{ g.pct }};background:#4f5bd5;transition:width .2s"></div></div>
+      <div style="padding:16px;display:flex;flex-direction:column;gap:10px;overflow-y:auto">
+        <span style="font-size:11px;color:#8a93a3">Scenario {{ g.scen }}</span>
+        <h3 style="font-size:17px">{{ g.title }}</h3>
+        <p style="font-size:13.5px;line-height:1.55;color:#344054;text-wrap:pretty">{{ g.say }}</p>
+        <div style="padding:10px 12px;border-radius:10px;background:#f9fafb;border:1px solid #eef0f3;display:flex;flex-direction:column;gap:4px"><span style="font-size:11px;font-weight:500;color:#8a93a3">Do this</span><span style="font-size:13px;line-height:1.5">{{ g.do }}</span></div>
+        <span style="font-size:12px;color:#4a5263">Acting as {{ g.persona }}</span>
+        <div style="display:flex;flex-direction:column;gap:2px;margin-top:4px">
+          <sc-for list="{{ g.steps }}" as="d" hint-placeholder-count="15">
+            <button onClick="{{ d.go }}" style="display:flex;align-items:center;gap:8px;padding:5px 6px;border-radius:6px;border:0;background:{{ d.bg }};cursor:pointer;text-align:left;font-size:12.5px;color:{{ d.fg }}" style-hover="background:#f6f7f9">
+              <span style="flex:none;width:16px;height:16px;border-radius:50%;flex:none;border:1.5px solid {{ d.ring }};background:{{ d.fill }}"></span>{{ d.title }}
+            </button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="padding:12px 16px;border-top:1px solid #eef0f3;display:flex;gap:8px">
+        <button onClick="{{ g.prev }}" style="height:34px;padding:0 12px;border-radius:8px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">Back</button>
+        <button onClick="{{ g.apply }}" style="height:34px;padding:0 12px;border-radius:8px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">Set up step</button>
+        <button onClick="{{ g.next }}" style="margin-left:auto;height:34px;padding:0 14px;border-radius:8px;background:#4f5bd5;color:#fff;border:1px solid #4350c4;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#4350c4">Next step</button>
+      </div>
+    </aside>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { collapsed: false, scenOpen: false, personaOpen: false, palette: false, pq: '', psel: 0, confirmReset: false };
+  paletteRef = React.createRef();
+  componentDidMount() {
+    const go = () => { if (window.PG) { this.u = PG.subscribe(() => this.forceUpdate()); this.forceUpdate(); } else this.t = setTimeout(go, 40); }; go();
+    this.kh = e => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); this.openPalette(); } else if (e.key === 'Escape') this.setState({ palette: false, scenOpen: false, personaOpen: false }); };
+    window.addEventListener('keydown', this.kh);
+  }
+  componentWillUnmount() { this.u && this.u(); clearTimeout(this.t); window.removeEventListener('keydown', this.kh); }
+  openPalette() { this.setState({ palette: true, pq: '', psel: 0 }, () => setTimeout(() => this.paletteRef.current && this.paletteRef.current.focus(), 30)); }
+  renderVals() { try { return this.rv(); } catch (e) { console.log('RV-ERR ' + e.message); return { show: {}, ctx: { st: {} }, g: {}, dialog: {}, me: {} }; } }
+  rv() {
+    const P = window.PG, S = this.state;
+    const ICON = { grid: 'M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z', file: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M9 13h6M9 17h6', check: 'M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11', layers: 'M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5', chart: 'M3 3v18h18M7 14l4-4 4 4 5-5', spark: 'M12 3l1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2z', tree: 'M6 3v12M18 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 9a9 9 0 0 1-9 9', alert: 'M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01', ship: 'M16 16l2 2 4-4M21 10V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l2-1.1M3.3 7 12 12l8.7-5M12 22V12', db: 'M3 5a9 3 0 1 0 18 0a9 3 0 1 0-18 0M3 5v14a9 3 0 0 0 18 0V5M3 12a9 3 0 0 0 18 0', flask: 'M9 3h6M10 3v6.5L4.5 19a1.5 1.5 0 0 0 1.3 2h12.4a1.5 1.5 0 0 0 1.3-2L14 9.5V3M7 15h10' };
+    const AV = { anika: '#4f5bd5', kiran: '#0e9384', daniel: '#155eef', ravi: '#dc6803', lena: '#c11574', tom: '#6941c6', marta: '#344054', sam: '#475467' };
+    const ini = n => n.split(' ').map(x => x[0]).join('');
+    const exp = !S.collapsed;
+    const base = { sideW: exp ? '256px' : '64px', expanded: exp, labelDisplay: exp ? 'inline' : 'none', labelFlex: exp ? 'flex' : 'none', toggleSide: () => this.setState({ collapsed: !S.collapsed }), confirmReset: S.confirmReset, askReset: () => this.setState({ confirmReset: true }), cancelReset: () => this.setState({ confirmReset: false }), stop: e => e.stopPropagation() };
+    if (!P) return Object.assign(base, { show: {}, ctx: { st: {} }, g: {}, dialog: {}, me: {}, nav: [], scens: [], personas: [], gateChips: [], toasts: [], pitems: [] });
+    const st = P.st, u = P.user(), d = P.cur(), SC = P.SCEN;
+    const otherCust = u.roles.includes('customer') && d.order.customer !== u.customer;
+    const scens = Object.keys(SC).map(k => { const s = P.orderState(k); const t = P.pill(s); return { id: k, name: SC[k].name, order: SC[k].order, cust: st[k].order.customerName, state: s.split(' · ')[0], stateFg: t.fg, bg: st.scen === k ? '#f6f7f9' : 'transparent', badgeBg: st.scen === k ? '#0d1321' : '#f2f4f7', badgeFg: st.scen === k ? '#fff' : '#344054', go: () => { this.setState({ scenOpen: false }); P.setScen(k); } }; });
+    const holdsFor = id => { if (id === 'trace') return (d.holds || []).filter(h => h.status === 'Active').length; if (id === 'release') { const b = P.gates().reduce((n, g) => n + g.blockers.filter(x => x.code !== 'PRIOR-GATE').length, 0); return otherCust ? 0 : b; } return 0; };
+    const nav = []; let lastG = '';
+    P.SCREENS.forEach(s => { if (s.group !== lastG) { nav.push({ isGroup: true, isItem: false, label: s.group, gh: exp ? 'auto' : '8px' }); lastG = s.group; } const act = st.screen === s.id, ok = P.canView(s.id), b = holdsFor(s.id); nav.push({ isGroup: false, isItem: true, label: s.name, d: ICON[s.icon], go: () => P.nav(s.id), bg: act ? '#eef0fc' : 'transparent', fg: act ? '#3640a8' : ok ? '#344054' : '#98a2b3', fw: act ? 500 : 400, io: act ? 1 : 0.8, labelDisplay: exp ? 'block' : 'none', badge: b, badgeDisplay: exp && b ? 'inline-flex' : 'none', lockDisplay: exp && !ok ? 'block' : 'none' }); });
+    const personas = Object.values(P.USERS).map(x => ({ name: x.name, title: x.title, ini: ini(x.name), av: AV[x.id], check: st.persona === x.id ? 'block' : 'none', bg: st.persona === x.id ? '#f6f7f9' : 'transparent', pick: () => { this.setState({ personaOpen: false }); P.setPersona(x.id); } }));
+    const G = P.gates();
+    const IC = { Pass: 'M20 6 9 17l-5-5', Blocked: 'M12 7v6M12 17h.01', Pending: 'M8 12h8', Waiting: 'M8 12h8' };
+    const SHORT = { G0: 'Engineering', G1: 'Setup', G2: 'First article', G3: 'Production', G4: 'Dispatch' };
+    const gateChips = otherCust ? [] : G.map(g => ({ id: g.id, short: SHORT[g.id], title: `${g.name}: ${g.status}${g.blockers.length ? ', ' + g.blockers.length + ' blocker(s)' : ''}`, icon: IC[g.status], go: () => P.nav('release'), dotBg: g.status === 'Blocked' ? '#fee4e2' : g.status === 'Pass' ? '#dcfae6' : '#f2f4f7', ic: g.status === 'Blocked' ? '#d92d20' : g.status === 'Pass' ? '#079455' : '#98a2b3', bg: '#fff', bd: g.status === 'Blocked' ? '#fecdca' : '#e6e8ec', short: SHORT[g.id], state: g.status === 'Pending' ? 'Not started' : g.status }));
+    const stTxt = otherCust ? 'Restricted' : P.orderState();
+    const ctx = otherCust ? { order: SC[st.scen].order, st: P.pill('Restricted', 'crit'), line: 'This order belongs to another customer.' } : { order: d.order.id, st: P.pill(stTxt), line: `${d.order.customerName} · ${d.order.product} rev ${d.order.rev} · ${d.order.qty.toLocaleString('en-US')} boards · ${d.order.route}` };
+    const denied = !P.ui.loading && !P.canView(st.screen);
+    const show = {}; P.SCREENS.forEach(s => show[s.id] = !P.ui.loading && !denied && st.screen === s.id);
+    const scr = P.SCREENS.find(s => s.id === st.screen);
+    const toasts = P.toasts.map(t => { const tn = P.T[t.kind === 'err' ? 'crit' : 'ok']; return { msg: t.msg, title: t.kind === 'err' ? 'Action blocked' : 'Done', bg: tn.bg, bd: tn.bd, fg: tn.dot, icon: t.kind === 'err' ? 'M18 6 6 18M6 6l12 12' : 'M20 6 9 17l-5-5' }; });
+    const dlg = P.ui.dialog;
+    const gs = P.GUIDE, gi = st.guide.step, gc = gs[gi];
+    const g = { n: gi + 1, total: gs.length, pct: ((gi + 1) / gs.length * 100) + '%', scen: gc.scen + ', ' + SC[gc.scen].name, title: gc.title, say: gc.say, do: gc.do, persona: P.USERS[gc.persona].name + ', ' + P.USERS[gc.persona].title,
+      steps: gs.map((x, i) => ({ title: x.title, go: () => P.guideGo(i), bg: i === gi ? '#eef0fc' : 'transparent', fg: i === gi ? '#3640a8' : i < gi ? '#4a5263' : '#8a93a3', ring: i <= gi ? '#4f5bd5' : '#d5d9e0', fill: i < gi ? '#4f5bd5' : 'transparent' })),
+      prev: () => P.guideGo(Math.max(0, gi - 1)), next: () => P.guideGo(Math.min(gs.length - 1, gi + 1)), apply: () => P.guideGo(gi) };
+    const items = [];
+    P.SCREENS.forEach(s => items.push({ kind: 'Page', label: s.name, hint: s.group, run: () => P.nav(s.id) }));
+    Object.keys(SC).forEach(k => items.push({ kind: 'Scenario', label: SC[k].name, hint: SC[k].order, run: () => P.setScen(k) }));
+    Object.values(P.USERS).forEach(x => items.push({ kind: 'User', label: 'Act as ' + x.name, hint: x.title, run: () => P.setPersona(x.id) }));
+    [['Request batch release', 'A', 'release', () => P.act('releaseBatch')], ['Run acceptance tests', null, 'at', null], ['Open release dossier', null, 'release', () => setTimeout(() => P.openPrint('dossier'), 400)], ['Download audit trail CSV', null, null, () => P.download('audit')], ['Start walkthrough', null, null, () => { P.guideGo(0); P.setGuide(true); }]].forEach(a => items.push({ kind: 'Action', label: a[0], hint: a[1] ? 'Scenario ' + a[1] : '', run: () => { if (a[1]) P.setScen(a[1]); if (a[2]) P.nav(a[2]); if (a[3]) a[3](); } }));
+    const q = S.pq.trim().toLowerCase();
+    if (/^mb-a-\d{4}$|^cmp-|^set-|^r-u3|^lot-u3|^pnl-h/.test(q)) items.unshift({ kind: 'Genealogy', label: 'Search ' + S.pq.trim().toUpperCase(), hint: 'Traceability', run: () => { P.setScen('B'); P.nav('trace'); P.act('queryB', { value: S.pq.trim() }); } });
+    const filtered = (q ? items.filter(i => (i.label + ' ' + i.hint + ' ' + i.kind).toLowerCase().includes(q) || i.kind === 'Genealogy') : items).slice(0, 12);
+    const sel = Math.min(S.psel, Math.max(0, filtered.length - 1));
+    const runItem = i => { this.setState({ palette: false }); i.run(); };
+    const na = P.nextAction(), ROLEN = { eng: 'Process engineer', qa: 'QA', operator: 'Operator', customer: 'Customer approver', admin: 'Administrator' };
+    const canAct = u.roles.includes(na.role) || (na.role === 'qa' && u.roles.includes('qa'));
+    const done = /closed|dispatched|Monitor/i.test(na.title);
+    const nx = { title: na.title, detail: na.detail, owner: na.owner, p: done ? P.pill('On track', 'ok') : canAct ? P.pill('You can act', 'info') : P.pill('Needs ' + (ROLEN[na.role] || na.owner), 'neutral'), cta: 'Open ' + (P.SCREENS.find(s => s.id === na.screen) || {}).name, go: () => P.nav(na.screen) };
+    const dd = P.drawerData();
+    const dw = dd ? { kicker: dd.kicker, title: dd.title, sub: dd.sub, p: P.pill(dd.status), sections: dd.sections, timeline: dd.timeline.map(t => ({ t: t.t, what: t.what, who: t.who, dot: t.bad ? '#f04438' : '#4f5bd5' })), noTl: !dd.timeline.length, actions: dd.actions.map(a => ({ label: a.label, go: () => { const q = a.query; P.closeDrawer(); if (q) { P.act('queryB', { value: q }); } P.nav(a.screen); } })) } : { p: {}, sections: [], timeline: [], actions: [] };
+    return Object.assign(base, {
+      hasNext: !otherCust && !denied, nx, hasDrawer: !!dd, dw, closeDrawer: () => P.closeDrawer(),
+      scenId: st.scen, scenName: SC[st.scen].name, scenOpen: S.scenOpen, toggleScen: () => this.setState({ scenOpen: !S.scenOpen, personaOpen: false }), scens, nav,
+      me: { name: u.name, title: u.title, ini: ini(u.name), av: AV[u.id] }, personaOpen: S.personaOpen, togglePersona: () => this.setState({ personaOpen: !S.personaOpen, scenOpen: false }), personas,
+      guideOn: st.guide.on, guideFg: st.guide.on ? '#3640a8' : '#4a5263', guideBg: st.guide.on ? '#eef0fc' : 'transparent', toggleGuide: () => { if (!st.guide.on) P.guideGo(st.guide.step); P.setGuide(!st.guide.on); }, g,
+      doReset: () => { this.setState({ confirmReset: false }); P.reset(); },
+      crumbGroup: scr.group, crumbPage: scr.name, demoDate: P.fmtD(P.demoDate()), openPalette: () => this.openPalette(),
+      ctx, gateChips, loading: P.ui.loading, denied, show,
+      deniedTitle: otherCust ? `${u.name} cannot view ${d.order.customerName} records` : `${scr.name} is not available to ${P.roleTxt(u)}`,
+      deniedBody: otherCust ? `Customer access is isolated to the customer's own products and approved evidence. ${d.order.id} belongs to ${d.order.customerName}.` : 'Customer users can open the command centre, the first-article approvals assigned to them, and release reports for their own products.',
+      goCommand: () => P.nav('command'), toasts,
+      hasDialog: !!dlg, dialog: dlg ? { title: dlg.title, count: dlg.blockers.length, blockers: dlg.blockers.map(b => ({ code: b.code, ctq: b.ctq || '', msg: b.msg, owner: b.owner || 'Not assigned', action: b.action ? 'Resolve' : 'Open', go: () => { P.closeDialog(); P.nav(b.screen || 'release'); } })) } : {}, closeDialog: () => P.closeDialog(),
+      paletteOpen: S.palette, closePalette: () => this.setState({ palette: false }), paletteRef: this.paletteRef, pq: S.pq, onPq: e => this.setState({ pq: e.target.value, psel: 0 }),
+      onPKey: e => { if (e.key === 'ArrowDown') { e.preventDefault(); this.setState({ psel: Math.min(filtered.length - 1, sel + 1) }); } else if (e.key === 'ArrowUp') { e.preventDefault(); this.setState({ psel: Math.max(0, sel - 1) }); } else if (e.key === 'Enter' && filtered[sel]) runItem(filtered[sel]); },
+      pitems: filtered.map((i, k) => ({ kind: i.kind, label: i.label, hint: i.hint, bg: k === sel ? '#f2f4f7' : 'transparent', go: () => runItem(i) })), pEmpty: !filtered.length
+    });
+  }
+}
+</script>
+</body>
+</html>

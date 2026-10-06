@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/resources.js"></script>
+<script src="/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/classical-602d74cf-5ba2-41d5-b912-d66c664fbecc/styles.css">
+<script src="_ds/classical-602d74cf-5ba2-41d5-b912-d66c664fbecc/_ds_bundle.js"></script>
+<script src="pg-engine-v2.js"></script>
+</helmet>
+<sc-if value="{{ ready }}" hint-placeholder-val="{{ true }}">
+<div style="padding:28px 32px 64px;max-width:1440px;margin:0 auto;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;flex-direction:column;gap:6px;max-width:820px"><h1 style="font-size:24px">SPC and defects · WO-24790</h1><p style="font-size:14px;color:#4a5263">Control charts, defect Pareto and capability for lot LOT-D-01.</p><details style="font-size:13px;color:#4a5263"><summary style="cursor:pointer;color:#4f5bd5;font-weight:500;list-style:none;display:inline-flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>About this page</summary><p style="margin-top:8px;line-height:1.55;padding:10px 12px;border-radius:8px;background:#fff;border:1px solid #eef0f3">Control limits describe baseline variation and specification limits define acceptability, so they are drawn separately. An in-spec drift can trigger investigation; an out-of-spec result stays a failure even when statistically expected. {{ scenNote }}</p></details></div>
+  <div style="display:flex;gap:2px;border-bottom:1px solid #e6e8ec;overflow-x:auto;scrollbar-width:none">
+    <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3"><button onClick="{{ t.go }}" style="flex:none;height:40px;padding:0 14px;border:0;background:transparent;cursor:pointer;font-size:13.5px;font-weight:500;color:{{ t.fg }};border-bottom:2px solid {{ t.bd }};margin-bottom:-1px" style-hover="color:#0d1321">{{ t.label }}</button></sc-for>
+  </div>
+
+  <sc-if value="{{ tab.charts }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+      <section style="flex:3 1 560px;min-width:0;background:#fff;border:1px solid #e6e8ec;border-radius:12px">
+        <div style="padding:12px 14px;border-bottom:1px solid #eef0f3;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <div style="display:flex;gap:2px;padding:2px;border-radius:8px;background:#f2f4f7"><sc-for list="{{ charts }}" as="c" hint-placeholder-count="3"><button onClick="{{ c.pick }}" style="height:30px;padding:0 12px;border-radius:6px;border:0;cursor:pointer;font-size:12.5px;font-weight:500;background:{{ c.bg }};color:{{ c.fg }};box-shadow:{{ c.sh }}">{{ c.name }}</button></sc-for></div>
+          <span style="font-size:12px;color:#8a93a3;margin-left:auto">{{ chartType }}</span>
+        </div>
+        <div style="padding:14px 14px 4px"><span style="font-size:13px;font-weight:500">{{ title }}</span></div>
+        <div style="padding:0 8px">{{ chartEl }}</div>
+        <sc-if value="{{ hasMR }}" hint-placeholder-val="{{ true }}"><div style="padding:4px 14px 0;font-size:12px;color:#8a93a3">Moving range</div><div style="padding:0 8px">{{ mrEl }}</div></sc-if>
+        <div style="padding:10px 14px 14px;display:flex;gap:6px 18px;flex-wrap:wrap;font-size:12px;color:#4a5263;border-top:1px solid #f2f4f7">
+          <span style="display:flex;gap:6px;align-items:center"><span style="width:16px;border-top:2px solid #344054"></span>Centre</span>
+          <span style="display:flex;gap:6px;align-items:center"><span style="width:16px;border-top:2px dashed #667085"></span>Control limits</span>
+          <span style="display:flex;gap:6px;align-items:center"><span style="width:16px;border-top:2px solid #f04438"></span>Specification limits</span>
+          <span style="display:flex;gap:6px;align-items:center"><span style="width:14px;height:10px;border-radius:2px;background:#eef0fc"></span>Frozen baseline</span>
+          <span style="display:flex;gap:6px;align-items:center"><span style="flex:none;width:9px;height:9px;border-radius:50%;background:#f79009"></span>Rule fired</span>
+          <span style="display:flex;gap:6px;align-items:center"><span style="flex:none;width:9px;height:9px;border-radius:50%;background:#d92d20"></span>Out of spec</span>
+        </div>
+      </section>
+      <aside style="flex:2 1 320px;min-width:0;display:flex;flex-direction:column;gap:16px">
+        <section style="background:{{ alert.bg }};border:1px solid {{ alert.bd }};border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:12px;font-weight:500;color:{{ alert.fg }}">{{ alert.k }}</span>
+          <span style="font-size:18px;font-weight:600;letter-spacing:-0.01em">{{ alert.v }}</span>
+          <span style="font-size:13px;color:#344054;line-height:1.5">{{ alert.s }}</span>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><button onClick="{{ ack }}" style="height:32px;padding:0 12px;border-radius:8px;background:#4f5bd5;color:#fff;border:1px solid #4350c4;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#4350c4">{{ ackLabel }}</button><button onClick="{{ refreeze }}" style="height:32px;padding:0 12px;border-radius:8px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">Recalculate limits</button></div>
+        </section>
+        <section style="background:#fff;border:1px solid #e6e8ec;border-radius:12px">
+          <div style="padding:12px 18px;border-bottom:1px solid #eef0f3"><h3 style="font-size:14px">Rule set SPC-RULES v1.0</h3></div>
+          <div style="padding:2px 18px 8px"><sc-for list="{{ rules }}" as="r" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:30px 1fr auto;gap:8px;padding:9px 0;border-bottom:1px solid #f2f4f7;font-size:13px;align-items:center"><span style="font-family:'Geist Mono',monospace;font-size:12px;color:#4a5263">{{ r.id }}</span><span>{{ r.text }}</span><span style="display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:999px;font-size:11px;font-weight:500;background:{{ r.p.bg }};color:{{ r.p.fg }};border:1px solid {{ r.p.bd }}">{{ r.p.label }}</span></div></sc-for></div>
+          <p style="padding:10px 18px 14px;font-size:12px;color:#4a5263;line-height:1.5">{{ baseline }}</p>
+        </section>
+        <section style="background:#fff;border:1px solid #e6e8ec;border-radius:12px;padding:14px 18px;display:flex;flex-direction:column;gap:8px">
+          <h3 style="font-size:14px">Annotate a change</h3>
+          <div style="display:flex;gap:6px"><input value="{{ annI }}" onChange="{{ onAnnI }}" aria-label="Point" style="width:64px;height:32px;padding:0 10px;border-radius:7px;border:1px solid #d5d9e0;font-size:13px"><input value="{{ annT }}" onChange="{{ onAnnT }}" placeholder="Stencil wiped" style="flex:1;min-width:0;height:32px;padding:0 10px;border-radius:7px;border:1px solid #d5d9e0;font-size:13px"><button onClick="{{ annotate }}" style="height:32px;padding:0 12px;border-radius:7px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">Add</button></div>
+          <sc-for list="{{ anns }}" as="a" hint-placeholder-count="1"><span style="font-size:12px;color:#4a5263">Point {{ a.n }}: {{ a.text }}, {{ a.by }}</span></sc-for>
+        </section>
+      </aside>
+    </div>
+    <section style="background:#fff;border:1px solid #e6e8ec;border-radius:12px;overflow:hidden">
+      <div style="padding:14px 18px;border-bottom:1px solid #eef0f3;display:flex;gap:10px;flex-wrap:wrap;align-items:baseline"><h3 style="font-size:14px">Source measurements</h3><span style="font-size:12px;color:#8a93a3">{{ measNote }}</span></div>
+      <div style="overflow-x:auto"><div style="min-width:640px">
+        <div style="display:grid;grid-template-columns:70px 120px 110px 1fr 120px;gap:12px;padding:9px 18px;background:#f9fafb;border-bottom:1px solid #eef0f3;font-size:12px;color:#8a93a3;font-weight:500"><span>Point</span><span>Record</span><span>Value</span><span>Source</span><span>Flag</span></div>
+        <sc-for list="{{ meas }}" as="m" hint-placeholder-count="10"><div style="display:grid;grid-template-columns:70px 120px 110px 1fr 120px;gap:12px;padding:8px 18px;border-bottom:1px solid #f2f4f7;font-size:12.5px;align-items:center"><span style="font-family:'Geist Mono',monospace">{{ m.n }}</span><span style="font-family:'Geist Mono',monospace">{{ m.id }}</span><span style="font-weight:500;color:{{ m.c }};font-feature-settings:'tnum'">{{ m.v }}</span><span style="color:#4a5263">{{ m.src }}</span><span style="color:{{ m.c }}">{{ m.flag }}</span></div></sc-for>
+      </div></div>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ tab.pareto }}" hint-placeholder-val="{{ false }}">
+    <section style="background:#fff;border:1px solid #e6e8ec;border-radius:12px">
+      <div style="padding:14px 18px;border-bottom:1px solid #eef0f3;display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+        <h3 style="font-size:14px">AOI Pareto · LOT-D-01</h3>
+        <sc-for list="{{ filters }}" as="f" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;color:#8a93a3">{{ f.k }}</span><div style="display:flex;gap:2px;padding:2px;border-radius:8px;background:#f2f4f7"><sc-for list="{{ f.opts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.pick }}" style="height:26px;padding:0 9px;border-radius:6px;border:0;cursor:pointer;font-size:12px;background:{{ o.bg }};color:{{ o.fg }};box-shadow:{{ o.sh }}">{{ o.v }}</button></sc-for></div></div>
+        </sc-for>
+      </div>
+      <p style="padding:12px 18px 0;font-size:12.5px;color:#4a5263">Confirmed defects and false calls are separated. Correlation with a lot or shift is a hypothesis until engineering validates causation. Select a bar to inspect source records.</p>
+      <div style="padding:14px 18px;display:flex;flex-wrap:wrap;gap:28px">
+        <sc-for list="{{ paretos }}" as="p" hint-placeholder-count="2">
+          <div style="flex:1 1 340px;min-width:0;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:13px;font-weight:600">{{ p.k }}</span><span style="font-size:12px;color:#8a93a3">{{ p.total }} sites</span></div>
+            <sc-for list="{{ p.bars }}" as="b" hint-placeholder-count="5"><button onClick="{{ b.pick }}" style="display:grid;grid-template-columns:150px 1fr 32px;gap:10px;align-items:center;border:0;background:transparent;padding:4px 0;cursor:pointer;text-align:left;color:#0d1321" style-hover="opacity:.8"><span style="font-size:12.5px">{{ b.label }}</span><span style="height:16px;border-radius:4px;background:#f2f4f7;display:block;overflow:hidden"><span style="display:block;height:100%;width:{{ b.w }};background:{{ b.c }};border-radius:4px"></span></span><span style="font-size:12.5px;font-weight:600;font-feature-settings:'tnum'">{{ b.n }}</span></button></sc-for>
+          </div>
+        </sc-for>
+      </div>
+      <sc-if value="{{ hasDrill }}" hint-placeholder-val="{{ false }}">
+        <div style="border-top:1px solid #eef0f3">
+          <div style="padding:10px 18px;font-size:12.5px;font-weight:500">Source records · {{ drillK }}</div>
+          <div style="overflow-x:auto"><div style="min-width:640px"><sc-for list="{{ drill }}" as="r" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:70px 1.4fr 70px 90px 120px 1fr;gap:10px;padding:7px 18px;border-top:1px solid #f2f4f7;font-size:12px"><span style="font-family:'Geist Mono',monospace">{{ r.refdes }}</span><span>{{ r.mode }}</span><span>Shift {{ r.shift }}</span><span style="font-family:'Geist Mono',monospace">{{ r.paste }}</span><span>{{ r.program }}</span><span style="color:#4a5263">Adjudicated by {{ r.reviewer }}</span></div></sc-for></div></div>
+        </div>
+      </sc-if>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ tab.cap }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <p style="font-size:13px;color:#4a5263;max-width:780px;line-height:1.55">Capability is evaluated only for suitable numeric CTQs with approved specifications, valid measurements and a stable process. Sample size, period and assumptions are always shown.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px">
+        <sc-for list="{{ caps }}" as="c" hint-placeholder-count="4"><div style="background:#fff;border:1px solid #e6e8ec;border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:8px"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:13px;font-weight:500">{{ c.k }}</span><span style="margin-left:auto;display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:999px;font-size:11px;font-weight:500;background:{{ c.p.bg }};color:{{ c.p.fg }};border:1px solid {{ c.p.bd }}">{{ c.p.label }}</span></div><span style="font-size:22px;font-weight:600;letter-spacing:-0.02em;font-feature-settings:'tnum'">{{ c.v }}</span><span style="font-size:12.5px;color:#4a5263;line-height:1.5">{{ c.s }}</span></div></sc-for>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { tab: 'charts', chart: 'paste', shift: 'All', paste: 'All', program: 'All', drill: null, annI: '45', annT: '' };
+  componentDidMount() { const go = () => { if (window.PG) { this.u = PG.subscribe(() => this.forceUpdate()); this.forceUpdate(); } else this.t = setTimeout(go, 40); }; go(); }
+  componentWillUnmount() { this.u && this.u(); clearTimeout(this.t); }
+  renderVals() { try { return this.rv(); } catch (e) { console.log('RV-ERR ' + e.message); return { ready: false }; } }
+  imr(s, anns) {
+    const h = React.createElement, W = 780, H = 280, L = 40, R = 80, T = 26, B = 26, n = s.pts.length;
+    const vals = s.pts.concat([s.usl, s.lsl, s.ucl, s.lcl]); const lo = Math.min(...vals), hi = Math.max(...vals), pad = (hi - lo) * 0.08;
+    const y0 = lo - pad, y1 = hi + pad, x = i => L + i * (W - L - R) / (n - 1), y = v => T + (y1 - v) / (y1 - y0) * (H - T - B);
+    const firedAt = {}; s.fired.forEach(f => firedAt[f.i] = (firedAt[f.i] || []).concat(f.rule));
+    const F = 'Geist, sans-serif';
+    const ln = (v, stroke, dash, label) => [h('line', { key: label + 'l', x1: L, x2: W - R, y1: y(v), y2: y(v), stroke, strokeWidth: 1.25, strokeDasharray: dash }), h('text', { key: label + 't', x: W - R + 8, y: y(v) + 3.5, fontSize: 10.5, fill: stroke, fontFamily: F }, `${label} ${v.toFixed(1)}`)];
+    const els = [];
+    for (let k = 0; k <= 4; k++) { const v = y0 + (y1 - y0) * k / 4; els.push(h('line', { key: 'g' + k, x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: '#f2f4f7' }), h('text', { key: 'gt' + k, x: L - 6, y: y(v) + 3, fontSize: 9.5, textAnchor: 'end', fill: '#98a2b3', fontFamily: F }, v.toFixed(0))); }
+    els.push(h('rect', { key: 'bl', x: x(0), y: T, width: x(s.nb - 1) - x(0), height: H - T - B, fill: '#eef0fc', opacity: 0.6 }), h('text', { key: 'blt', x: x(0) + 6, y: T + 13, fontSize: 10, fill: '#3640a8', fontFamily: F }, `Frozen baseline, n = ${s.nb}`));
+    els.push(...ln(s.mean, '#344054', '', 'CL'), ...ln(s.ucl, '#667085', '5 4', 'UCL'), ...ln(s.lcl, '#667085', '5 4', 'LCL'), ...ln(s.usl, '#f04438', '', 'USL'), ...ln(s.lsl, '#f04438', '', 'LSL'));
+    if (s.firstAlert !== null) els.push(h('line', { key: 'fa', x1: x(s.firstAlert), x2: x(s.firstAlert), y1: T, y2: H - B, stroke: '#f79009', strokeWidth: 1.5, strokeDasharray: '3 3' }), h('text', { key: 'fat', x: x(s.firstAlert) - 5, y: T - 9, fontSize: 10.5, textAnchor: 'end', fill: '#b54708', fontWeight: 600, fontFamily: F }, `First alert, point ${s.firstAlert + 1}`));
+    if (s.cross !== null) els.push(h('line', { key: 'cr', x1: x(s.cross), x2: x(s.cross), y1: T, y2: H - B, stroke: '#d92d20', strokeWidth: 1.5 }), h('text', { key: 'crt', x: x(s.cross) - 5, y: H - B - 7, fontSize: 10.5, textAnchor: 'end', fill: '#b42318', fontWeight: 600, fontFamily: F }, `Spec crossing, point ${s.cross + 1}`));
+    els.push(h('polyline', { key: 'pl', points: s.pts.map((v, i) => x(i) + ',' + y(v)).join(' '), fill: 'none', stroke: '#4f5bd5', strokeWidth: 1.6, strokeLinejoin: 'round' }));
+    s.pts.forEach((v, i) => { const oos = v > s.usl || v < s.lsl, fr = firedAt[i]; els.push(h('circle', { key: 'p' + i, cx: x(i), cy: y(v), r: oos ? 4.5 : fr ? 4 : 2.6, fill: oos ? '#d92d20' : fr ? '#f79009' : '#4f5bd5', stroke: '#fff', strokeWidth: oos || fr ? 1.5 : 0 }, h('title', null, `Point ${i + 1}: ${v.toFixed(1)} ${s.unit}${fr ? ', ' + fr.join(', ') : ''}${oos ? ', out of spec' : ''}`))); });
+    (anns || []).forEach((a, k) => { if (a.i < n) els.push(h('g', { key: 'a' + k }, h('path', { d: `M${x(a.i) - 5},${H - B + 14} L${x(a.i) + 5},${H - B + 14} L${x(a.i)},${H - B + 6} Z`, fill: '#667085' }), h('title', null, `Point ${a.i + 1}: ${a.text}`))); });
+    [0, 9, 19, 29, 39, 49, n - 1].filter(i => i < n).forEach(i => els.push(h('text', { key: 'x' + i, x: x(i), y: H - 4, fontSize: 9.5, textAnchor: 'middle', fill: '#98a2b3', fontFamily: F }, i + 1)));
+    const svg = h('svg', { viewBox: `0 0 ${W} ${H}`, style: { width: '100%', height: 'auto', display: 'block' } }, els);
+    const mr = s.pts.slice(1).map((v, i) => Math.abs(v - s.pts[i])); const mrbar = s.sigma * 1.128, mucl = 3.267 * mrbar, mH = 86, mmax = Math.max(mucl, ...mr) * 1.1, my = v => 8 + (mmax - v) / mmax * (mH - 18);
+    const mels = [h('line', { key: 'm1', x1: L, x2: W - R, y1: my(mrbar), y2: my(mrbar), stroke: '#344054' }), h('line', { key: 'm2', x1: L, x2: W - R, y1: my(mucl), y2: my(mucl), stroke: '#667085', strokeDasharray: '5 4' }), h('text', { key: 'm3', x: W - R + 8, y: my(mucl) + 3, fontSize: 10, fill: '#667085', fontFamily: F }, 'UCL ' + mucl.toFixed(2)), h('polyline', { key: 'm4', points: mr.map((v, i) => x(i + 1) + ',' + my(v)).join(' '), fill: 'none', stroke: '#98a2b3', strokeWidth: 1.3 })];
+    return [svg, h('svg', { viewBox: `0 0 ${W} ${mH}`, style: { width: '100%', height: 'auto', display: 'block' } }, mels)];
+  }
+  pch(pc) {
+    const h = React.createElement, W = 780, H = 260, L = 40, R = 80, T = 16, B = 26, n = pc.sub.length, F = 'Geist, sans-serif';
+    const hi = Math.max(...pc.sub.map(s => Math.max(s.p, s.ucl))) * 1.1, x = i => L + i * (W - L - R) / (n - 1), y = v => T + (hi - v) / hi * (H - T - B);
+    const els = [h('line', { key: 'cl', x1: L, x2: W - R, y1: y(pc.pbar), y2: y(pc.pbar), stroke: '#344054' }), h('text', { key: 'clt', x: W - R + 8, y: y(pc.pbar) + 3, fontSize: 10.5, fill: '#344054', fontFamily: F }, 'p̄ ' + (pc.pbar * 100).toFixed(2) + '%')];
+    els.push(h('polyline', { key: 'u', points: pc.sub.map((s, i) => x(i) + ',' + y(s.ucl)).join(' '), fill: 'none', stroke: '#667085', strokeDasharray: '5 4' }), h('text', { key: 'ut', x: W - R + 8, y: y(pc.sub[n - 1].ucl) + 3, fontSize: 10.5, fill: '#667085', fontFamily: F }, 'UCL varies'));
+    els.push(h('polyline', { key: 'pl', points: pc.sub.map((s, i) => x(i) + ',' + y(s.p)).join(' '), fill: 'none', stroke: '#4f5bd5', strokeWidth: 1.6 }));
+    pc.sub.forEach((s, i) => els.push(h('circle', { key: 'c' + i, cx: x(i), cy: y(s.p), r: 3, fill: s.p > s.ucl ? '#d92d20' : '#4f5bd5' }, h('title', null, `Subgroup ${i + 1}: ${s.d} of ${s.n} boards, UCL ${(s.ucl * 100).toFixed(1)}%`))));
+    [0, 4, 9, 14, 19, 24].forEach(i => els.push(h('text', { key: 'x' + i, x: x(i), y: H - 4, fontSize: 9.5, textAnchor: 'middle', fill: '#98a2b3', fontFamily: F }, i + 1)));
+    return h('svg', { viewBox: `0 0 ${W} ${H}`, style: { width: '100%', height: 'auto', display: 'block' } }, els);
+  }
+  rv() {
+    const P = window.PG; if (!P) return { ready: false };
+    const st = P.st, S = this.state, c = st.C, paste = P.spcPaste(), peak = P.spcPeak(), pc = P.pChart();
+    const seg = (cur, v) => ({ bg: cur === v ? '#fff' : 'transparent', fg: cur === v ? '#0d1321' : '#4a5263', sh: cur === v ? '0 1px 2px rgba(16,24,40,.1)' : 'none' });
+    const charts = [['paste', 'Paste volume U7'], ['peak', 'Reflow peak TC2'], ['aoi', 'AOI defect proportion']].map(x => Object.assign({ name: x[1], pick: () => this.setState({ chart: x[0] }) }, seg(S.chart, x[0])));
+    let title, chartEl, mrEl = null, hasMR = true, rules, alert, baseline, meas, measNote, chartType = 'I-MR chart';
+    const RULES = [['R1', 'One point beyond 3 sigma'], ['R2', 'Eight consecutive points on one side of centre'], ['R3', 'Six points steadily increasing or decreasing']];
+    if (S.chart === 'aoi') {
+      chartType = 'p chart, changing sample size'; title = 'Confirmed AOI defects per subgroup of boards'; chartEl = this.pch(pc); hasMR = false;
+      rules = RULES.map(r => ({ id: r[0], text: r[1], p: P.pill('Not fired', 'neutral') }));
+      alert = { k: 'Statistical status', v: 'In control', s: `p̄ ${(pc.pbar * 100).toFixed(2)}% across 25 subgroups of 18 to 25 boards. Changing sample counts give stepped limits.`, bg: '#f6fef9', bd: '#abefc6', fg: '#067647' };
+      baseline = 'Proportion chart for changing sample counts. Not pooled with other CTQs or revisions.';
+      meas = pc.sub.slice(-10).map((s, i) => ({ n: 16 + i, id: 'SG-' + (16 + i), v: `${s.d} of ${s.n}`, src: 'AOI-L2, confirmed by reviewer', flag: s.p > s.ucl ? 'Above UCL' : 'None', c: '#0d1321' }));
+      measNote = 'Machine calls are adjudicated before counting; pending calls are excluded.';
+    } else {
+      const s = S.chart === 'paste' ? paste : peak; const els = this.imr(s, S.chart === 'paste' ? c.spc.annotations : []); chartEl = els[0]; mrEl = els[1]; title = s.title.replace(' · ', ', ');
+      rules = RULES.map(r => ({ id: r[0], text: r[1], p: s.firstRule[r[0]] !== undefined ? P.pill('Point ' + (s.firstRule[r[0]] + 1), 'warn') : P.pill('Not fired', 'neutral') }));
+      if (s.firstAlert !== null) alert = c.spc.ack ? { k: 'Acknowledged by ' + P.uname(c.spc.ack.by), v: `Alert at point ${s.firstAlert + 1}, crossing at point ${s.cross + 1}`, s: `${s.cross - s.firstAlert} observations of warning before the illustrative USL crossing. Stencil and paste review assigned to Anika Rao.`, bg: '#f9fafb', bd: '#e6e8ec', fg: '#4a5263' } : { k: 'Statistical early warning', v: `Alert at point ${s.firstAlert + 1}, crossing at point ${s.cross + 1}`, s: `${s.cross - s.firstAlert} observations of warning before the illustrative USL crossing. The last value, ${s.pts[s.pts.length - 1].toFixed(1)}${s.unit}, is out of specification and stays a failure.`, bg: '#fffaeb', bd: '#fedf89', fg: '#b54708' };
+      else alert = { k: 'Statistical status', v: 'Stable', s: 'No rule fired after the frozen baseline.', bg: '#f6fef9', bd: '#abefc6', fg: '#067647' };
+      baseline = `Baseline of ${s.nb} individual observations frozen by Anika Rao on 28 Sep 2026 (minimum 30 under the current rule set). Sigma from MR-bar / 1.128 = ${s.sigma.toFixed(2)} ${s.unit}. Limits are not recalculated after a defect.`;
+      meas = s.pts.slice(-10).map((v, i) => { const k = s.pts.length - 10 + i, oos = v > s.usl || v < s.lsl, fr = s.fired.find(f => f.i === k); return { n: k + 1, id: (S.chart === 'paste' ? 'PNL-D-' : 'PR-') + String(k + 1).padStart(3, '0'), v: v.toFixed(1) + ' ' + s.unit, src: S.chart === 'paste' ? 'SPI-01, pad family U7, gauge R&R 8.4% (synthetic)' : 'Profiler PF-3, TC2, calibrated 02 Jun 2026', flag: oos ? 'Out of spec' : fr ? 'Rule fired' : 'None', c: oos ? '#b42318' : fr ? '#b54708' : '#0d1321' }; });
+      measNote = 'Units, method, calibration status and measurement repeatability are stored with each value.';
+    }
+    const caps = [
+      { k: 'Paste volume, baseline', v: `Cp ${paste.cp.toFixed(2)} · Cpk ${paste.cpk.toFixed(2)}`, s: `n = ${paste.nb}, points 1 to 40, within-process sigma from I-MR. Assumes approximate normality and adequate gauge R&R. Synthetic data.`, p: P.pill('Stable', 'ok') },
+      { k: 'Paste volume, points 41 to 56', v: 'Suppressed', s: 'Process not stable: rules R1, R2 and R3 fired. Capability is not reported for unstable data.', p: P.pill('Unstable', 'crit') },
+      { k: 'Reflow peak, TC2', v: `Cp ${peak.cp.toFixed(2)} · Cpk ${peak.cpk.toFixed(2)}`, s: `n = ${peak.nb}, stable. Periodic profiling only; oven air temperature is a proxy.`, p: P.pill('Stable', 'ok') },
+      { k: 'CTQ-U3-ORI orientation', v: 'Not computed', s: 'Orientation is categorical, so Cp and Cpk do not apply. Track verified orientation defect PPM instead.', p: P.pill('Categorical', 'neutral') }
+    ];
+    const rows = P.defectsC().filter(r => (S.shift === 'All' || r.shift === S.shift) && (S.paste === 'All' || r.paste === S.paste) && (S.program === 'All' || r.program === S.program));
+    const key = r => r.refdes + ' · ' + r.mode.replace('False call · ', '').replace('False call', 'other');
+    const mk = (k, list, color, conf) => { const m = {}; list.forEach(r => m[key(r)] = (m[key(r)] || 0) + 1); const a = Object.entries(m).sort((x, y) => y[1] - x[1]), max = a.length ? a[0][1] : 1; return { k, total: list.length, bars: a.map(([lab, n]) => ({ label: lab, n, w: (n / max * 100) + '%', c: color, pick: () => this.setState({ drill: { k: k + ', ' + lab, lab, conf } }) })) }; };
+    const paretos = [mk('Confirmed defects', rows.filter(r => r.confirmed), '#f04438', true), mk('False calls', rows.filter(r => !r.confirmed), '#98a2b3', false)];
+    const filters = [['Shift', 'shift', ['All', 'A', 'B', 'C']], ['Paste lot', 'paste', ['All', 'SP-2290', 'SP-2291']], ['AOI program', 'program', ['All', 'AOI-MB-A v5', 'AOI-MB-A v5.1']]].map(f => ({ k: f[0], opts: f[2].map(v => Object.assign({ v: v.replace('AOI-MB-A ', ''), pick: () => this.setState({ [f[1]]: v, drill: null }) }, seg(S[f[1]], v))) }));
+    const drill = S.drill ? rows.filter(r => key(r) === S.drill.lab && r.confirmed === S.drill.conf).map(r => Object.assign({}, r, { mode: r.mode.replace(' · ', ', ') })) : [];
+    const TL = [['charts', 'Control charts'], ['pareto', 'Defect Pareto'], ['cap', 'Capability']];
+    const tab = {}; TL.forEach(t => tab[t[0]] = S.tab === t[0]);
+    return { ready: true, scenNote: st.scen === 'C' ? '' : 'This view shows the WO-24790 dataset regardless of the selected scenario.', tabs: TL.map(t => ({ label: t[1], go: () => this.setState({ tab: t[0] }), fg: S.tab === t[0] ? '#0d1321' : '#8a93a3', bd: S.tab === t[0] ? '#4f5bd5' : 'transparent' })), tab,
+      charts, chartType, title, chartEl, mrEl, hasMR, rules, alert, baseline, caps, paretos, filters, hasDrill: !!S.drill, drillK: S.drill ? S.drill.k : '', drill, meas, measNote,
+      ack: () => P.act('ackAlert'), ackLabel: c.spc.ack ? 'Acknowledged' : 'Acknowledge and assign review', refreeze: () => P.act('refreezeBaseline'),
+      annI: S.annI, annT: S.annT, onAnnI: e => this.setState({ annI: e.target.value }), onAnnT: e => this.setState({ annT: e.target.value }), annotate: () => { P.act('annotate', { i: Math.max(0, (parseInt(S.annI, 10) || 1) - 1), text: S.annT }); this.setState({ annT: '' }); },
+      anns: c.spc.annotations.map(a => ({ n: a.i + 1, text: a.text, by: a.by })) };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/resources.js"></script>
+<script src="/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/classical-602d74cf-5ba2-41d5-b912-d66c664fbecc/styles.css">
+<script src="_ds/classical-602d74cf-5ba2-41d5-b912-d66c664fbecc/_ds_bundle.js"></script>
+<script src="pg-engine-v2.js"></script>
+</helmet>
+<sc-if value="{{ ready }}" hint-placeholder-val="{{ true }}">
+<div style="padding:28px 32px 64px;max-width:1440px;margin:0 auto;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px">
+    <div style="display:flex;flex-direction:column;gap:6px;max-width:780px"><h1 style="font-size:24px">Release and reports</h1><p style="font-size:14px;color:#4a5263;line-height:1.55;text-wrap:pretty">Gate evaluation, evidence and reports for the selected work order.</p><details style="font-size:13px;color:#4a5263"><summary style="cursor:pointer;color:#4f5bd5;font-weight:500;list-style:none;display:inline-flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>How release is evaluated</summary><p style="margin-top:8px;line-height:1.55;padding:10px 12px;border-radius:8px;background:#fff;border:1px solid #eef0f3">Every release request is evaluated by the service and returns a structured blocker list naming the reason, owner and clearing action. Blocking applies inside the application only; a physical line-stop or ERP shipping interlock needs a later validated integration.</p></details><p style="display:none"></p></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ primary }}" as="b" hint-placeholder-count="2"><button onClick="{{ b.go }}" style="height:34px;padding:0 14px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;background:{{ b.bg }};color:{{ b.fg }};border:1px solid {{ b.bd }}" style-hover="filter:brightness(.96)">{{ b.label }}</button></sc-for></div>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+    <section style="flex:3 1 560px;min-width:0;background:#fff;border:1px solid #e6e8ec;border-radius:12px">
+      <div style="padding:14px 18px;border-bottom:1px solid #eef0f3;display:flex;align-items:center;gap:10px"><h3 style="font-size:14px">Gates and evidence · {{ order }}</h3><span style="font-size:12px;color:#8a93a3">{{ k22 }} evidence items met</span><span style="margin-left:auto;display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:999px;font-size:11.5px;font-weight:500;background:{{ stp.bg }};color:{{ stp.fg }};border:1px solid {{ stp.bd }}"><span style="flex:none;width:5px;height:5px;border-radius:50%;background:{{ stp.dot }}"></span>{{ stp.label }}</span></div>
+      <div style="padding:8px 18px 14px">
+        <sc-for list="{{ gates }}" as="g" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:28px minmax(0,1fr);gap:14px">
+            <div style="display:flex;flex-direction:column;align-items:center"><span style="flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;margin-top:12px;background:{{ g.dot }};color:{{ g.ic }};flex:none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="{{ g.icon }}"></path></svg></span><span style="flex:1;width:2px;background:#eef0f3;margin-top:4px;display:{{ g.line }}"></span></div>
+            <div style="padding:12px 0 14px;display:flex;flex-direction:column;gap:6px;min-width:0">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-family:'Geist Mono',monospace;font-size:12px;color:#4a5263">{{ g.id }}</span><span style="font-size:14px;font-weight:600">{{ g.name }}</span><span style="display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:999px;font-size:11px;font-weight:500;background:{{ g.p.bg }};color:{{ g.p.fg }};border:1px solid {{ g.p.bd }}">{{ g.p.label }}</span></div>
+              <span style="font-size:12px;color:#8a93a3;line-height:1.45">{{ g.req }}</span>
+              <div style="display:flex;flex-direction:column;border:1px solid #f2f4f7;border-radius:8px;overflow:hidden;display:{{ g.evD }}">
+                <sc-for list="{{ g.ev }}" as="v" hint-placeholder-count="2"><div style="display:grid;grid-template-columns:18px 1fr auto;gap:10px;align-items:center;padding:7px 10px;border-bottom:1px solid #f6f7f9;font-size:12.5px"><span style="width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:{{ v.bg }}"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="{{ v.ic }}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="{{ v.icon }}"></path></svg></span><span>{{ v.k }}</span><span style="color:#8a93a3;font-size:12px;text-align:right">{{ v.ev }}</span></div></sc-for>
+              </div>
+              <sc-for list="{{ g.blockers }}" as="b" hint-placeholder-count="1">
+                <button onClick="{{ b.go }}" style="text-align:left;border:1px solid #fee4e2;background:#fffbfa;border-radius:8px;padding:10px 12px;cursor:pointer;display:flex;flex-direction:column;gap:4px;color:#0d1321" style-hover="border-color:#fecdca">
+                  <span style="font-family:'Geist Mono',monospace;font-size:11px;color:#b42318">{{ b.code }}</span>
+                  <span style="font-size:13px;line-height:1.45;text-wrap:pretty">{{ b.msg }}</span>
+                  <span style="font-size:12px;color:#4a5263">Owner {{ b.owner }} · {{ b.action }}</span>
+                </button>
+              </sc-for>
+              <span style="font-size:12.5px;color:#4a5263">{{ g.note }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <aside style="flex:2 1 340px;min-width:0;display:flex;flex-direction:column;gap:16px">
+      
+      <section style="background:#fff;border:1px solid #e6e8ec;border-radius:12px">
+        <div style="padding:14px 18px;border-bottom:1px solid #eef0f3"><h3 style="font-size:14px">Approvals and concessions</h3></div>
+        <div style="padding:4px 18px 10px"><sc-for list="{{ appr }}" as="a" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:100px 1fr auto;gap:10px;padding:9px 0;border-bottom:1px solid #f2f4f7;font-size:12.5px;align-items:center"><span style="font-weight:500">{{ a.k }}</span><span style="color:#4a5263">{{ a.v }}</span><span style="display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:999px;font-size:11px;font-weight:500;background:{{ a.p.bg }};color:{{ a.p.fg }};border:1px solid {{ a.p.bd }}">{{ a.p.label }}</span></div></sc-for></div>
+        <sc-if value="{{ isD }}" hint-placeholder-val="{{ false }}"><div style="padding:0 18px 16px;display:flex;flex-direction:column;gap:8px"><span style="font-size:12.5px;color:#344054;line-height:1.5">{{ con }}</span><span style="font-size:12px;color:#8a93a3">Simulated date {{ demoDate }}. Advance it to show an expired concession blocking dispatch.</span><div style="display:flex;gap:6px;flex-wrap:wrap"><button onClick="{{ adv }}" style="height:30px;padding:0 10px;border-radius:7px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:12.5px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">Advance 15 days</button><button onClick="{{ resetClock }}" style="height:30px;padding:0 10px;border-radius:7px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:12.5px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">Reset date</button></div></div></sc-if>
+        <sc-if value="{{ isC }}" hint-placeholder-val="{{ false }}"><div style="padding:0 18px 16px;display:flex;flex-direction:column;gap:8px"><span style="font-size:12.5px;font-weight:500">Mixed shipment rule</span><div style="display:flex;gap:2px;padding:2px;border-radius:8px;background:#f2f4f7;align-self:flex-start"><sc-for list="{{ mixOpts }}" as="o" hint-placeholder-count="2"><button onClick="{{ o.go }}" style="height:28px;padding:0 10px;border-radius:6px;border:0;cursor:pointer;font-size:12.5px;background:{{ o.bg }};color:{{ o.fg }};box-shadow:{{ o.sh }}">{{ o.v }}</button></sc-for></div><span style="font-size:12px;color:#8a93a3;line-height:1.45">Administrator setting. Held serials never release, and unrelated clean units are not altered.</span></div></sc-if>
+      </section>
+      <section style="background:#fff;border:1px solid #e6e8ec;border-radius:12px">
+        <div style="padding:14px 18px;border-bottom:1px solid #eef0f3"><h3 style="font-size:14px">Holds</h3></div>
+        <sc-if value="{{ noHolds }}" hint-placeholder-val="{{ true }}"><div style="padding:16px 18px;font-size:13px;color:#8a93a3">No holds on this order.</div></sc-if>
+        <div style="padding:10px;display:flex;flex-direction:column;gap:8px"><sc-for list="{{ holds }}" as="h" hint-placeholder-count="0"><div style="border:1px solid #e6e8ec;border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px"><div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Geist Mono',monospace;font-size:12px;font-weight:500">{{ h.id }}</span><button onClick="{{ h.open }}" style="margin-left:6px;height:22px;padding:0 8px;border-radius:6px;background:transparent;color:#4f5bd5;border:0;font-size:12px;font-weight:500;cursor:pointer" style-hover="background:#eef0fc">Details</button><span style="margin-left:auto;display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:999px;font-size:11px;font-weight:500;background:{{ h.p.bg }};color:{{ h.p.fg }};border:1px solid {{ h.p.bd }}">{{ h.p.label }}</span></div><span style="font-size:12.5px">{{ h.reason }}</span><span style="font-size:11.5px;color:#8a93a3">{{ h.meta }}</span><sc-if value="{{ h.active }}" hint-placeholder-val="{{ true }}"><div style="display:flex;gap:6px"><input value="{{ holdReason }}" onChange="{{ onHoldReason }}" placeholder="Disposition reason" style="flex:1;min-width:0;height:30px;padding:0 10px;border-radius:7px;border:1px solid #d5d9e0;font-size:12.5px"><button onClick="{{ h.release }}" style="height:30px;padding:0 10px;border-radius:7px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:12.5px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">Resolve</button></div></sc-if></div></sc-for></div>
+      </section>
+    </aside>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+    <section style="flex:1 1 420px;min-width:0;background:#fff;border:1px solid #e6e8ec;border-radius:12px">
+      <div style="padding:14px 18px;border-bottom:1px solid #eef0f3;display:flex;flex-direction:column;gap:2px"><h3 style="font-size:14px">Release history</h3><span style="font-size:12px;color:#8a93a3">Historical releases are never rewritten; late evidence and revision changes append new events.</span></div>
+      <sc-if value="{{ noHistory }}" hint-placeholder-val="{{ true }}"><div style="padding:16px 18px;font-size:13px;color:#8a93a3">No release events yet.</div></sc-if>
+      <div style="padding:6px 18px 12px"><sc-for list="{{ history }}" as="h" hint-placeholder-count="2"><div style="display:grid;grid-template-columns:12px 1fr;gap:10px;padding:8px 0"><span style="flex:none;width:8px;height:8px;border-radius:50%;margin-top:6px;background:#4f5bd5"></span><span style="display:flex;flex-direction:column;gap:1px"><span style="font-size:13px">{{ h.event }}</span><span style="font-size:11.5px;color:#8a93a3">{{ h.by }} · {{ h.at }}</span></span></div></sc-for></div>
+    </section>
+    <section style="flex:1 1 420px;min-width:0;background:#fff;border:1px solid #e6e8ec;border-radius:12px">
+      <div style="padding:14px 18px;border-bottom:1px solid #eef0f3;display:flex;flex-direction:column;gap:2px"><h3 style="font-size:14px">Reports and exports</h3><span style="font-size:12px;color:#8a93a3">Exports match on-screen totals and carry the synthetic badge, revision snapshot and as-of time.</span></div>
+      <div style="padding:8px">
+        <sc-for list="{{ reports }}" as="r" hint-placeholder-count="5"><button onClick="{{ r.go }}" style="width:100%;display:flex;align-items:center;gap:12px;padding:10px;border-radius:8px;border:0;background:transparent;cursor:pointer;text-align:left;color:#0d1321" style-hover="background:#f6f7f9"><span style="width:36px;height:36px;border-radius:8px;flex:none;display:grid;place-items:center;font-size:10.5px;font-weight:600;font-family:'Geist Mono',monospace;background:{{ r.bg }};color:{{ r.fg }};border:1px solid {{ r.bd }}">{{ r.kind }}</span><span style="display:flex;flex-direction:column;gap:1px;flex:1"><span style="font-size:13.5px;font-weight:500">{{ r.name }}</span><span style="font-size:12px;color:#8a93a3">{{ r.sub }}</span></span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#98a2b3" stroke-width="2"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 21h16"></path></svg></button></sc-for>
+      </div>
+    </section>
+  </div>
+
+  <sc-if value="{{ printOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:140;background:rgba(13,19,33,.4);overflow:auto;padding:32px 16px;display:flex;justify-content:center;align-items:flex-start">
+      <div id="pg-print" style="width:min(860px,100%);background:#fff;border-radius:12px;box-shadow:0 24px 48px rgba(16,24,40,.2);padding:40px 44px;display:flex;flex-direction:column;gap:20px;font-size:13px;color:#0d1321">
+        <div class="pg-noprint" style="display:flex;gap:8px"><button onClick="{{ doPrint }}" style="height:34px;padding:0 14px;border-radius:8px;background:#4f5bd5;color:#fff;border:1px solid #4350c4;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#4350c4">Print or save as PDF</button><button onClick="{{ closePrint }}" style="height:34px;padding:0 14px;border-radius:8px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">Close</button></div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;border-bottom:1px solid #e6e8ec;padding-bottom:14px"><span style="font-weight:600;font-size:16px">ProcessGrit</span><span style="display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;font-size:11.5px;font-weight:500;background:#fffaeb;color:#b54708;border:1px solid #fedf89">Synthetic demo</span><span style="margin-left:auto;font-size:11.5px;color:#8a93a3;font-family:'Geist Mono',monospace">As-of {{ rp.asOf }} · snapshot {{ rp.snap }}</span></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:12px;color:#4f5bd5;font-weight:500">{{ rp.kicker }}</span><span style="font-size:26px;font-weight:600;letter-spacing:-0.02em">{{ rp.title }}</span><span style="color:#4a5263">{{ rp.sub }}</span></div>
+        <sc-for list="{{ rp.sections }}" as="s" hint-placeholder-count="4"><div style="display:flex;flex-direction:column;gap:6px;break-inside:avoid"><span style="font-size:12.5px;font-weight:600;border-bottom:1px solid #eef0f3;padding-bottom:6px">{{ s.h }}</span><sc-for list="{{ s.rows }}" as="r" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:210px 1fr;gap:14px;font-size:12.5px;line-height:1.5"><span style="color:#4a5263">{{ r.k }}</span><span>{{ r.v }}</span></div></sc-for></div></sc-for>
+        <span style="font-size:11px;color:#8a93a3;border-top:1px solid #eef0f3;padding-top:10px;line-height:1.5">Synthetic demonstration records. Quantities and technical settings are fixtures except the user-reported 1,200-unit incident scope. Generated by {{ rp.by }}. Every AI-written statement is marked Draft pending QA review.</span>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { holdReason: '' };
+  componentDidMount() { const go = () => { if (window.PG) { this.u = PG.subscribe(() => this.forceUpdate()); this.forceUpdate(); } else this.t = setTimeout(go, 40); }; go(); }
+  componentWillUnmount() { this.u && this.u(); clearTimeout(this.t); }
+  renderVals() { try { return this.rv(); } catch (e) { console.log('RV-ERR ' + e.message); return { ready: false }; } }
+  rv() {
+    const P = window.PG; if (!P) return { ready: false };
+    const st = P.st, sc = st.scen, d = P.cur(), G = P.gates();
+    const REQ = { G0: 'Requires approved BOM, placement package, CTQ register, test plan and orientation decisions', G1: 'Requires material and feeder scan, qualified programs, approved profile and equipment status', G2: 'Requires serial-linked CTQ results, inspection and test evidence, distinct engineering and QA approvals and customer approval', G3: 'Requires a valid G2 snapshot, complete route events, inspection status and no applicable hold', G4: 'Requires quantity reconciliation, serial-level required tests, closed dispositions and QA authorization' };
+    const IC = { Pass: 'M20 6 9 17l-5-5', Blocked: 'M12 7v6M12 17h.01', Pending: 'M8 12h8', Waiting: 'M8 12h8' };
+    const gates = G.map((g, i) => ({ id: g.id, name: g.name, p: P.pill(g.status, g.status === 'Pass' ? 'ok' : g.status === 'Blocked' ? 'crit' : 'neutral'), req: REQ[g.id], note: g.note, dot: g.status === 'Blocked' ? '#fee4e2' : g.status === 'Pass' ? '#dcfae6' : '#f2f4f7', ic: g.status === 'Blocked' ? '#d92d20' : g.status === 'Pass' ? '#079455' : '#98a2b3', icon: IC[g.status], line: i < G.length - 1 ? 'block' : 'none', blockers: g.blockers.map(b => ({ code: b.code + (b.ctq ? ' · ' + b.ctq : ''), msg: b.msg, owner: b.owner || 'Unassigned', action: b.action || 'Open', go: () => P.nav(b.screen || 'release') })) }));
+    const EV = {}, item = (k, ok, ev) => ({ k, ev: ev || '', bg: ok === null ? '#f2f4f7' : ok ? '#dcfae6' : '#fee4e2', ic: ok === null ? '#98a2b3' : ok ? '#079455' : '#d92d20', icon: ok === null ? 'M8 12h8' : ok ? 'M20 6 9 17l-5-5' : 'M18 6 6 18M6 6l12 12', ok });
+    if (sc === 'A' || sc === 'D') {
+      const c = P.ctqs().filter(x => !x.na), cv = P.coverage(), cl = P.checklist().filter(x => x.result !== 'Not applicable'), cur = P.snap(), ap = d.fa.approvals, okAp = k => !!(ap[k] && ap[k].hash === cur);
+      EV.G0 = [item('CTQ register complete', c.every(x => x.complete), `${c.filter(x => x.complete).length} of ${c.length} records`), item('Critical detection coverage validated', cv.every(f => f.covered), `${cv.filter(f => f.covered).length} of ${cv.length} failure modes`)].concat(sc === 'A' ? [item('U3 orientation decision recorded', st.A.conflict.status === 'resolved', st.A.conflict.status === 'resolved' ? 'PKG-U3 rev 3, PLC-MB-A r7' : 'Sources conflict')] : [item('Functional test method agreed', !!d.testPlan || P.concessionStatus() === 'Active', d.testPlan ? d.testPlan.id : P.concessionStatus() === 'Active' ? 'Covered by ' + d.concession.id : 'No customer SOP')]);
+      const s = st.A.setup;
+      EV.G1 = sc === 'A' ? [item('Feeder materials match BOM', s.slot14 !== 'wrong', s.slot14 === 'wrong' ? 'Slot 14 mismatch' : '6 of 6 slots'), item('Approved program loaded', s.machineProg === st.A.prog.placement.rev, 'Machine ' + s.machineProg + ', approved ' + st.A.prog.placement.rev), item('Independent setup verification', !!(s.verified && s.verified.prog === st.A.prog.placement.rev), s.verified ? P.uname(s.verified.by) : 'Not recorded')] : [item('Setup SET-B-201 verified', true, 'Daniel Cho')];
+      EV.G2 = [item('Checklist evidence complete', cl.every(x => x.result === 'Pass' || x.concession), `${cl.filter(x => x.result === 'Pass').length} of ${cl.length} pass`), item('Engineering approval current', okAp('eng'), ap.eng ? P.uname(ap.eng.by) : 'Missing'), item('QA approval current and independent', okAp('qa'), ap.qa ? P.uname(ap.qa.by) : 'Missing'), item('Customer approval current', okAp('cust'), ap.cust ? P.uname(ap.cust.by) : 'Missing')];
+      const rel = d.order.released || d.order.inProduction;
+      EV.G3 = [item('Release snapshot valid', rel ? okAp('eng') && okAp('qa') && okAp('cust') : null, rel ? cur : 'Starts after release'), item('No active hold', !d.holds.some(h => h.status === 'Active'), d.holds.filter(h => h.status === 'Active').map(h => h.id).join(', ') || 'None')];
+      EV.G4 = sc === 'D' && d.concession ? [item('Concession in date', P.concessionStatus() !== 'Expired', 'Expires ' + P.fmtD(d.concession.expiry))] : [item('Quantity and serial evidence', null, 'Batch not produced yet')];
+    } else if (sc === 'C') {
+      ['G0', 'G1', 'G2', 'G3'].forEach(k => EV[k] = [item(k === 'G2' ? 'First article approved 18 Sep 2026' : 'Evidence current', true, k === 'G2' ? 'Snapshot 7e21c0' : '')]);
+      EV.G4 = P.dossier().map(x => item(x.k.replace(' (started = good + held + rework + scrapped + WIP)', '').replace(' (FA snapshot 7e21c0)', ''), x.ok, x.ev));
+    }
+    gates.forEach(g => { g.ev = EV[g.id] || []; g.evD = g.ev.length ? 'flex' : 'none'; });
+    const allEv = [].concat(...Object.values(EV)).filter(x => x.ok !== null);
+    const PB = { bg: '#4f5bd5', fg: '#fff', bd: '#4350c4' }, SB = { bg: '#fff', fg: '#0d1321', bd: '#d5d9e0' };
+    const primary = [];
+    primary.push(Object.assign({ label: 'Export blockers CSV', go: () => P.download('blockers') }, SB));
+    if (sc === 'A' && d.order.released && !d.order.inProduction) primary.push(Object.assign({ label: 'Start production', go: () => P.act('startProduction') }, SB));
+    if (sc === 'A' || sc === 'D') primary.push(Object.assign({ label: 'Request batch release', go: () => P.act('releaseBatch') }, PB));
+    if (sc === 'C') primary.push(Object.assign({ label: st.C.dispatch ? 'Released in SHP-3001' : 'Release for dispatch', go: () => P.act('releaseDispatch') }, PB));
+    const dos = P.dossier();
+    const dossier = dos.map(x => ({ k: x.k, ev: x.ev, bg: x.ok ? '#12b76a' : '#f04438', icon: x.ok ? 'M20 6 9 17l-5-5' : 'M18 6 6 18M6 6l12 12' }));
+    const appr = [];
+    if (sc === 'A' || sc === 'D') { const cur = P.snap(); ['eng', 'qa', 'cust'].forEach(k => { const a = d.fa.approvals[k]; appr.push({ k: P.APPR_LBL[k], v: a ? `${P.uname(a.by)}, ${a.hash}` : 'Not signed', p: !a ? P.pill('Missing', 'neutral') : a.hash !== cur ? P.pill('Stale', 'crit') : P.pill('Current', 'ok') }); }); }
+    else appr.push({ k: 'FA approvals', v: sc === 'B' ? 'Two signatures, no U3 evidence' : 'Anika Rao, Daniel Cho, Lena Ortiz', p: sc === 'B' ? P.pill('Unverified', 'warn') : P.pill('Current', 'ok') });
+    const cs = P.concessionStatus();
+    appr.push({ k: 'Concession', v: sc === 'D' && d.concession ? d.concession.id : 'None', p: sc === 'D' && d.concession ? P.pill(cs, cs === 'Active' ? 'warn' : cs === 'Expired' ? 'crit' : 'neutral') : P.pill('None', 'neutral') });
+    const hs = (d.holds || []).slice();
+    if (sc === 'C' && P.recon().held) hs.push({ id: 'H-C-014', status: 'Active', reason: 'MB-C-0042 rework disposition open (NCR-C-014)', scope: 'MB-C-0042', by: 'Daniel Cho', at: '2026-10-04T10:20:00+05:30', fixed: true });
+    const holds = hs.slice().reverse().map(h => ({ open: () => h.fixed ? P.nav('prod') : P.openDrawer('hold', h.id), id: h.id, p: P.pill(h.status, h.status === 'Active' ? 'crit' : 'ok'), reason: h.reason, meta: h.resolved ? `Resolved by ${P.uname(h.resolved.by)}: ${h.resolved.reason}` : `${h.scope || ''} · ${P.uname(h.by)}${h.fixed ? ' · clears through the rework loop' : ''}`, active: h.status === 'Active' && !h.fixed, release: () => P.act('releaseHold', { id: h.id, reason: this.state.holdReason }) }));
+    let history = (d.releaseHistory || []).map(h => ({ at: P.fmtT(h.at), event: h.event + (h.snapshot ? ', snapshot ' + h.snapshot : ''), by: P.uname(h.by) }));
+    if (sc === 'F') history = d.shipment.history.map(h => ({ at: P.fmtT(h.at), event: h.event, by: h.by }));
+    if (sc === 'C' && st.C.dispatch) history = [{ at: P.fmtT(st.C.dispatch.at), event: `Released for dispatch in SHP-3001, ${st.C.dispatch.qty} boards${st.C.dispatch.excluded.length ? ', excluded ' + st.C.dispatch.excluded.join(', ') : ''}`, by: P.uname(st.C.dispatch.by) }];
+    if (sc === 'B') history = [{ at: '15 Aug, 17:10', event: 'Released on REL-2201 with checklist override', by: 'Shift supervisor' }, { at: '16 Aug, 08:00', event: 'SHP-2201 dispatched, 480 boards', by: 'Logistics' }, { at: '22 Aug, 08:00', event: 'SHP-2202 dispatched, 480 boards', by: 'Logistics' }];
+    if (sc === 'E') history = [{ at: '22 Sep', event: 'LOT-V-01 released', by: 'Daniel Cho' }, { at: '26 Sep', event: 'LOT-V-02 released', by: 'Daniel Cho' }, { at: '01 Oct', event: 'LOT-V-03 released', by: 'Daniel Cho' }];
+    const PDF = { bg: '#fef3f2', fg: '#b42318', bd: '#fecdca' }, CSV = { bg: '#ecfdf3', fg: '#067647', bd: '#abefc6' };
+    const reports = [Object.assign({ kind: 'PDF', name: 'Release dossier', sub: 'Gates, blockers, evidence, approvals, concessions and KPIs', go: () => P.openPrint('dossier') }, PDF)];
+    if (sc === 'B' || sc === 'E') reports.push(Object.assign({ kind: 'PDF', name: '8D correction report, NCR-U3-001', sub: 'Problem, containment, occurrence, escape, actions and effectiveness', go: () => P.openPrint('8d') }, PDF));
+    reports.push(Object.assign({ kind: 'CSV', name: 'KPI table', sub: 'Numerators, denominators, cohort and exclusions', go: () => P.download('kpis') }, CSV));
+    if (sc === 'B') reports.push(Object.assign({ kind: 'CSV', name: 'Containment manifest', sub: 'Every serial in the current query with scope and status', go: () => P.download('manifest') }, CSV));
+    if (sc === 'C') reports.push(Object.assign({ kind: 'CSV', name: 'Serial reconciliation', sub: '200 serials with stage results', go: () => P.download('recon') }, CSV));
+    if (sc === 'F') reports.push(Object.assign({ kind: 'CSV', name: 'Import quarantine list', sub: 'Row-specific reasons with file and line', go: () => P.download('quarantine') }, CSV));
+    reports.push(Object.assign({ kind: 'CSV', name: 'Audit trail', sub: 'Append-only actor, action, before and after', go: () => P.download('audit') }, CSV));
+    const mix = st.config.mixedShipment, seg = v => ({ bg: mix === v ? '#fff' : 'transparent', fg: mix === v ? '#0d1321' : '#4a5263', sh: mix === v ? '0 1px 2px rgba(16,24,40,.1)' : 'none' });
+    const stTxt = P.orderState();
+    return {
+      ready: true, order: d.order.id, stp: P.pill(stTxt.split(' · ')[0]), primary, gates, dossier, k22: allEv.length ? `${allEv.filter(x => x.ok).length} of ${allEv.length}` : `${dos.filter(x => x.ok).length} of ${dos.length}`, appr, holds, noHolds: !holds.length, history, noHistory: !history.length, reports,
+      isD: sc === 'D', isC: sc === 'C', con: d.concession ? `${d.concession.id}: ${cs}, quantity ${d.concession.qty}, expires ${P.fmtD(d.concession.expiry)}. Controls: ${d.concession.controls}.` : 'No concession requested.', demoDate: P.fmtD(P.demoDate()), adv: () => P.act('advanceClock', { days: 15 }), resetClock: () => P.act('resetClock'),
+      mixOpts: [['exclude', 'Exclude held serials'], ['block', 'Block shipment']].map(o => Object.assign({ v: o[1], go: () => P.act('setConfig', { key: 'mixedShipment', value: o[0] }) }, seg(o[0]))),
+      holdReason: this.state.holdReason, onHoldReason: e => this.setState({ holdReason: e.target.value }),
+      printOn: !!P.ui.print, rp: this.report(P, st, sc, d, G, dos), doPrint: () => window.print(), closePrint: () => P.closePrint()
+    };
+  }
+  report(P, st, sc, d, G, dos) {
+    const kind = P.ui.print; if (!kind) return { sections: [] };
+    const asOf = new Date().toLocaleString('en-GB'), snap = (sc === 'A' || sc === 'D') ? P.snap() : '7e21c0', by = P.user().name;
+    if (kind === '8d') {
+      const b = st.B, q = P.queryB('', 'SET-0918'), held = b.holds.find(h => h.status === 'Active'), e = st.E.capa, crit = P.criteriaE();
+      const hy = k => b.hyps.filter(h => h.kind === k).map(h => ({ k: h.id + ', ' + h.status, v: h.text + ' (evidence: ' + h.evidence + ')' }));
+      return { asOf, snap, by, kicker: '8D correction report, draft pending QA review', title: 'NCR-U3-001 · U3 orientation', sub: 'Customer A · MB-7420 rev B · WO-23602', sections: [
+        { h: 'Problem and scope', rows: [{ k: 'Failure mode', v: 'U3 rotated 180 degrees; expected PIN1-NW, observed PIN1-SE (synthetic board-datum labels)' }, { k: 'Detected at', v: 'Customer system test, CMP-0017' }, { k: 'Confirmed defective', v: '1 (MB-A-1437, EVD-212)' }, { k: 'Potentially exposed', v: (q.total - 1).toLocaleString('en-US') + ' (setup SET-0918, PLC-MB-A r5)' }, { k: 'Shipment and WIP', v: `${q.shipped} shipped, ${q.stock} finished-goods stock, 0 WIP` }, { k: 'Reported scope', v: '1,200 affected units, user-reported and not independently confirmed in records' }] },
+        { h: 'Immediate containment', rows: [{ k: 'Hold', v: held ? `${held.id}: ${held.scope}` : 'Not yet applied' }, { k: 'Manifest', v: b.manifest ? `${b.manifest.id}, ${b.manifest.total} serials, query ${b.manifest.query}` : 'Not generated' }, { k: 'Shipped units', v: b.recall ? b.recall.status : 'Pending' }, { k: 'Times', v: `Detected ${P.fmtT(b.detectedAt)}, contained ${b.containedAt ? P.fmtT(b.containedAt) : 'open'}` }] },
+        { h: 'Occurrence investigation', rows: hy('occurrence') },
+        { h: 'Escape investigation', rows: hy('escape').concat([{ k: 'Gate map', v: 'G0 not run, setup not capable, FA unknown, AOI not capable, X-ray N/A, FT not run, release overridden' }]) },
+        { h: 'Correction and prevention', rows: [{ k: 'Correction', v: 'Independent U3 inspection of held stock; recall review for shipped units' }, { k: 'Prevention', v: 'CTQ-U3-ORI mapped relationship; PLC-MB-A r7; AOI Pin 1 feature with challenge set; FT case for U3' }] },
+        { h: 'System updates', rows: [{ k: 'Documents', v: 'PFMEA PF-MB-A rev 6, control plan CP-MB-A rev 4, TR-221' }, { k: 'Horizontal review', v: 'U9 and U12 on MB-7420; U4 on MB-5110 (HR-031)' }] },
+        { h: 'Effectiveness decision', rows: crit.map(c => ({ k: c.id + ', ' + (c.pass ? 'met' : 'not met'), v: c.text + ' (' + c.ev + ')' })).concat([{ k: 'Decision', v: e.closed ? 'Closed by ' + P.uname(e.closed.by) : e.review ? (e.review.pass ? 'Review passed; closure pending' : 'Review failed; CAPA reopened') : 'Pending independent review' }, { k: 'Statistical note', v: 'Zero failures in 600 independent observations gives an approximate one-sided 95% upper bound of 3 / 600, about 0.5%' }]) }
+      ] };
+    }
+    const sections = [
+      { h: 'Order', rows: [{ k: 'Order and customer', v: `${d.order.id}, ${d.order.customerName}` }, { k: 'Product', v: `${d.order.product} rev ${d.order.rev}, quantity ${d.order.qty}` }, { k: 'State', v: P.orderState() }] },
+      { h: 'Gate evaluation', rows: G.map(g => ({ k: `${g.id} ${g.name}`, v: g.status + (g.blockers.length ? ': ' + g.blockers.map(b => `${b.code}${b.ctq ? ' ' + b.ctq : ''}, ${b.msg}`).join(' | ') : '') })) },
+      { h: 'Evidence', rows: dos.map(x => ({ k: (x.ok ? 'Met: ' : 'Missing: ') + x.k, v: x.ev })) }
+    ];
+    if (sc === 'C') { const r = P.recon(); sections.push({ h: 'Serial reconciliation', rows: [{ k: 'Started', v: String(r.started) }, { k: 'Good, held, rework, scrapped, WIP', v: `${r.good}, ${r.held}, ${r.rework}, ${r.scrap}, ${r.wip}` }] }); }
+    if (sc === 'D' && d.concession) sections.push({ h: 'Concession', rows: [{ k: d.concession.id, v: `${P.concessionStatus()}, scope ${d.concession.scope}, quantity ${d.concession.qty}, expires ${P.fmtD(d.concession.expiry)}` }, { k: 'Compensating controls', v: d.concession.controls }, { k: 'Non-waivable', v: d.concession.nonWaivable }, { k: 'Result', v: 'CTQ-B-FT stays Unknown; the concession does not rewrite it as Pass' }] });
+    sections.push({ h: 'KPIs', rows: P.kpis().map(k => ({ k: `${k.id} ${k.name}`, v: `${k.display}${k.den !== undefined ? ' (' + k.num + ' ÷ ' + k.den + ')' : ''}, ${k.badge}` })) });
+    return { asOf, snap, by, kicker: 'Release dossier', title: d.order.id, sub: `Scenario ${sc}, ${P.SCEN[sc].name}`, sections };
+  }
+}
+</script>
+</body>
+</html>

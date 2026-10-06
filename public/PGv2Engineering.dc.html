@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/resources.js"></script>
+<script src="/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/classical-602d74cf-5ba2-41d5-b912-d66c664fbecc/styles.css">
+<script src="_ds/classical-602d74cf-5ba2-41d5-b912-d66c664fbecc/_ds_bundle.js"></script>
+<script src="pg-engine-v2.js"></script>
+</helmet>
+<sc-if value="{{ ready }}" hint-placeholder-val="{{ true }}">
+<div style="padding:28px 32px 64px;max-width:1440px;margin:0 auto;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;flex-direction:column;gap:6px;max-width:780px">
+    <h1 style="font-size:24px">{{ headline }}</h1><p style="font-size:14px;color:#4a5263">Reconcile sources, CTQs and detection coverage before setup.</p><details style="font-size:13px;color:#4a5263"><summary style="cursor:pointer;color:#4f5bd5;font-weight:500;list-style:none;display:inline-flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>About this page</summary><p style="margin-top:8px;line-height:1.55;padding:10px 12px;border-radius:8px;background:#fff;border:1px solid #eef0f3">{{ blurb }}</p></details>
+  </div>
+  <div style="display:flex;gap:2px;border-bottom:1px solid #e6e8ec;overflow-x:auto;scrollbar-width:none">
+    <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4"><button onClick="{{ t.go }}" style="flex:none;height:40px;padding:0 14px;border:0;background:transparent;cursor:pointer;font-size:13.5px;font-weight:500;color:{{ t.fg }};border-bottom:2px solid {{ t.bd }};margin-bottom:-1px;display:flex;align-items:center;gap:8px" style-hover="color:#0d1321">{{ t.label }}<span style="font-size:11px;height:18px;min-width:18px;padding:0 6px;border-radius:9px;display:{{ t.cd }};align-items:center;justify-content:center;background:#fef3f2;color:#b42318;border:1px solid #fecdca">{{ t.count }}</span></button></sc-for>
+  </div>
+
+  <sc-if value="{{ tab.conflict }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+        <sc-for list="{{ sources }}" as="s" hint-placeholder-count="4">
+          <div style="background:#fff;border:1px solid {{ s.bd }};border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Geist Mono',monospace;font-size:11px;color:#8a93a3">{{ s.id }}</span><span style="margin-left:auto;display:inline-flex;align-items:center;gap:5px;height:20px;padding:0 7px;border-radius:999px;font-size:11px;font-weight:500;background:{{ s.p.bg }};color:{{ s.p.fg }};border:1px solid {{ s.p.bd }}">{{ s.p.label }}</span></div>
+            <span style="font-weight:600;font-size:14px">{{ s.name }}</span>
+            <svg viewBox="0 0 120 84" style="width:100%;height:auto;display:block;background:#f9fafb;border-radius:8px">
+              <rect x="34" y="16" width="52" height="52" rx="3" fill="#1d2433"></rect>
+              <circle cx="{{ s.cx }}" cy="{{ s.cy }}" r="5" fill="{{ s.dot }}"></circle>
+              <text x="5" y="80" font-size="7" fill="#8a93a3" font-family="Geist Mono">FID1 datum</text>
+              <text x="115" y="10" font-size="7" fill="#4a5263" text-anchor="end" font-family="Geist Mono">{{ s.pin }}</text>
+            </svg>
+            <span style="font-size:13px;line-height:1.5;color:#344054;text-wrap:pretty">{{ s.stmt }}</span>
+            <span style="font-size:12px;color:#8a93a3;font-family:'Geist Mono',monospace">{{ s.rev }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <span style="font-size:12px;color:#8a93a3">Directions are synthetic board-datum labels, not actual U3 specifications.</span>
+
+      <sc-if value="{{ conf.open }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-wrap:wrap;gap:16px">
+          <div style="flex:1 1 340px;background:#fffbfa;border:1px solid #fecdca;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;gap:8px"><span style="flex:none;width:8px;height:8px;border-radius:50%;background:#d92d20"></span><span style="font-size:13px;font-weight:600;color:#b42318">{{ conf.label }}</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:#b42318;margin-left:auto">CTQ-U3-ORI</span></div>
+            <p style="font-size:13.5px;line-height:1.55;color:#7a271a;text-wrap:pretty">Assembly drawing rev B places Pin 1 at NW. Placement CSV r6 specifies 0 degrees, which the SMT-L2 machine convention (origin Pin-1-SW, counter-clockwise) places at SE. G0 stays blocked until engineering records an authoritative mapping.</p>
+            <span style="font-size:12.5px;color:#7a271a">{{ conf.query }}</span>
+            <div><button onClick="{{ raiseQuery }}" disabled="{{ conf.queried }}" style="height:34px;padding:0 14px;border-radius:8px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:13px;font-weight:500;cursor:pointer;opacity:{{ conf.qo }}" style-hover="background:#f6f7f9">Raise engineering query</button></div>
+          </div>
+          <div style="flex:1.3 1 400px;background:#fff;border:1px solid #e6e8ec;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:12px">
+            <span style="font-size:14px;font-weight:600">Resolve with authoritative evidence</span>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <sc-for list="{{ srcOpts }}" as="o" hint-placeholder-count="3">
+                <button onClick="{{ o.pick }}" style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:10px;border:1px solid {{ o.bd }};background:{{ o.bg }};cursor:pointer;text-align:left;color:#0d1321">
+                  <span style="flex:none;width:16px;height:16px;border-radius:50%;flex:none;margin-top:2px;border:{{ o.ring }}"></span>
+                  <span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:13.5px;font-weight:500">{{ o.label }}</span><span style="font-size:12px;color:#8a93a3">{{ o.sub }}</span></span>
+                </button>
+              </sc-for>
+            </div>
+            <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12.5px;font-weight:500;color:#344054">Source page or section locator</span><input value="{{ locator }}" onChange="{{ onLocator }}" placeholder="PKG-U3 rev 3, section 2, figure 1" style="height:36px;padding:0 12px;border-radius:8px;border:1px solid #d5d9e0;font-size:13.5px;background:#fff;color:#0d1321"></label>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button onClick="{{ resolve }}" style="height:34px;padding:0 14px;border-radius:8px;background:#4f5bd5;color:#fff;border:1px solid #4350c4;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#4350c4">Record mapping and revise program</button><span style="font-size:12px;color:#8a93a3">Process engineer only</span></div>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ conf.resolved }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#f6fef9;border:1px solid #abefc6;border-radius:12px;padding:16px 18px;display:flex;flex-wrap:wrap;gap:8px 28px;align-items:baseline">
+          <span style="display:flex;align-items:center;gap:8px;width:100%;font-size:13px;font-weight:600;color:#067647"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#12b76a" stroke-width="2.6"><path d="M20 6 9 17l-5-5"></path></svg>Resolved by {{ res.by }} · {{ res.at }}</span>
+          <span style="font-size:13px"><span style="color:#4a5263">Authority </span>{{ res.source }}</span>
+          <span style="font-size:13px"><span style="color:#4a5263">Locator </span>{{ res.locator }}</span>
+          <span style="font-size:13px"><span style="color:#4a5263">Mapping </span>{{ res.mapping }}</span>
+        </div>
+      </sc-if>
+
+      <section style="background:#fff;border:1px solid #e6e8ec;border-radius:12px">
+        <div style="padding:14px 18px;border-bottom:1px solid #eef0f3;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap"><h3 style="font-size:14px">CTQ-U3-ORI orientation record</h3><span style="font-size:12px;color:#8a93a3">Stored as a mapped relationship, not as "0 degrees". {{ u3Missing }}</span></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));padding:4px 18px 14px;column-gap:24px">
+          <sc-for list="{{ u3 }}" as="f" hint-placeholder-count="17">
+            <div style="padding:10px 0;border-bottom:1px solid #f2f4f7;display:flex;flex-direction:column;gap:2px"><span style="font-size:12px;color:#8a93a3">{{ f.k }}</span><span style="font-size:13.5px;font-weight:{{ f.w }};color:{{ f.c }}">{{ f.v }}</span></div>
+          </sc-for>
+        </div>
+      </section>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ tab.testcov }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span style="font-size:14px;font-weight:600">CTQ-B-FT functional coverage</span><span style="display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:500;background:{{ dct.p.bg }};color:{{ dct.p.fg }};border:1px solid {{ dct.p.bd }}"><span style="flex:none;width:6px;height:6px;border-radius:50%;background:{{ dct.p.dot }}"></span>{{ dct.p.label }}</span></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">
+        <div style="background:#fff;border:1px solid #e6e8ec;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px">
+          <span style="font-size:12px;font-weight:500;color:#4f5bd5">Option one</span><span style="font-size:15px;font-weight:600">Agree a test plan</span>
+          <p style="font-size:13px;line-height:1.55;color:#4a5263">Record the plan agreed with Customer B, then import first-article results. A new test plan changes the configuration snapshot, so earlier approvals become stale.</p>
+          <span style="font-size:12.5px;color:#344054">{{ dct.plan }}</span>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:auto"><button onClick="{{ uploadPlan }}" style="height:34px;padding:0 14px;border-radius:8px;background:#4f5bd5;color:#fff;border:1px solid #4350c4;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#4350c4">Record TP-MB-B 1.0</button><button onClick="{{ importFT }}" style="height:34px;padding:0 14px;border-radius:8px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">Import FA results</button></div>
+        </div>
+        <div style="background:#fff;border:1px solid #e6e8ec;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px">
+          <span style="font-size:12px;font-weight:500;color:#4f5bd5">Option two</span><span style="font-size:15px;font-weight:600">Scoped concession</span>
+          <p style="font-size:13px;line-height:1.55;color:#4a5263">A separate authorization with scope, quantity, expiry, approvers and compensating controls. It never rewrites Unknown as Pass. X-ray and firmware verification cannot be waived.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:12px;color:#4a5263">Quantity</span><input value="{{ cq }}" onChange="{{ onCq }}" style="height:34px;padding:0 10px;border-radius:8px;border:1px solid #d5d9e0;font-size:13px"></label>
+            <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:12px;color:#4a5263">Expires in days</span><input value="{{ cd }}" onChange="{{ onCd }}" style="height:34px;padding:0 10px;border-radius:8px;border:1px solid #d5d9e0;font-size:13px"></label>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:12px;color:#4a5263">Compensating controls</span><input value="{{ cc }}" onChange="{{ onCc }}" style="height:34px;padding:0 10px;border-radius:8px;border:1px solid #d5d9e0;font-size:13px"></label>
+          <span style="font-size:12.5px;color:#344054">{{ dct.con }}</span>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:auto"><button onClick="{{ reqCon }}" style="height:34px;padding:0 14px;border-radius:8px;background:#4f5bd5;color:#fff;border:1px solid #4350c4;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#4350c4">Request concession</button><button onClick="{{ apprCon }}" style="height:34px;padding:0 14px;border-radius:8px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">Approve as current user</button></div>
+        </div>
+        <div style="background:#fff;border:1px solid #e6e8ec;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px">
+          <span style="font-size:12px;font-weight:500;color:#4f5bd5">Option three</span><span style="font-size:15px;font-weight:600">Mark Not applicable</span>
+          <p style="font-size:13px;line-height:1.55;color:#4a5263">Not applicable requires a route-based reason and approval. Route R-MB-B v2 includes functional test.</p>
+          <label style="display:flex;flex-direction:column;gap:4px"><span style="font-size:12px;color:#4a5263">Reason</span><input value="{{ naReason }}" onChange="{{ onNa }}" placeholder="Customer performs functional test" style="height:34px;padding:0 10px;border-radius:8px;border:1px solid #d5d9e0;font-size:13px"></label>
+          <span style="font-size:12.5px;color:#b42318">{{ dct.na }}</span>
+          <div style="margin-top:auto"><button onClick="{{ reqNA }}" style="height:34px;padding:0 14px;border-radius:8px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">Request Not applicable</button></div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ tab.coverage }}" hint-placeholder-val="{{ false }}">
+    <section style="background:#fff;border:1px solid #e6e8ec;border-radius:12px;overflow:hidden">
+      <div style="padding:14px 18px;border-bottom:1px solid #eef0f3;display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h3 style="font-size:14px">Detection coverage by failure mode and gate</h3><span style="display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:500;background:{{ k02p.bg }};color:{{ k02p.fg }};border:1px solid {{ k02p.bd }}">{{ k02p.label }}</span><span style="font-size:12px;color:#8a93a3;flex:1 1 300px">Inspecting every board is not the same as detecting every defect type. Required controls carry a blue ring; a failure mode is covered only when every required control is validated.</span></div>
+      <div style="overflow-x:auto"><div style="min-width:960px">
+        <div style="display:grid;grid-template-columns:220px repeat(7,minmax(0,1fr)) 90px;padding:9px 18px;background:#f9fafb;border-bottom:1px solid #eef0f3;font-size:12px;color:#8a93a3;font-weight:500;gap:6px"><span>Failure mode</span><sc-for list="{{ cols }}" as="c" hint-placeholder-count="7"><span>{{ c }}</span></sc-for><span>Covered</span></div>
+        <sc-for list="{{ fms }}" as="f" hint-placeholder-count="6">
+          <div style="display:grid;grid-template-columns:220px repeat(7,minmax(0,1fr)) 90px;padding:10px 18px;border-bottom:1px solid #f2f4f7;gap:6px;align-items:center">
+            <span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:13.5px;font-weight:500">{{ f.name }}</span><span style="font-family:'Geist Mono',monospace;font-size:11px;color:#8a93a3">{{ f.ctq }}</span></span>
+            <sc-for list="{{ f.cells }}" as="c" hint-placeholder-count="7"><span title="{{ c.note }}" style="height:30px;border-radius:7px;display:flex;align-items:center;padding:0 8px;font-size:11.5px;font-weight:500;background:{{ c.bg }};color:{{ c.fg }};box-shadow:{{ c.ring }}">{{ c.label }}</span></sc-for>
+            <span style="display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:999px;font-size:11.5px;font-weight:500;justify-self:start;background:{{ f.p.bg }};color:{{ f.p.fg }};border:1px solid {{ f.p.bd }}">{{ f.p.label }}</span>
+          </div>
+        </sc-for>
+      </div></div>
+      <div style="padding:12px 18px;display:flex;flex-direction:column;gap:4px;border-top:1px solid #eef0f3">
+        <sc-for list="{{ covNotes }}" as="n" hint-placeholder-count="2"><span style="font-size:12.5px;color:#4a5263"><span style="font-weight:500;color:#0d1321">{{ n.k }}</span> · {{ n.v }}</span></sc-for>
+      </div>
+      <sc-if value="{{ isA }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:14px 18px;border-top:1px solid #eef0f3;background:#f9fafb;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <button onClick="{{ addPin1 }}" style="height:34px;padding:0 14px;border-radius:8px;background:#4f5bd5;color:#fff;border:1px solid #4350c4;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#4350c4">Add U3 Pin 1 feature to AOI program</button>
+          <button onClick="{{ challenge }}" style="height:34px;padding:0 14px;border-radius:8px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">Run challenge set CH-U3-ORI-01</button>
+          <span style="font-size:12.5px;color:#4a5263">{{ chal }}</span>
+        </div>
+      </sc-if>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ tab.register }}" hint-placeholder-val="{{ false }}">
+    <section style="background:#fff;border:1px solid #e6e8ec;border-radius:12px;overflow:hidden">
+      <div style="padding:14px 18px;border-bottom:1px solid #eef0f3;display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h3 style="font-size:14px">CTQ register · {{ product }}</h3><span style="display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:500;background:{{ k01p.bg }};color:{{ k01p.fg }};border:1px solid {{ k01p.bd }}">{{ k01p.label }}</span><span style="font-size:12px;color:#8a93a3">Outcomes are Pass, Fail, Unknown or Not applicable</span></div>
+      <div style="overflow-x:auto"><div style="min-width:1000px">
+        <div style="display:grid;grid-template-columns:130px 1.2fr 1fr 1.1fr 1.2fr 1fr 80px 120px;gap:12px;padding:9px 18px;background:#f9fafb;border-bottom:1px solid #eef0f3;font-size:12px;color:#8a93a3;font-weight:500"><span>CTQ</span><span>Feature</span><span>Failure mode</span><span>Limits</span><span>Method and frequency</span><span>Source locator</span><span>Critical</span><span>Record</span></div>
+        <sc-for list="{{ ctqs }}" as="c" hint-placeholder-count="8">
+          <button onClick="{{ c.open }}" style-hover="background:#f9fafb" style="width:100%;border:0;background:transparent;cursor:pointer;text-align:left;color:#0d1321;display:grid;grid-template-columns:130px 1.2fr 1fr 1.1fr 1.2fr 1fr 80px 120px;gap:12px;padding:11px 18px;border-bottom:1px solid #f2f4f7;font-size:13px;align-items:start">
+            <span style="font-family:'Geist Mono',monospace;font-size:12px;font-weight:500">{{ c.id }}</span><span>{{ c.feat }}</span><span style="color:#4a5263">{{ c.fm }}</span><span>{{ c.limits }}</span><span style="color:#4a5263">{{ c.method }}</span><span style="color:#4a5263">{{ c.src }}</span><span>{{ c.crit }}</span>
+            <span style="display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:999px;font-size:11.5px;font-weight:500;justify-self:start;background:{{ c.p.bg }};color:{{ c.p.fg }};border:1px solid {{ c.p.bd }}"><span style="flex:none;width:5px;height:5px;border-radius:50%;background:{{ c.p.dot }}"></span>{{ c.p.label }}</span>
+          </button>
+        </sc-for>
+      </div></div>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ tab.config }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+      <section style="flex:1 1 420px;min-width:0;background:#fff;border:1px solid #e6e8ec;border-radius:12px">
+        <div style="padding:14px 18px;border-bottom:1px solid #eef0f3;display:flex;align-items:center;gap:10px"><h3 style="font-size:14px">Configuration snapshot</h3><span style="margin-left:auto;font-family:'Geist Mono',monospace;font-size:12px;padding:2px 8px;border-radius:6px;background:#f2f4f7;color:#344054">{{ snap }}</span></div>
+        <div style="padding:4px 18px">
+          <sc-for list="{{ progs }}" as="p" hint-placeholder-count="5"><div style="display:grid;grid-template-columns:150px 1fr auto;gap:10px;padding:10px 0;border-bottom:1px solid #f2f4f7;font-size:13px"><span style="color:#4a5263">{{ p.k }}</span><span style="font-weight:500">{{ p.id }} {{ p.rev }}</span><span style="font-family:'Geist Mono',monospace;font-size:12px;color:#4a5263">{{ p.hash }}</span></div></sc-for>
+        </div>
+        <p style="padding:12px 18px;font-size:12.5px;color:#4a5263;line-height:1.5">Approvals bind to this immutable hash. Any change to BOM, footprint or orientation, placement or inspection program, critical material, reflow profile or test plan opens an impact review.</p>
+        <sc-if value="{{ isA }}" hint-placeholder-val="{{ true }}"><div style="padding:0 18px 16px"><button onClick="{{ changeProg }}" style="height:34px;padding:0 14px;border-radius:8px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">Simulate placement program change ECO-118</button></div></sc-if>
+      </section>
+      <section style="flex:1 1 420px;min-width:0;background:#fff;border:1px solid #e6e8ec;border-radius:12px">
+        <div style="padding:14px 18px;border-bottom:1px solid #eef0f3"><h3 style="font-size:14px">Impact reviews</h3></div>
+        <sc-if value="{{ noImpacts }}" hint-placeholder-val="{{ true }}"><div style="padding:24px 18px;font-size:13px;color:#8a93a3">No configuration change since the current approvals.</div></sc-if>
+        <div style="padding:12px;display:flex;flex-direction:column;gap:10px">
+          <sc-for list="{{ impacts }}" as="i" hint-placeholder-count="0">
+            <div style="border:1px solid #e6e8ec;border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-family:'Geist Mono',monospace;font-size:12px;font-weight:500">{{ i.id }}</span><span style="font-size:13px;font-weight:500">{{ i.changed }}</span><span style="margin-left:auto;display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:999px;font-size:11px;font-weight:500;background:{{ i.p.bg }};color:{{ i.p.fg }};border:1px solid {{ i.p.bd }}">{{ i.p.label }}</span></div>
+              <span style="font-size:12.5px;color:#4a5263">{{ i.reason }} · {{ i.by }} · {{ i.at }}</span>
+              <span style="font-size:12.5px">Reverify {{ i.ctqs }}</span><span style="font-size:12.5px;color:#4a5263">Exposure: {{ i.exposed }}</span>
+              <sc-if value="{{ i.open }}" hint-placeholder-val="{{ true }}"><div><button onClick="{{ i.assess }}" style="height:30px;padding:0 12px;border-radius:7px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:12.5px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">Assess impact and reset affected CTQs</button></div></sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+    </div>
+  </sc-if>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { tab: null, src: 'DOC-PKG', locator: '', cq: '300', cd: '14', cc: '100% power-on, rail and boot check; U-net continuity on 1 in 10', na: '' };
+  componentDidMount() { const go = () => { if (window.PG) { this.u = PG.subscribe(() => this.forceUpdate()); this.forceUpdate(); } else this.t = setTimeout(go, 40); }; go(); }
+  componentWillUnmount() { this.u && this.u(); clearTimeout(this.t); }
+  renderVals() { try { return this.rv(); } catch (e) { console.log('RV-ERR ' + e.message); return { ready: false }; } }
+  rv() {
+    const P = window.PG; if (!P) return { ready: false };
+    const st = P.st, sc = st.scen, isA = sc === 'A', isD = sc === 'D', S = this.state, a = st.A;
+    const prodSc = isA || isD ? sc : 'A';
+    const CELL = { validated: ['Validated', '#ecfdf3', '#067647'], capable: ['Capable, not validated', '#fffaeb', '#b54708'], 'not capable': ['Not capable', '#fef3f2', '#b42318'], unknown: ['Unknown', '#fef3f2', '#b42318'], na: ['N/A', '#f9fafb', '#98a2b3'], 'not run': ['Not run', '#fef3f2', '#b42318'] };
+    let fmsRaw = P.coverage(prodSc);
+    if (!isA && !isD) { fmsRaw = JSON.parse(JSON.stringify(fmsRaw)); fmsRaw.forEach(f => Object.keys(f.cells).forEach(k => { if (f.req.includes(k)) f.cells[k] = 'validated'; })); if (sc === 'B') { const u3 = fmsRaw[0]; u3.cells.fa = 'unknown'; u3.cells.aoi = 'not capable'; u3.cells.ft = 'not run'; fmsRaw[5].cells.dip = 'not run'; } fmsRaw.forEach(f => f.covered = f.req.every(r => f.cells[r] === 'validated')); }
+    const colKeys = Object.keys(P.GATECOL);
+    const fms = fmsRaw.map(f => ({ name: f.name, ctq: f.ctq, p: P.pill(f.covered ? 'Yes' : 'No', f.covered ? 'ok' : 'crit'), cells: colKeys.map(k => { const v = f.cells[k] || 'na', c = CELL[v] || CELL.na, req = f.req.includes(k); return { label: c[0], bg: c[1], fg: c[2], ring: req ? 'inset 0 0 0 2px #4f5bd5' : 'none', note: (f.notes && f.notes[k]) || '' }; }) }));
+    const covNotes = []; if (isA || isD) fmsRaw.forEach(f => Object.keys(f.notes || {}).forEach(k => { if (f.req.includes(k)) covNotes.push({ k: f.ctq + ', ' + P.GATECOL[k], v: f.notes[k] }); }));
+    const nCov = fmsRaw.filter(f => f.covered).length;
+    let ctqsRaw = P.ctqs(prodSc);
+    if (!isA && !isD) ctqsRaw = ctqsRaw.map(c => Object.assign({}, c, { complete: !(sc === 'B' && c.id === 'CTQ-U3-ORI') }));
+    const ctqs = ctqsRaw.map(c => ({ open: () => P.openDrawer('ctq', c.id), id: c.id, feat: c.feat, fm: c.fm, limits: c.limits || 'Not set', method: [c.method, c.freq].filter(x => x && x !== 'None').join(' · ') || 'Not set', src: c.src, crit: c.critical ? 'Yes' : 'No', p: c.na ? P.pill('Not applicable', 'neutral') : c.complete ? P.pill('Complete', 'ok') : P.pill('Incomplete', 'crit') }));
+    const applic = ctqsRaw.filter(c => !c.na), nComp = applic.filter(c => c.complete).length;
+    const resolved = a.conflict.status === 'resolved', res = a.conflict.resolution;
+    const pos = { NW: [41, 23], SE: [79, 61], NE: [79, 23] };
+    const srcs = [
+      { id: 'DOC-ASM', name: 'Assembly drawing', rev: 'ASM-MB-A rev B, sheet 1', pin: 'Pin 1 NW', stmt: 'Pin 1 marked at the board-datum NW corner of U3.', tag: resolved ? 'Consistent' : 'Conflicts', p: 'NW' },
+      { id: 'DOC-PLC', name: 'Placement CSV (centroid)', rev: resolved ? 'PLC-MB-A r6, superseded' : 'PLC-MB-A r6', pin: resolved ? 'r7 maps to NW' : '0 deg maps to SE', stmt: resolved ? 'r7 maps centroid 0 degrees to machine 180 degrees, giving Pin 1 NW.' : 'Rotation 0 degrees under machine origin Pin-1-SW (CCW) places Pin 1 SE.', tag: resolved ? 'Corrected in r7' : 'Conflicts', p: resolved ? 'NW' : 'SE' },
+      { id: 'DOC-PKG', name: 'Manufacturer package drawing', rev: 'PKG-U3 rev 3, section 2', pin: 'Pin 1 NW', stmt: 'Pin 1 chamfer top-left in top view. Authoritative when reconciled with the approved manufacturing package.', tag: resolved ? 'Authoritative' : 'Candidate authority', p: 'NW' },
+      { id: 'DOC-SILK', name: 'Silkscreen and Gerber', rev: 'Gerber set G-14', pin: 'Dot ambiguous', stmt: 'The dot sits between two pads. Silkscreen or Gerber alone cannot resolve a conflict.', tag: 'Not authoritative', p: 'NE' }
+    ];
+    const sources = srcs.map(s => ({ id: s.id, name: s.name, rev: s.rev, pin: s.pin, stmt: s.stmt, p: P.pill(s.tag, s.tag === 'Conflicts' ? 'crit' : s.tag === 'Authoritative' || s.tag === 'Consistent' || s.tag === 'Corrected in r7' ? 'ok' : s.tag === 'Candidate authority' ? 'info' : 'neutral'), bd: s.tag === 'Conflicts' ? '#fecdca' : '#e6e8ec', cx: pos[s.p][0], cy: pos[s.p][1], dot: s.tag === 'Conflicts' ? '#f04438' : s.id === 'DOC-SILK' ? '#98a2b3' : '#ffffff' }));
+    const srcOpts = [['DOC-PKG', 'Manufacturer package drawing with approved manufacturing package', 'PKG-U3 rev 3 reconciled with MP-MB-A rev C'], ['DOC-ASM', 'Assembly drawing rev B', 'One side of the conflict'], ['DOC-SILK', 'Silkscreen and Gerber', 'Shows a dot near U3']].map(o => ({ label: o[1], sub: o[2], pick: () => this.setState({ src: o[0] }), bg: S.src === o[0] ? '#fafbff' : '#fff', bd: S.src === o[0] ? '#4f5bd5' : '#e6e8ec', ring: S.src === o[0] ? '5px solid #4f5bd5' : '1.5px solid #d5d9e0' }));
+    const u3 = P.u3Fields().map(f => ({ k: f[0], v: f[1] || 'Missing, blocks G0', w: f[1] ? 400 : 500, c: f[1] ? '#0d1321' : '#b42318' }));
+    const miss = u3.filter(f => f.v.startsWith('Missing')).length;
+    const progSrc = isD ? st.D.prog : a.prog;
+    const progs = [['BOM', 'bom'], ['Placement program', 'placement'], ['AOI program', 'aoi'], ['Reflow profile', 'profile'], ['Test plan', 'test']].map(x => ({ k: x[0], id: progSrc[x[1]].id, rev: progSrc[x[1]].rev, hash: progSrc[x[1]].hash }));
+    const impacts = (isA ? a.impacts : []).slice().reverse().map(i => ({ id: i.id, changed: i.changed, reason: i.reason, by: P.uname(i.by), at: P.fmtT(i.at), ctqs: i.ctqs.join(', '), exposed: i.exposed, p: P.pill(i.status, i.status === 'Closed' ? 'ok' : 'warn'), open: i.status === 'Open', assess: () => P.act('completeImpact', { id: i.id }) }));
+    const d = st.D, cs = P.concessionStatus();
+    const dct = { p: d.ftResults ? P.pill('Covered, results pass', 'ok') : d.testPlan ? P.pill('Plan agreed, results pending', 'warn') : cs === 'Active' ? P.pill('Concession active, result Unknown', 'warn') : cs === 'Expired' ? P.pill('Concession expired', 'crit') : P.pill('Coverage gap, Unknown', 'crit'),
+      plan: d.testPlan ? `${d.testPlan.id} · ${d.testPlan.evidence}` : 'No agreed plan on file.', con: d.concession ? `${d.concession.id} · ${cs} · qty ${d.concession.qty} · expires ${P.fmtD(d.concession.expiry)} · QA ${d.concession.approvals.qa ? P.uname(d.concession.approvals.qa.by) : 'pending'} · Customer ${d.concession.approvals.cust ? P.uname(d.concession.approvals.cust.by) : 'pending'}` : 'No concession requested.', na: d.naAttempts.length ? `${d.naAttempts.length} request(s) rejected because the route includes functional test.` : '' };
+    const g0 = P.gates(prodSc)[0].blockers.length;
+    const TL = isA ? [['conflict', 'Orientation conflict', resolved ? 0 : 1], ['coverage', 'Coverage matrix', fmsRaw.length - nCov], ['register', 'CTQ register', applic.length - nComp], ['config', 'Configuration and impact', a.impacts.filter(i => i.status !== 'Closed').length]] : isD ? [['testcov', 'Test coverage decision', d.ftResults || cs === 'Active' ? 0 : 1], ['coverage', 'Coverage matrix', fmsRaw.length - nCov], ['register', 'CTQ register', applic.length - nComp], ['config', 'Configuration', 0]] : [['coverage', 'Coverage matrix', fmsRaw.length - nCov], ['register', 'CTQ register', applic.length - nComp], ['config', 'Configuration', 0]];
+    const cur = S.tab && TL.some(t => t[0] === S.tab) ? S.tab : TL[0][0];
+    const tab = {}; TL.forEach(t => tab[t[0]] = cur === t[0]);
+    const tabs = TL.map(t => ({ label: t[1], count: t[2], cd: t[2] ? 'inline-flex' : 'none', go: () => this.setState({ tab: t[0] }), fg: cur === t[0] ? '#0d1321' : '#8a93a3', bd: cur === t[0] ? '#4f5bd5' : 'transparent' }));
+    const BL = { A: `Reconcile orientation, coverage and source evidence before any setup or first article. G0 has ${g0} open blocker(s).`, D: 'MB-5110 arrived without a customer functional SOP. A missing method is a coverage gap, not a pass.', B: 'Historical rev B configuration used for the 1,200-board WO-23602 cohort. Read only.', C: 'Current MB-7420 rev C configuration after CAPA-U3-001. Read only in this scenario.', E: 'Current MB-7420 rev C configuration after CAPA-U3-001. Read only in this scenario.', F: 'Current MB-7420 rev C configuration. Read only in this scenario.' };
+    return {
+      ready: true, isA, tabs, tab, headline: isD ? 'Engineering · MB-5110 rev A' : sc === 'B' ? 'Engineering · MB-7420 rev B (historical)' : 'Engineering · MB-7420 rev C', blurb: BL[sc], product: isD ? 'MB-5110 rev A' : sc === 'B' ? 'MB-7420 rev B' : 'MB-7420 rev C',
+      conf: { open: !resolved, resolved, queried: a.conflict.status !== 'open', qo: a.conflict.status !== 'open' ? 0.45 : 1, label: a.conflict.status === 'query' ? 'Query EQ-031 open' : 'Conflict open', query: a.conflict.query ? `EQ-031 raised by ${P.uname(a.conflict.query.by)}, owner ${a.conflict.query.owner}, due ${P.fmtD(a.conflict.query.due)}` : 'No engineering query raised yet.' },
+      res: res ? { by: P.uname(res.by), at: P.fmtT(res.at), source: res.source, locator: res.locator, mapping: res.mapping.replace('→', 'to') } : {},
+      sources, srcOpts, locator: S.locator, onLocator: e => this.setState({ locator: e.target.value }), raiseQuery: () => P.act('raiseQuery'), resolve: () => P.act('resolveConflict', { source: S.src, locator: S.locator }),
+      u3, u3Missing: miss ? miss + ' mandatory field(s) missing.' : 'All mandatory fields complete.',
+      cols: colKeys.map(k => P.GATECOL[k]), fms, covNotes, k02p: P.pill(`${nCov} of ${fmsRaw.length} covered`, nCov === fmsRaw.length ? 'ok' : 'crit'), ctqs, k01p: P.pill(`${nComp} of ${applic.length} complete`, nComp === applic.length ? 'ok' : 'crit'),
+      addPin1: () => P.act('addAoiPin1'), challenge: () => P.act('runChallenge'), chal: a.cov.challenge ? `${a.cov.challenge.detected} of ${a.cov.challenge.total} orientation errors detected, ${a.cov.challenge.falseCalls} false calls on ${a.cov.challenge.conforming} conforming boards` : a.cov.aoiPin1 ? 'Feature added in v5, not yet validated.' : 'AOI-MB-A v4 has no Pin 1 feature.',
+      snap: P.snap(isD ? 'D' : 'A'), progs, changeProg: () => { P.act('changeProgram'); this.setState({ tab: 'config' }); }, impacts, noImpacts: !impacts.length,
+      dct, cq: S.cq, cd: S.cd, cc: S.cc, naReason: S.na, onCq: e => this.setState({ cq: e.target.value }), onCd: e => this.setState({ cd: e.target.value }), onCc: e => this.setState({ cc: e.target.value }), onNa: e => this.setState({ na: e.target.value }),
+      uploadPlan: () => P.act('uploadTestPlan'), importFT: () => P.act('importFT'), reqCon: () => P.act('requestConcession', { qty: S.cq, days: S.cd, controls: S.cc }), apprCon: () => P.act('approveConcession'), reqNA: () => P.act('requestNA', { reason: S.na })
+    };
+  }
+}
+</script>
+</body>
+</html>

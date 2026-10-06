@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/resources.js"></script>
+<script src="/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/classical-602d74cf-5ba2-41d5-b912-d66c664fbecc/styles.css">
+<script src="_ds/classical-602d74cf-5ba2-41d5-b912-d66c664fbecc/_ds_bundle.js"></script>
+<script src="pg-engine-v2.js"></script>
+</helmet>
+<sc-if value="{{ ready }}" hint-placeholder-val="{{ true }}">
+<div style="padding:28px 32px 64px;max-width:1440px;margin:0 auto;display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px">
+    <div style="display:flex;flex-direction:column;gap:6px;max-width:760px">
+      <h1 style="font-size:24px">Command centre</h1>
+      <p style="font-size:14px;color:#4a5263">Release readiness, coverage, holds and KPIs for the selected work order.</p>
+      <details style="font-size:13px;color:#4a5263"><summary style="cursor:pointer;color:#4f5bd5;font-weight:500;list-style:none;display:inline-flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>About this work order</summary><p style="margin-top:8px;line-height:1.55;padding:10px 12px;border-radius:8px;background:#fff;border:1px solid #eef0f3">{{ blurb }}</p></details>
+    </div>
+    <button onClick="{{ dlKpi }}" style="height:34px;padding:0 14px;border-radius:8px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px" style-hover="background:#f6f7f9"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 21h16"></path></svg>Export KPIs</button>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px">
+    <sc-for list="{{ tiles }}" as="t" hint-placeholder-count="5">
+      <button onClick="{{ t.go }}" style="text-align:left;background:#fff;border:1px solid #e6e8ec;border-radius:12px;padding:16px 18px;cursor:pointer;display:flex;flex-direction:column;gap:10px;color:#0d1321;box-shadow:0 1px 2px rgba(16,24,40,.03)" style-hover="border-color:#c7cdf5;box-shadow:0 4px 12px rgba(16,24,40,.06)">
+        <div style="display:flex;align-items:center;gap:8px;width:100%"><span style="font-size:12.5px;color:#4a5263;font-weight:500">{{ t.k }}</span><span style="margin-left:auto;display:inline-flex;align-items:center;gap:5px;height:20px;padding:0 7px;border-radius:999px;font-size:11px;font-weight:500;background:{{ t.p.bg }};color:{{ t.p.fg }};border:1px solid {{ t.p.bd }}"><span style="flex:none;width:5px;height:5px;border-radius:50%;background:{{ t.p.dot }}"></span>{{ t.p.label }}</span></div>
+        <span style="font-size:26px;font-weight:600;letter-spacing:-0.02em;line-height:1.1;font-feature-settings:'tnum'">{{ t.v }}</span>
+        <div style="height:4px;border-radius:2px;background:#eef0f3;overflow:hidden;display:{{ t.barDisplay }}"><div style="height:100%;width:{{ t.bar }};background:{{ t.barC }};border-radius:2px"></div></div>
+        <span style="font-size:12.5px;color:#4a5263;line-height:1.45;text-wrap:pretty">{{ t.sub }}</span>
+      </button>
+    </sc-for>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+    <section style="flex:3 1 600px;min-width:0;background:#fff;border:1px solid #e6e8ec;border-radius:12px;overflow:hidden">
+      <div style="padding:14px 18px;border-bottom:1px solid #eef0f3;display:flex;flex-wrap:wrap;align-items:baseline;gap:10px"><h3 style="font-size:14px">Key performance indicators</h3><span style="font-size:12px;color:#8a93a3">Grouped by stage. Select a row for the calculation and contributing records.</span></div>
+      <div style="overflow-x:auto"><div style="min-width:720px">
+        <div style="display:grid;grid-template-columns:minmax(200px,1.5fr) 110px 150px 76px 140px;gap:12px;padding:9px 18px;background:#f9fafb;border-bottom:1px solid #eef0f3;font-size:12px;color:#8a93a3;font-weight:500"><span>Indicator</span><span>Actual</span><span>Against target</span><span>Trend</span><span>Data source</span></div>
+        <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+          <div style="padding:10px 18px 6px;font-size:11.5px;font-weight:600;color:#4f5bd5;letter-spacing:.02em;border-bottom:1px solid #f2f4f7;background:#fcfcfd">{{ g.group }}</div>
+          <sc-for list="{{ g.items }}" as="k" hint-placeholder-count="3">
+            <button onClick="{{ k.go }}" style="width:100%;display:grid;grid-template-columns:minmax(200px,1.5fr) 110px 150px 76px 140px;gap:12px;padding:10px 18px;border:0;border-bottom:1px solid #f2f4f7;background:transparent;cursor:pointer;text-align:left;align-items:center;color:#0d1321" style-hover="background:#f9fafb">
+              <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:13.5px;font-weight:500">{{ k.name }}</span><span style="font-size:11.5px;color:#8a93a3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ k.note }}</span></span>
+              <span style="font-size:15px;font-weight:600;font-feature-settings:'tnum';color:{{ k.vc }}">{{ k.display }}</span>
+              <span style="display:flex;flex-direction:column;gap:4px"><span style="height:6px;border-radius:3px;background:#eef0f3;position:relative;display:{{ k.barD }}"><span style="position:absolute;left:0;top:0;bottom:0;border-radius:3px;width:{{ k.bar }};background:{{ k.barC }}"></span><span style="position:absolute;top:-3px;bottom:-3px;width:2px;background:#0d1321;left:{{ k.tgt }};display:{{ k.tgtD }}"></span></span><span style="font-size:11px;color:#8a93a3">{{ k.tgtTxt }}</span></span>
+              <span><svg width="60" height="20" viewBox="0 0 60 20" style="display:{{ k.sparkD }}"><polyline points="{{ k.spark }}" fill="none" stroke="#4f5bd5" stroke-width="1.6" stroke-linejoin="round"></polyline></svg><span style="font-size:11px;color:#c0c6d0;display:{{ k.noSparkD }}">No history</span></span>
+              <span style="display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:999px;font-size:11.5px;font-weight:500;justify-self:start;background:{{ k.b.bg }};color:{{ k.b.fg }};border:1px solid {{ k.b.bd }};white-space:nowrap"><span style="flex:none;width:5px;height:5px;border-radius:50%;background:{{ k.b.dot }}"></span>{{ k.b.label }}</span>
+            </button>
+          </sc-for>
+        </sc-for>
+      </div></div>
+    </section>
+    <section style="flex:2 1 320px;min-width:0;background:#fff;border:1px solid #e6e8ec;border-radius:12px;display:flex;flex-direction:column">
+      <div style="padding:14px 18px;border-bottom:1px solid #eef0f3;display:flex;align-items:center;gap:10px"><h3 style="font-size:14px">Recent activity</h3><span style="font-size:12px;color:#8a93a3">Append-only audit</span></div>
+      <sc-if value="{{ noAudit }}" hint-placeholder-val="{{ false }}"><div style="padding:20px 18px;font-size:13px;color:#8a93a3">Nothing recorded since reset.</div></sc-if>
+      <div style="padding:6px 18px 12px;display:flex;flex-direction:column">
+        <sc-for list="{{ audit }}" as="a" hint-placeholder-count="5">
+          <div style="display:grid;grid-template-columns:14px minmax(0,1fr);gap:10px;padding:8px 0">
+            <span style="flex:none;width:8px;height:8px;border-radius:50%;margin-top:6px;background:{{ a.dot }}"></span>
+            <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:13px;font-weight:500">{{ a.action }}</span><span style="font-size:12px;color:#4a5263;line-height:1.4">{{ a.detail }}</span><span style="font-size:11.5px;color:#8a93a3">{{ a.actor }} · {{ a.time }}</span></span>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </div>
+
+  <section style="background:#fff;border:1px solid #e6e8ec;border-radius:12px;overflow:hidden">
+    <div style="padding:14px 18px;border-bottom:1px solid #eef0f3;display:flex;flex-wrap:wrap;align-items:baseline;gap:10px"><h3 style="font-size:14px">Work orders</h3><span style="font-size:12px;color:#8a93a3">Each scenario keeps its own dataset so numbers never combine.</span></div>
+    <div style="overflow-x:auto"><div style="min-width:820px">
+      <div style="display:grid;grid-template-columns:minmax(200px,1.3fr) 120px 110px 120px minmax(180px,1fr) 120px;gap:12px;padding:9px 18px;background:#f9fafb;border-bottom:1px solid #eef0f3;font-size:12px;color:#8a93a3;font-weight:500"><span>Scenario</span><span>Work order</span><span>Customer</span><span>Product</span><span>State</span><span>Open blockers</span></div>
+      <sc-for list="{{ portfolio }}" as="p" hint-placeholder-count="6">
+        <button onClick="{{ p.go }}" style="width:100%;display:grid;grid-template-columns:minmax(200px,1.3fr) 120px 110px 120px minmax(180px,1fr) 120px;gap:12px;padding:11px 18px;border:0;border-bottom:1px solid #f2f4f7;background:{{ p.bg }};cursor:pointer;text-align:left;align-items:center;color:#0d1321" style-hover="background:#f9fafb">
+          <span style="display:flex;align-items:center;gap:10px"><span style="width:22px;height:22px;border-radius:6px;background:#f2f4f7;display:grid;place-items:center;font-size:11px;font-weight:600">{{ p.id }}</span><span style="font-size:13.5px;font-weight:500">{{ p.name }}</span></span>
+          <span style="font-family:'Geist Mono',monospace;font-size:12.5px">{{ p.order }}</span><span style="font-size:13px">{{ p.cust }}</span><span style="font-size:13px">{{ p.product }}</span>
+          <span style="display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:999px;font-size:11.5px;font-weight:500;justify-self:start;background:{{ p.st.bg }};color:{{ p.st.fg }};border:1px solid {{ p.st.bd }}"><span style="flex:none;width:5px;height:5px;border-radius:50%;background:{{ p.st.dot }}"></span>{{ p.st.label }}</span>
+          <span style="font-size:13px;font-weight:500;color:{{ p.bc }}">{{ p.blk }}</span>
+        </button>
+      </sc-for>
+    </div></div>
+  </section>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() { const go = () => { if (window.PG) { this.u = PG.subscribe(() => this.forceUpdate()); this.forceUpdate(); } else this.t = setTimeout(go, 40); }; go(); }
+  componentWillUnmount() { this.u && this.u(); clearTimeout(this.t); }
+  renderVals() { try { return this.rv(); } catch (e) { console.log('RV-ERR ' + e.message); return { ready: false }; } }
+  rv() {
+    const P = window.PG; if (!P) return { ready: false };
+    const st = P.st, sc = st.scen, d = P.cur(), u = P.user();
+    const BT = { 'Direct machine data': 'info', 'Manual verified data': 'ok', 'Proxy': 'warn', 'Synthetic demo': 'neutral', 'Missing': 'crit', 'Not applicable': 'neutral' };
+    const groups = P.kpiGroups().map(g => ({ group: g.group, items: g.items.map(k => { const pct = k.unit === '%' && k.value !== null; const tgt = k.target || null; const miss = tgt && k.value !== null && k.value < tgt; const lowerBetter = /K09|K12|K13|K14|K16|K18|K27/.test(k.id); return { name: k.name, display: k.display, vc: miss || k.badge === 'Missing' ? '#b42318' : '#0d1321', note: [k.cohort, k.excl ? 'Excludes ' + k.excl : '', k.note].filter(Boolean).join(' · '), barD: pct ? 'block' : 'none', bar: pct ? Math.min(100, k.value) + '%' : '0%', barC: miss ? '#f04438' : tgt && !miss ? '#32d583' : lowerBetter ? '#98a2b3' : '#4f5bd5', tgt: tgt ? tgt + '%' : '0%', tgtD: tgt ? 'block' : 'none', tgtTxt: tgt ? (miss ? 'Below target ' + tgt + '%' : 'Meets target ' + tgt + '%') : pct ? 'Target needs baseline' : k.unit === 'PPM' ? 'Lower is better' : 'No target', spark: k.spark, sparkD: k.spark ? 'block' : 'none', noSparkD: k.spark ? 'none' : 'inline', b: P.pill(k.badge, BT[k.badge] || 'neutral'), go: () => P.openDrawer('kpi', k.id) }; }) }));
+    const blk = k => P.gates(k).reduce((n, g) => n + g.blockers.length, 0);
+    const heldC = sc === 'C' && P.recon().held ? 1 : 0, activeHolds = (d.holds || []).filter(h => h.status === 'Active'), holds = activeHolds.length + heldC;
+    const sp = P.spcPaste(), ackd = !!st.C.spc.ack, imp = P.importStats(), k28 = imp.valid / imp.expected * 100;
+    const cov = sc === 'A' || sc === 'D' ? P.coverage() : null, covN = cov ? cov.filter(f => f.covered).length : sc === 'B' ? 3 : 6, covD = cov ? cov.length : 6;
+    const nb = blk(sc), stateTxt = P.orderState();
+    const tiles = [
+      { k: 'Release readiness', v: stateTxt.split(' · ')[0], p: nb ? P.pill(nb + (nb > 1 ? ' blockers' : ' blocker'), 'crit') : P.pill('Clear', 'ok'), sub: nb ? 'See the next action above, or open Release for every blocker' : 'All evaluated gates clear', go: () => P.nav('release'), barDisplay: 'none' },
+      { k: 'Critical coverage', v: `${covN} of ${covD}`, p: covN === covD ? P.pill('On target', 'ok') : P.pill('Below 100%', 'crit'), sub: cov ? 'Failure modes with validated detection' : sc === 'B' ? 'Historical configuration at time of build' : 'After CAPA-U3-001', go: () => P.nav('eng'), barDisplay: 'block', bar: (covN / covD * 100) + '%', barC: covN === covD ? '#32d583' : '#f04438' },
+      { k: 'Active holds', v: String(holds), p: holds ? P.pill('Contained', 'warn') : P.pill('None', 'neutral'), sub: holds ? activeHolds.map(h => h.id).concat(heldC ? ['H-C-014'] : []).join(', ') : 'No active holds on this work order', go: () => { const h = activeHolds[0]; if (h) P.openDrawer('hold', h.id); else P.nav(sc === 'C' ? 'prod' : 'trace'); }, barDisplay: 'none' },
+      { k: 'SPC alerts', v: ackd ? '0 open' : '1 open', p: ackd ? P.pill('Acknowledged', 'ok') : P.pill('Drift', 'warn'), sub: `Paste volume U7, rule fired at point ${sp.firstAlert + 1}, spec crossed at ${sp.cross + 1}`, go: () => { P.setScen('C'); P.nav('spc'); }, barDisplay: 'none' },
+      { k: 'Data readiness', v: k28.toFixed(1) + '%', p: P.pill('Live', 'info'), sub: `${imp.late} late · ${imp.invalid} invalid · ${imp.conflicts} conflicts`, go: () => P.nav('data'), barDisplay: 'block', bar: k28 + '%', barC: '#4f5bd5' }
+    ];
+    const BL = { A: 'U3 orientation is ambiguous and AOI cannot see Pin 1. The order cannot reach batch production until both are resolved, verified on a real first article and approved by distinct people.', B: 'A customer return confirmed one board with U3 rotated 180 degrees. 1,200 serials built on the same setup are potentially exposed; only one is confirmed.', C: 'Paste volume on U7 pads drifts upward. SPC rules fire before the specification is crossed, giving time to act.', D: 'Customer B supplied no functional SOP. Appearance and solder checks pass, but functional coverage is Unknown, which blocks release.', E: 'Three post-action lots, 600 required U3 checks, zero failures. CAPA-U3-001 can close only after an independent review against predefined criteria.', F: 'Imports contain a duplicate, a missing serial, a wrong unit and a late critical failure. Counts stay stable and bad rows quarantine.' };
+    const portfolio = Object.keys(P.SCEN).filter(k => !u.roles.includes('customer') || P.SCEN[k].customer === u.customer).map(k => { const o = st[k].order, s = P.orderState(k), n = blk(k); return { id: k, name: P.SCEN[k].name, order: o.id, cust: o.customerName, product: o.product + ' rev ' + o.rev, st: P.pill(s.split(' · ')[0]), blk: n ? n + (n > 1 ? ' blockers' : ' blocker') : 'None', bc: n ? '#b42318' : '#067647', bg: k === sc ? '#fafbff' : 'transparent', go: () => P.setScen(k) }; });
+    const audit = st.audit.slice(-7).reverse().map(a => ({ time: P.fmtT(a.t), actor: a.actor, action: a.action, detail: a.detail, dot: a.rejected ? '#f04438' : '#4f5bd5' }));
+    return { ready: true, blurb: BL[sc], tiles, groups, portfolio, audit, noAudit: !audit.length, dlKpi: () => P.download('kpis') };
+  }
+}
+</script>
+</body>
+</html>

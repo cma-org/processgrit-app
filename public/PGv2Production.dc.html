@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/resources.js"></script>
+<script src="/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/classical-602d74cf-5ba2-41d5-b912-d66c664fbecc/styles.css">
+<script src="_ds/classical-602d74cf-5ba2-41d5-b912-d66c664fbecc/_ds_bundle.js"></script>
+<script src="pg-engine-v2.js"></script>
+</helmet>
+<sc-if value="{{ ready }}" hint-placeholder-val="{{ true }}">
+<div style="padding:28px 32px 64px;max-width:1440px;margin:0 auto;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px">
+    <div style="display:flex;flex-direction:column;gap:6px;max-width:780px"><h1 style="font-size:24px">{{ headline }}</h1><p style="font-size:14px;color:#4a5263">Route progress by serial and panel, with holds, rework and station freshness.</p><details style="font-size:13px;color:#4a5263"><summary style="cursor:pointer;color:#4f5bd5;font-weight:500;list-style:none;display:inline-flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>About this page</summary><p style="margin-top:8px;line-height:1.55;padding:10px 12px;border-radius:8px;background:#fff;border:1px solid #eef0f3">{{ blurb }}</p></details></div>
+    <sc-if value="{{ isC }}" hint-placeholder-val="{{ true }}"><button onClick="{{ dlRecon }}" style="height:34px;padding:0 14px;border-radius:8px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">Export serial reconciliation</button></sc-if>
+  </div>
+
+  <sc-if value="{{ notC }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:16px;max-width:980px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">
+        <sc-for list="{{ lotStats }}" as="l" hint-placeholder-count="4"><div style="background:#fff;border:1px solid #e6e8ec;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:6px"><span style="font-size:12.5px;color:#4a5263">{{ l.k }}</span><span style="font-size:22px;font-weight:600;letter-spacing:-0.02em">{{ l.v }}</span><span style="font-size:12px;color:#8a93a3">{{ l.s }}</span></div></sc-for>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 14px;border-radius:10px;background:#f9fafb;border:1px solid #eef0f3;max-width:980px;color:#8a93a3"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg><span style="font-size:13px;color:#4a5263;flex:1 1 320px;line-height:1.45">{{ otherNote }}</span><sc-if value="{{ canStart }}" hint-placeholder-val="{{ false }}"><button onClick="{{ start }}" style="height:28px;padding:0 10px;border-radius:7px;background:transparent;color:#4f5bd5;border:0;font-size:12.5px;font-weight:500;cursor:pointer" style-hover="background:#eef0fc">Start batch production</button></sc-if><button onClick="{{ goC }}" style="height:28px;padding:0 10px;border-radius:7px;background:transparent;color:#4f5bd5;border:0;font-size:12.5px;font-weight:500;cursor:pointer" style-hover="background:#eef0fc">Open lot LOT-D-01</button></div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isC }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;gap:2px;border-bottom:1px solid #e6e8ec;overflow-x:auto;scrollbar-width:none">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4"><button onClick="{{ t.go }}" style="flex:none;height:40px;padding:0 14px;border:0;background:transparent;cursor:pointer;font-size:13.5px;font-weight:500;color:{{ t.fg }};border-bottom:2px solid {{ t.bd }};margin-bottom:-1px" style-hover="color:#0d1321">{{ t.label }}</button></sc-for>
+    </div>
+
+    <sc-if value="{{ tab.lot }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <section style="background:#fff;border:1px solid #e6e8ec;border-radius:12px;overflow:hidden">
+          <div style="padding:14px 18px;border-bottom:1px solid #eef0f3;display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h3 style="font-size:14px">Route progress · {{ lot }}</h3><span style="font-size:12px;color:#8a93a3">DIP Yes branch goes to {{ dipRoute }}. AOI {{ aoiPos }}. Skipped and unknown gates are shown, never filled.</span></div>
+          <div style="overflow-x:auto"><div style="min-width:980px;display:grid;grid-template-columns:repeat(11,minmax(0,1fr))">
+            <sc-for list="{{ stages }}" as="s" hint-placeholder-count="11">
+              <div style="padding:12px 10px;border-right:1px solid #f2f4f7;display:flex;flex-direction:column;gap:6px;background:{{ s.bg }}">
+                <div style="display:flex;align-items:center;gap:6px"><span style="flex:none;width:8px;height:8px;border-radius:50%;background:{{ s.dot }}"></span><span style="font-size:12px;font-weight:500;line-height:1.2">{{ s.name }}</span></div>
+                <span style="font-size:20px;font-weight:600;font-feature-settings:'tnum'">{{ s.done }}</span>
+                <div style="height:3px;border-radius:2px;background:#eef0f3"><div style="height:100%;width:{{ s.pct }};background:{{ s.dot }};border-radius:2px"></div></div>
+                <span style="font-size:11.5px;color:#4a5263;line-height:1.35">{{ s.sub }}</span>
+                <span style="font-size:11.5px;font-weight:500;color:#b42318;line-height:1.35">{{ s.flag }}</span>
+              </div>
+            </sc-for>
+          </div></div>
+        </section>
+        <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+          <section style="flex:3 1 480px;min-width:0;background:#fff;border:1px solid #e6e8ec;border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:baseline;gap:10px"><h3 style="font-size:14px">Boards by serial</h3><span style="font-size:12px;color:#8a93a3">Select a board to see its route events</span></div>
+            <div style="display:grid;grid-template-columns:repeat(20,minmax(0,1fr));gap:3px;max-width:680px">
+              <sc-for list="{{ boards }}" as="b" hint-placeholder-count="200"><button onClick="{{ b.pick }}" title="{{ b.title }}" style="aspect-ratio:1;border:0;padding:0;border-radius:3px;cursor:pointer;background:{{ b.bg }};box-shadow:{{ b.ring }}"></button></sc-for>
+            </div>
+            <div style="display:flex;gap:6px 16px;flex-wrap:wrap;font-size:12px;color:#4a5263">
+              <sc-for list="{{ legend }}" as="l" hint-placeholder-count="6"><span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:3px;background:{{ l.bg }};box-shadow:{{ l.ring }}"></span>{{ l.k }}</span></sc-for>
+            </div>
+          </section>
+          <section style="flex:2 1 320px;min-width:0;background:#fff;border:1px solid #e6e8ec;border-radius:12px">
+            <div style="padding:14px 18px;border-bottom:1px solid #eef0f3;display:flex;flex-direction:column;gap:2px"><span style="display:flex;align-items:center"><span style="font-family:'Geist Mono',monospace;font-size:14px;font-weight:500">{{ sel.serial }}</span><button onClick="{{ sel.open }}" style="margin-left:6px;height:22px;padding:0 8px;border-radius:6px;background:transparent;color:#4f5bd5;border:0;font-size:12px;font-weight:500;cursor:pointer" style-hover="background:#eef0fc">Details</button></span><span style="font-size:12px;color:#4a5263">{{ sel.panel }}, position {{ sel.pos }} · {{ sel.status }}</span></div>
+            <div style="padding:6px 18px 10px">
+              <sc-for list="{{ sel.events }}" as="e" hint-placeholder-count="11"><div style="display:grid;grid-template-columns:12px 1fr auto;gap:10px;padding:7px 0;border-bottom:1px solid #f2f4f7;align-items:start"><span style="flex:none;width:8px;height:8px;border-radius:50%;margin-top:5px;background:{{ e.dot }}"></span><span style="display:flex;flex-direction:column;gap:1px"><span style="font-size:13px">{{ e.st }}</span><span style="font-size:11.5px;color:#8a93a3">{{ e.m }}</span></span><span style="font-size:12px;font-weight:500;color:{{ e.c }}">{{ e.r }}</span></div></sc-for>
+            </div>
+            <sc-if value="{{ sel.is117 }}" hint-placeholder-val="{{ false }}"><div style="padding:0 18px 16px"><button onClick="{{ xray }}" style="height:32px;padding:0 12px;border-radius:8px;background:#4f5bd5;color:#fff;border:1px solid #4350c4;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#4350c4">Run required X-ray on MB-C-0117</button></div></sc-if>
+          </section>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ tab.rework }}" hint-placeholder-val="{{ false }}">
+      <section style="background:#fff;border:1px solid #e6e8ec;border-radius:12px">
+        <div style="padding:14px 18px;border-bottom:1px solid #eef0f3;display:flex;flex-direction:column;gap:2px"><h3 style="font-size:14px">Rework loop · {{ rw.serial }}</h3><span style="font-size:12px;color:#8a93a3">Rework never erases the first-pass failure and does not automatically clear related material or batch holds.</span></div>
+        <div style="padding:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px">
+          <sc-for list="{{ rw.steps }}" as="s" hint-placeholder-count="6">
+            <div style="border:1px solid {{ s.bd }};border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px;background:{{ s.bg }}">
+              <div style="display:flex;align-items:center;gap:8px"><span style="flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:600;background:{{ s.cBg }};color:{{ s.cFg }}">{{ s.n }}</span><span style="font-size:11.5px;font-weight:500;color:{{ s.sc }}">{{ s.state }}</span></div>
+              <span style="font-size:13.5px;font-weight:500">{{ s.k }}</span>
+              <span style="font-size:12px;color:#4a5263">{{ s.who }}</span>
+              <span style="font-size:12px;color:#8a93a3;line-height:1.4">{{ s.note }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="padding:0 18px 18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button onClick="{{ rw.next }}" disabled="{{ rw.done }}" style="height:34px;padding:0 14px;border-radius:8px;background:#4f5bd5;color:#fff;border:1px solid #4350c4;font-size:13px;font-weight:500;cursor:pointer;opacity:{{ rw.op }}" style-hover="background:#4350c4">{{ rw.btn }}</button><span style="font-size:12.5px;color:#4a5263">{{ rw.hint }}</span></div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ tab.panels }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+        <section style="flex:1 1 420px;min-width:0;background:#fff;border:1px solid #e6e8ec;border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h3 style="font-size:14px">Panel genealogy</h3>
+            <div style="display:flex;gap:2px;padding:2px;border-radius:8px;background:#f2f4f7;margin-left:auto"><sc-for list="{{ panelOpts }}" as="p" hint-placeholder-count="3"><button onClick="{{ p.pick }}" style="height:28px;padding:0 10px;border-radius:6px;border:0;cursor:pointer;font-family:'Geist Mono',monospace;font-size:12px;background:{{ p.bg }};color:{{ p.fg }};box-shadow:{{ p.sh }}">{{ p.id }}</button></sc-for></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;padding:10px;border-radius:10px;background:#f2f4f7">
+            <sc-for list="{{ pan.pos }}" as="p" hint-placeholder-count="5"><div style="padding:10px 8px;border-radius:8px;display:flex;flex-direction:column;gap:4px;min-height:100px;background:{{ p.bg }};border:1px solid {{ p.bd }}"><span style="font-size:11px;color:#8a93a3">Position {{ p.n }}</span><span style="font-family:'Geist Mono',monospace;font-size:11.5px;font-weight:500">{{ p.serial }}</span><span style="font-size:11px;line-height:1.35;color:{{ p.fg }}">{{ p.aoi }}</span></div></sc-for>
+          </div>
+          <span style="font-size:12.5px;color:#4a5263;line-height:1.5;text-wrap:pretty">{{ pan.note }}</span>
+        </section>
+        <section style="flex:1 1 380px;min-width:0;background:#fff;border:1px solid #e6e8ec;border-radius:12px">
+          <div style="padding:14px 18px;border-bottom:1px solid #eef0f3"><h3 style="font-size:14px">Stations and last data</h3></div>
+          <div style="padding:4px 18px 10px">
+            <sc-for list="{{ stations }}" as="s" hint-placeholder-count="7"><div style="display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:9px 0;border-bottom:1px solid #f2f4f7"><span style="font-size:13px;font-weight:500">{{ s.name }}</span><span style="display:inline-flex;align-items:center;gap:5px;height:20px;padding:0 7px;border-radius:999px;font-size:11px;font-weight:500;background:{{ s.p.bg }};color:{{ s.p.fg }};border:1px solid {{ s.p.bd }}"><span style="flex:none;width:5px;height:5px;border-radius:50%;background:{{ s.p.dot }}"></span>{{ s.p.label }}</span><span style="font-size:12px;color:#8a93a3">{{ s.kind }}, last record {{ s.last }}</span></div></sc-for>
+          </div>
+        </section>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ tab.recon }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px">
+          <sc-for list="{{ recon }}" as="r" hint-placeholder-count="6"><div style="background:#fff;border:1px solid {{ r.bd }};border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:4px"><span style="font-size:12.5px;color:#4a5263">{{ r.k }}</span><span style="font-size:26px;font-weight:600;color:{{ r.c }};font-feature-settings:'tnum'">{{ r.v }}</span></div></sc-for>
+        </div>
+        <span style="font-size:12.5px;color:#4a5263">Started units reconcile into good, held, rework, scrapped and WIP without double counting.</span>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+          <sc-for list="{{ fixture }}" as="f" hint-placeholder-count="5"><div style="background:#fff;border:1px solid #e6e8ec;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:6px"><div style="display:flex;gap:8px;align-items:center"><span style="font-size:12.5px;font-weight:500">{{ f.name }}</span></div><span style="font-size:24px;font-weight:600;font-feature-settings:'tnum'">{{ f.display }}</span><span style="font-family:'Geist Mono',monospace;font-size:12px;color:#4a5263">{{ f.frac }}</span><span style="font-size:12px;color:#8a93a3;line-height:1.4">{{ f.note }}</span></div></sc-for>
+        </div>
+        <span style="font-size:12.5px;color:#4a5263">Scrap records MB-C-0031, 0077, 0128, 0156 and 0191: FT failure not recoverable, quantity basis board, authorized by Daniel Cho.</span>
+      </div>
+    </sc-if>
+  </sc-if>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { tab: 'lot', sel: 42, panel: 'PNL-D-024' };
+  componentDidMount() { const go = () => { if (window.PG) { this.u = PG.subscribe(() => this.forceUpdate()); this.forceUpdate(); } else this.t = setTimeout(go, 40); }; go(); }
+  componentWillUnmount() { this.u && this.u(); clearTimeout(this.t); }
+  renderVals() { try { return this.rv(); } catch (e) { console.log('RV-ERR ' + e.message); return { ready: false }; } }
+  rv() {
+    const P = window.PG; if (!P) return { ready: false };
+    const st = P.st, sc = st.scen, isC = sc === 'C', d = P.cur(), S = this.state;
+    const base = { ready: true, isC, notC: !isC, goC: () => { P.setScen('C'); P.nav('prod'); } };
+    if (!isC) {
+      const M = {
+        A: { h: 'Production board · WO-24817', b: 'Batch production starts only after G2 passes and QA releases the order. G3 then re-evaluates on every route event.', stats: [['Planned', '1,200', 'MB-7420 rev C'], ['Built', '0', 'First article only'], ['Order state', P.orderState('A'), ''], ['G3', P.gates('A')[3].status, P.gates('A')[3].note]], note: d.order.released ? 'The order is released. An operator can start the batch; any revision change suspends it.' : 'The order is not released for batch. Complete the first article and request release.', canStart: d.order.released && !d.order.inProduction },
+        B: { h: 'Production board · WO-23602', b: 'Built 11 to 15 Aug 2026 on SMT-L2 with setup SET-0918. Route events are complete for 1,198 boards; 2 boards have no AOI record.', stats: [['Built', '1,200', '200 panels of 6'], ['Shipped', '960', 'SHP-2201, SHP-2202'], ['Finished-goods stock', '240', d.holdAt ? 'On hold' : 'Not held'], ['Missing AOI', '2', 'MB-A-1523, MB-A-1524']], note: 'Use Traceability to traverse genealogy and apply scoped holds.' },
+        D: { h: 'Production board · WO-24831', b: 'Production waits on the functional test coverage decision.', stats: [['Planned', '300', 'MB-5110 rev A'], ['Built', '1', 'First article'], ['G2', P.gates('D')[2].status, ''], ['Concession', P.concessionStatus() || 'None', '']], note: 'See Engineering for the coverage decision and First article for evidence.' },
+        E: { h: 'Production board · WO-24655', b: 'All three 200-board lots completed with full U3 inspection evidence.', stats: st.E.lots.map(l => [l.id, l.boards + ' boards', `${l.checks} U3 checks, ${l.fails} fails`]).concat([['Bypasses', '0', 'No unauthorized bypass']]), note: 'The effectiveness review lives in NCR and 8D.' },
+        F: { h: 'Production board · WO-24702', b: 'LOT-F-01 completed and dispatched in SHP-3101. Late evidence can still reopen it.', stats: [['Built', '200', ''], ['Dispatched', '200', 'SHP-3101 on 04 Oct'], ['Late failures', String(st.F.incidents.length), st.F.incidents.length ? st.F.incidents[0].serial : 'None'], ['Active holds', String(st.F.holds.filter(h => h.status === 'Active').length), '']], note: st.F.incidents.length ? 'MB-F-0088 is on hold after a late critical failure. The dispatched exposure is flagged for authorized recall review.' : 'Replay imports in Data and configuration.' }
+      }[sc];
+      return Object.assign(base, { headline: M.h, blurb: M.b, lotStats: M.stats.map(x => ({ k: x[0], v: x[1], s: x[2] })), otherNote: M.note, canStart: !!M.canStart, start: () => P.act('startProduction') });
+    }
+    const c = st.C, B = P.boardsC(), r = P.recon();
+    const col = b => b.status === 'Scrapped' ? '#d0d5dd' : b.status.startsWith('Held') ? '#f04438' : b.failed || b.up ? '#fdb022' : '#32d583';
+    const ring = b => b.xray === 'Not run' ? 'inset 0 0 0 2px #d92d20' : b.stale ? 'inset 0 0 0 2px #98a2b3' : S.sel === b.i ? '0 0 0 2px #4f5bd5' : 'none';
+    const boards = B.map(b => ({ title: `${b.serial}: ${b.status}${b.xray === 'Not run' ? ', X-ray not run' : ''}`, bg: col(b), ring: ring(b), pick: () => this.setState({ sel: b.i, panel: b.panel }) }));
+    const legend = [['Good, first pass', '#32d583', 'none'], ['Good after rework or retest', '#fdb022', 'none'], ['Held', '#f04438', 'none'], ['Scrapped', '#d0d5dd', 'none'], ['Required gate skipped', '#fff', 'inset 0 0 0 2px #d92d20'], ['Tester feed stale', '#fff', 'inset 0 0 0 2px #98a2b3']].map(x => ({ k: x[0], bg: x[1], ring: x[2] }));
+    const sb = B[S.sel - 1];
+    const ev = (stn, res, m, bad) => ({ st: stn, r: res, m, c: bad ? '#b42318' : '#067647', dot: bad ? '#f04438' : '#32d583' });
+    const events = [ev('Setup SET-1102', 'Verified', 'PLC-MB-A r7, 7e21c0'), ev('SPI-01', sb.up ? 'Fail' : 'Pass', sb.up ? 'U7 pads 116.3% above USL; reworked, attempt 2 pass' : 'Paste volume within limits', sb.up), ev('Placement SMT-L2', 'Complete', 'Program command only, not proof of placement'), ev('Reflow PRF-MB-A 2', 'Within window', 'Recipe matched; oven log is a proxy'), ev('AOI-01 v5', 'Pass', 'U3 Pin 1 feature included'), ev('X-ray', sb.xray, sb.xray === 'Not run' ? 'Route event missing; required for all hidden joints' : 'U7 all joints accepted', sb.xray === 'Not run'), ev('DIP and wave', 'Pass', 'J1 inserted and soldered'), ev('Post-DIP inspection', 'Pass', 'SMT pass is not carried forward'), ev('Depanel', 'Pass', 'Router DP-02; cleaning N/A on no-clean route'), ev('Functional test ' + (sb.stale ? 'FT-02' : 'FT-01'), sb.ft, sb.failed ? 'Attempt 1 failure preserved' : sb.stale ? 'Record received; feed now stale' : '18 of 18 cases', sb.failed), ev('Final QA', c.dispatch ? 'Released' : 'Pending', c.dispatch ? 'SHP-3001' : 'Awaiting QA authorization')];
+    events.forEach(e => { if (e.r === 'Pending') { e.c = '#b54708'; e.dot = '#fdb022'; } });
+    const stages = [['Setup', 200, 'SET-1102 verified', ''], ['SPI', 200, '190 first pass, 10 rework', ''], ['Placement', 200, 'Program events', 'Telemetry is a proxy'], ['Reflow', 200, '11 of 12 profiles conform', ''], ['AOI post-reflow', 200, '58 calls, 17 confirmed', ''], ['X-ray', c.xray0117 ? 200 : 199, 'All hidden joints', c.xray0117 ? '' : '1 skipped: MB-C-0117'], ['DIP and wave', 200, 'J1, J5', ''], ['Post-DIP inspection', 200, '196 first pass', ''], ['Depanel and clean', 200, 'Cleaning N/A, no-clean', ''], ['Functional test', 200, '180 first pass, 20 fail', '10 records from stale FT-02'], ['Final QA', c.dispatch ? 200 : 0, c.dispatch ? 'SHP-3001' : 'Pending', '']].map(x => ({ name: x[0], done: x[1] + ' / 200', pct: (x[1] / 2) + '%', sub: x[2], flag: x[3], dot: /skipped/.test(x[3]) ? '#f04438' : x[1] === 200 ? '#32d583' : x[1] === 0 ? '#d0d5dd' : '#fdb022', bg: /skipped/.test(x[3]) ? '#fffbfa' : 'transparent' }));
+    const rw = c.rework;
+    const steps = rw.steps.map((s, i) => { const done = i < rw.step, next = i === rw.step; return { n: i + 1, k: s.k, who: s.who ? `${s.who}, ${P.fmtT(s.at)}` : 'Pending', note: s.note, state: done ? 'Complete' : next ? 'Next' : 'Waiting', sc: done ? '#067647' : next ? '#3640a8' : '#8a93a3', bg: next ? '#fafbff' : '#fff', bd: next ? '#c7cdf5' : '#e6e8ec', cBg: done ? '#12b76a' : next ? '#4f5bd5' : '#f2f4f7', cFg: done || next ? '#fff' : '#8a93a3' }; });
+    const nextRole = ['', '', '', '', 'an operator', 'QA, not the technician'][rw.step] || '';
+    const panelIds = ['PNL-D-009', 'PNL-D-024', 'PNL-D-031'], pid = S.panel, pn = parseInt(pid.slice(-3), 10);
+    const pos = [1, 2, 3, 4, 5].map(k => { const i = (pn - 1) * 5 + k, b = B[i - 1], ex = pid === 'PNL-D-024' && k === 5; return { n: k, serial: b ? b.serial : 'Empty', aoi: ex ? 'Outside panel AOI image; board-level AOI run 2 pass' : 'Included in panel AOI, pass', bg: ex ? '#fffaeb' : '#fff', bd: b && b.i === S.sel ? '#4f5bd5' : ex ? '#fedf89' : '#e6e8ec', fg: ex ? '#b54708' : '#4a5263' }; });
+    const kp = P.kpis('C');
+    const fixture = ['K20', 'K21', 'FY', 'K23', 'K17'].map(id => { const k = kp.find(x => x.id === id); return { id: k.id, name: k.name, display: k.display, frac: `${k.num} ÷ ${k.den}`, note: k.note || '' }; });
+    const recon = [['Started', r.started, 0], ['Good', r.good, 1], ['Held', r.held, r.held ? 2 : 0], ['Rework', r.rework, 0], ['Scrapped', r.scrap, 0], ['WIP', r.wip, 0]].map(x => ({ k: x[0], v: x[1], c: x[2] === 1 ? '#067647' : x[2] === 2 ? '#b42318' : '#0d1321', bd: x[2] === 2 ? '#fecdca' : '#e6e8ec' }));
+    const TL = [['lot', 'Lot overview'], ['rework', 'Rework loop'], ['panels', 'Panels and stations'], ['recon', 'Reconciliation']];
+    const tab = {}; TL.forEach(t => tab[t[0]] = S.tab === t[0]);
+    return Object.assign(base, {
+      headline: 'Production board · LOT-D-01', blurb: 'Route progress by serial and panel, with hold, rework and scrap status and the last data timestamp of every station.',
+      tabs: TL.map(t => ({ label: t[1], go: () => this.setState({ tab: t[0] }), fg: S.tab === t[0] ? '#0d1321' : '#8a93a3', bd: S.tab === t[0] ? '#4f5bd5' : 'transparent' })), tab,
+      lot: c.order.lot, dipRoute: st.config.dipYes === 'insertion' ? 'insertion and wave' : 'depanel and clean (as drawn)', aoiPos: st.config.aoiPos, stages, boards, legend,
+      sel: { open: () => P.openDrawer('serial', sb.serial), serial: sb.serial, panel: sb.panel, pos: sb.pos, status: sb.status, events, is117: sb.i === 117 && !c.xray0117 }, xray: () => P.act('xray0117'),
+      rw: { serial: rw.serial, steps, done: rw.step >= 6, op: rw.step >= 6 ? 0.45 : 1, btn: rw.step >= 6 ? 'Loop complete' : 'Record ' + rw.steps[rw.step].k.toLowerCase(), hint: rw.step >= 6 ? 'MB-C-0042 accepted. First-pass failure retained.' : 'The next step must be recorded by ' + nextRole + '.', next: () => P.act('reworkStep') },
+      panelOpts: panelIds.map(p => ({ id: p, pick: () => this.setState({ panel: p }), bg: p === pid ? '#fff' : 'transparent', fg: p === pid ? '#0d1321' : '#4a5263', sh: p === pid ? '0 1px 2px rgba(16,24,40,.1)' : 'none' })),
+      pan: { pos, note: pid === 'PNL-D-024' ? 'Position 5 was outside the panel AOI field of view. A panel-level pass applies to a child board only when that position and its features were included, so MB-C-0120 needed its own board-level run.' : 'All five positions were included in the panel AOI image. Child serials keep their panel position after depaneling.' },
+      stations: P.CONNECTORS.map(s => ({ name: s.name, kind: s.kind, last: s.last, p: P.pill(s.status, s.status === 'Live' ? 'ok' : s.status === 'Stale' || s.status === 'Not connected' ? 'crit' : 'warn') })),
+      recon, fixture, dlRecon: () => P.download('recon')
+    });
+  }
+}
+</script>
+</body>
+</html>

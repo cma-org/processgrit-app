@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/resources.js"></script>
+<script src="/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/classical-602d74cf-5ba2-41d5-b912-d66c664fbecc/styles.css">
+<script src="_ds/classical-602d74cf-5ba2-41d5-b912-d66c664fbecc/_ds_bundle.js"></script>
+<script src="pg-engine-v2.js"></script>
+</helmet>
+<sc-if value="{{ ready }}" hint-placeholder-val="{{ true }}">
+<div style="padding:28px 32px 64px;max-width:1440px;margin:0 auto;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;flex-direction:column;gap:6px;max-width:820px"><h1 style="font-size:24px">Data and configuration</h1><p style="font-size:14px;color:#4a5263">Imports, data readiness, configuration, roles and audit.</p><details style="font-size:13px;color:#4a5263"><summary style="cursor:pointer;color:#4f5bd5;font-weight:500;list-style:none;display:inline-flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>About this page</summary><p style="margin-top:8px;line-height:1.55;padding:10px 12px;border-radius:8px;background:#fff;border:1px solid #eef0f3">Repeated imports never inflate KPIs, invalid rows go to quarantine with row-specific reasons, and late events re-evaluate releases without altering historical approvals. {{ scenNote }}</p></details></div>
+  <div style="display:flex;gap:2px;border-bottom:1px solid #e6e8ec;overflow-x:auto;scrollbar-width:none">
+    <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="6"><button onClick="{{ t.go }}" style="flex:none;height:40px;padding:0 14px;border:0;background:transparent;cursor:pointer;font-size:13.5px;font-weight:500;color:{{ t.fg }};border-bottom:2px solid {{ t.bd }};margin-bottom:-1px;display:flex;align-items:center;gap:8px" style-hover="color:#0d1321">{{ t.label }}<span style="font-size:11px;height:18px;min-width:18px;padding:0 6px;border-radius:9px;display:{{ t.cd }};align-items:center;justify-content:center;background:#fef3f2;color:#b42318;border:1px solid #fecdca">{{ t.count }}</span></button></sc-for>
+  </div>
+
+  <sc-if value="{{ tab.imports }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px">
+        <sc-for list="{{ stats }}" as="s" hint-placeholder-count="6"><div style="background:#fff;border:1px solid {{ s.bd }};border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:4px"><span style="font-size:12.5px;color:#4a5263">{{ s.k }}</span><span style="font-size:24px;font-weight:600;letter-spacing:-0.02em;color:{{ s.c }};font-feature-settings:'tnum'">{{ s.v }}</span><span style="font-size:12px;color:#8a93a3">{{ s.s }}</span></div></sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px">
+        <sc-for list="{{ files }}" as="f" hint-placeholder-count="3">
+          <div style="background:#fff;border:1px solid #e6e8ec;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:10px"><span style="width:34px;height:34px;border-radius:8px;display:grid;place-items:center;background:#ecfdf3;border:1px solid #abefc6;color:#067647;font-size:10px;font-weight:600;font-family:'Geist Mono',monospace;flex:none">CSV</span><span style="display:flex;flex-direction:column;min-width:0"><span style="font-size:12.5px;font-weight:500;font-family:'Geist Mono',monospace;word-break:break-all">{{ f.name }}</span><span style="font-size:11.5px;color:#8a93a3">{{ f.src }} · {{ f.rows }} rows</span></span></div>
+            <span style="font-size:12.5px;color:#4a5263;line-height:1.5">{{ f.hint }}</span>
+            <span style="display:inline-flex;align-self:flex-start;align-items:center;height:20px;padding:0 7px;border-radius:999px;font-size:11px;font-weight:500;background:{{ f.p.bg }};color:{{ f.p.fg }};border:1px solid {{ f.p.bd }}">{{ f.p.label }}</span>
+            <div style="display:flex;gap:8px;margin-top:auto"><button onClick="{{ f.preview }}" style="height:32px;padding:0 12px;border-radius:8px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">Preview</button><button onClick="{{ f.commit }}" style="height:32px;padding:0 12px;border-radius:8px;background:#4f5bd5;color:#fff;border:1px solid #4350c4;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#4350c4">Import</button></div>
+          </div>
+        </sc-for>
+      </div>
+      <sc-if value="{{ hasPreview }}" hint-placeholder-val="{{ false }}">
+        <section style="background:#fff;border:1px solid #c7cdf5;border-radius:12px;overflow:hidden">
+          <div style="padding:14px 18px;border-bottom:1px solid #eef0f3;display:flex;gap:10px;flex-wrap:wrap;align-items:baseline;background:#fafbff"><h3 style="font-size:14px">Preview · {{ pv.name }}</h3><span style="font-size:12px;color:#8a93a3">Dry run against current records. Nothing is written until you import.</span></div>
+          <div style="display:flex;flex-wrap:wrap">
+            <div style="flex:1 1 280px;padding:14px 18px;border-right:1px solid #eef0f3"><span style="font-size:12.5px;font-weight:500">Column mapping</span><sc-for list="{{ pv.map }}" as="m" hint-placeholder-count="8"><div style="display:grid;grid-template-columns:1fr 20px 1fr;gap:6px;font-size:12px;padding:5px 0;border-bottom:1px solid #f2f4f7;font-family:'Geist Mono',monospace"><span style="color:#4a5263">{{ m.a }}</span><span style="color:#98a2b3">→</span><span>{{ m.b }}</span></div></sc-for></div>
+            <div style="flex:2 1 420px;padding:14px 18px"><span style="font-size:12.5px;font-weight:500">Row classification, units and counts</span><sc-for list="{{ pv.rows }}" as="r" hint-placeholder-count="6"><div style="display:grid;grid-template-columns:40px 80px 110px 1fr;gap:8px;font-size:12px;padding:6px 0;border-bottom:1px solid #f2f4f7;align-items:center"><span style="color:#8a93a3;font-family:'Geist Mono',monospace">L{{ r.line }}</span><span style="font-family:'Geist Mono',monospace">{{ r.id }}</span><span style="display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:999px;font-size:11px;font-weight:500;justify-self:start;background:{{ r.p.bg }};color:{{ r.p.fg }};border:1px solid {{ r.p.bd }}">{{ r.p.label }}</span><span style="color:#4a5263">{{ r.reason }}</span></div></sc-for></div>
+          </div>
+        </section>
+      </sc-if>
+      <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+        <section style="flex:1 1 380px;min-width:0;background:#fff;border:1px solid #e6e8ec;border-radius:12px">
+          <div style="padding:14px 18px;border-bottom:1px solid #eef0f3;display:flex;align-items:center;gap:10px"><h3 style="font-size:14px">Quarantine</h3><button onClick="{{ dlQ }}" style="margin-left:auto;height:28px;padding:0 10px;border-radius:7px;background:transparent;color:#4f5bd5;border:0;font-size:12.5px;font-weight:500;cursor:pointer" style-hover="background:#eef0fc">Export CSV</button></div>
+          <sc-if value="{{ noQ }}" hint-placeholder-val="{{ true }}"><div style="padding:16px 18px;font-size:13px;color:#8a93a3">Empty.</div></sc-if>
+          <div style="padding:4px 18px 10px"><sc-for list="{{ quarantine }}" as="q" hint-placeholder-count="0"><div style="padding:9px 0;border-bottom:1px solid #f2f4f7;display:flex;flex-direction:column;gap:2px"><span style="font-size:12.5px;font-weight:500;font-family:'Geist Mono',monospace">{{ q.id }} · line {{ q.line }}</span><span style="font-size:12.5px;color:#b42318">{{ q.reason }}</span><span style="font-size:11.5px;color:#8a93a3">{{ q.file }}</span></div></sc-for></div>
+        </section>
+        <section style="flex:1 1 380px;min-width:0;background:#fff;border:1px solid #e6e8ec;border-radius:12px">
+          <div style="padding:14px 18px;border-bottom:1px solid #eef0f3"><h3 style="font-size:14px">Conflicts and late evidence</h3></div>
+          <sc-if value="{{ noR }}" hint-placeholder-val="{{ true }}"><div style="padding:16px 18px;font-size:13px;color:#8a93a3">No conflicting duplicates or late critical events.</div></sc-if>
+          <div style="padding:10px;display:flex;flex-direction:column;gap:8px">
+            <sc-for list="{{ review }}" as="r" hint-placeholder-count="0"><div style="border:1px solid #fedf89;background:#fffcf5;border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:4px"><span style="font-size:12.5px;font-weight:500;font-family:'Geist Mono',monospace">{{ r.id }} · line {{ r.line }} · {{ r.status }}</span><span style="font-size:12.5px;color:#7a2e0e">{{ r.reason }}</span><sc-if value="{{ r.open }}" hint-placeholder-val="{{ true }}"><div><button onClick="{{ r.resolve }}" style="height:28px;padding:0 10px;border-radius:7px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:12px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">Keep original (QA)</button></div></sc-if></div></sc-for>
+            <sc-for list="{{ incidents }}" as="i" hint-placeholder-count="0"><div style="border:1px solid #fecdca;background:#fef3f2;border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:4px"><span style="font-size:12.5px;font-weight:600;color:#b42318">{{ i.id }}: hold applied, SHP-3101 exposure flagged</span><span style="font-size:12.5px;color:#7a271a">{{ i.text }}</span></div></sc-for>
+          </div>
+        </section>
+      </div>
+      <section style="background:#fff;border:1px solid #e6e8ec;border-radius:12px;overflow:hidden">
+        <div style="padding:14px 18px;border-bottom:1px solid #eef0f3"><h3 style="font-size:14px">Import runs</h3></div>
+        <sc-if value="{{ noRuns }}" hint-placeholder-val="{{ true }}"><div style="padding:16px 18px;font-size:13px;color:#8a93a3">No imports in this session yet.</div></sc-if>
+        <div style="overflow-x:auto"><div style="min-width:760px"><sc-for list="{{ runs }}" as="r" hint-placeholder-count="0"><div style="display:grid;grid-template-columns:70px minmax(0,1.3fr) minmax(0,1fr) minmax(0,1.6fr);gap:12px;padding:9px 18px;border-bottom:1px solid #f2f4f7;font-size:12.5px"><span style="font-family:'Geist Mono',monospace;font-weight:500">{{ r.id }}</span><span>{{ r.file }}</span><span style="font-family:'Geist Mono',monospace;color:#4a5263">{{ r.sum }}</span><span style="color:#4a5263">{{ r.counts }} · {{ r.by }}, {{ r.at }}</span></div></sc-for></div></div>
+      </section>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ tab.ready }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <section style="background:#fff;border:1px solid #e6e8ec;border-radius:12px;overflow:hidden">
+        <div style="padding:14px 18px;border-bottom:1px solid #eef0f3;display:flex;flex-direction:column;gap:2px"><h3 style="font-size:14px">Data readiness</h3><span style="font-size:12px;color:#8a93a3">Each missing field with the KPIs and gates it affects. Offline entry may queue records; final release waits for synchronised, validated evidence. Event time and ingestion time are both stored.</span></div>
+        <div style="overflow-x:auto"><div style="min-width:960px">
+          <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1.2fr 0.8fr 0.8fr 150px;gap:12px;padding:9px 18px;background:#f9fafb;border-bottom:1px solid #eef0f3;font-size:12px;color:#8a93a3;font-weight:500"><span>Field</span><span>KPIs and gates</span><span>Owner</span><span>Capture method</span><span>Frequency</span><span>Due</span><span>Status</span></div>
+          <sc-for list="{{ readiness }}" as="r" hint-placeholder-count="10"><div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 1.2fr 0.8fr 0.8fr 150px;gap:12px;padding:10px 18px;border-bottom:1px solid #f2f4f7;font-size:12.5px;align-items:center"><span style="font-weight:500">{{ r.field }}</span><span style="color:#4a5263">{{ r.kpis }}</span><span>{{ r.owner }}</span><span style="color:#4a5263">{{ r.method }}</span><span style="color:#4a5263">{{ r.freq }}</span><span>{{ r.due }}</span><span style="display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:999px;font-size:11.5px;font-weight:500;justify-self:start;background:{{ r.p.bg }};color:{{ r.p.fg }};border:1px solid {{ r.p.bd }};white-space:nowrap"><span style="flex:none;width:5px;height:5px;border-radius:50%;background:{{ r.p.dot }}"></span>{{ r.p.label }}</span></div></sc-for>
+        </div></div>
+      </section>
+      <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+        <section style="flex:1 1 380px;min-width:0;background:#fff;border:1px solid #e6e8ec;border-radius:12px">
+          <div style="padding:14px 18px;border-bottom:1px solid #eef0f3"><h3 style="font-size:14px">Connectors</h3></div>
+          <div style="padding:4px 18px 10px"><sc-for list="{{ conns }}" as="c" hint-placeholder-count="7"><div style="display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:9px 0;border-bottom:1px solid #f2f4f7"><span style="font-size:13px;font-weight:500">{{ c.name }}</span><span style="display:inline-flex;align-items:center;gap:5px;height:20px;padding:0 7px;border-radius:999px;font-size:11px;font-weight:500;background:{{ c.p.bg }};color:{{ c.p.fg }};border:1px solid {{ c.p.bd }}"><span style="flex:none;width:5px;height:5px;border-radius:50%;background:{{ c.p.dot }}"></span>{{ c.p.label }}</span><span style="font-size:12px;color:#8a93a3">{{ c.kind }}, last refresh {{ c.last }}</span></div></sc-for></div>
+        </section>
+        <section style="flex:1 1 380px;min-width:0;background:#fff;border:1px solid #e6e8ec;border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:10px">
+          <h3 style="font-size:14px">Onboarding level</h3>
+          <sc-for list="{{ levels }}" as="l" hint-placeholder-count="3"><div style="border:1px solid {{ l.bd }};background:{{ l.bg }};border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:2px"><span style="font-size:13px;font-weight:500;color:{{ l.fg }}">{{ l.k }}</span><span style="font-size:12.5px;color:#4a5263;line-height:1.45">{{ l.v }}</span></div></sc-for>
+          <span style="font-size:12px;color:#8a93a3">No protocol or connector is promised until the machine model and an export sample are inspected.</span>
+        </section>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ tab.route }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+      <section style="flex:1 1 420px;min-width:0;background:#fff;border:1px solid #e6e8ec;border-radius:12px">
+        <div style="padding:14px 18px;border-bottom:1px solid #eef0f3;display:flex;flex-direction:column;gap:2px"><h3 style="font-size:14px">Route R-MB-A v3</h3><span style="font-size:12px;color:#8a93a3">Configurable; plant confirmation required before live use.</span></div>
+        <div style="padding:10px 18px">
+          <sc-for list="{{ route }}" as="r" hint-placeholder-count="13"><div style="display:grid;grid-template-columns:24px 1fr auto;gap:10px;padding:7px 0;align-items:center"><span style="flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:10.5px;font-weight:600;background:{{ r.cBg }};color:{{ r.cFg }}">{{ r.n }}</span><span style="font-size:13px">{{ r.name }}</span><span style="font-size:11.5px;color:{{ r.nc }}">{{ r.note }}</span></div></sc-for>
+        </div>
+        <div style="padding:12px 18px 16px;border-top:1px solid #eef0f3;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12.5px;font-weight:500">When DIP is present, the Yes branch goes to</span><div style="display:flex;gap:2px;padding:2px;border-radius:8px;background:#f2f4f7;align-self:flex-start"><sc-for list="{{ dipOpts }}" as="o" hint-placeholder-count="2"><button onClick="{{ o.go }}" style="height:28px;padding:0 10px;border-radius:6px;border:0;cursor:pointer;font-size:12.5px;background:{{ o.bg }};color:{{ o.fg }};box-shadow:{{ o.sh }}">{{ o.v }}</button></sc-for></div></div>
+          <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12.5px;font-weight:500">AOI station position</span><div style="display:flex;gap:2px;padding:2px;border-radius:8px;background:#f2f4f7;align-self:flex-start"><sc-for list="{{ aoiOpts }}" as="o" hint-placeholder-count="2"><button onClick="{{ o.go }}" style="height:28px;padding:0 10px;border-radius:6px;border:0;cursor:pointer;font-size:12.5px;background:{{ o.bg }};color:{{ o.fg }};box-shadow:{{ o.sh }}">{{ o.v }}</button></sc-for></div></div>
+        </div>
+      </section>
+      <section style="flex:1 1 420px;min-width:0;background:#fff;border:1px solid #e6e8ec;border-radius:12px">
+        <div style="padding:14px 18px;border-bottom:1px solid #eef0f3;display:flex;flex-direction:column;gap:2px"><h3 style="font-size:14px">Specification limits</h3><span style="font-size:12px;color:#8a93a3">An engineer proposes with a reason and a different QA user approves. Every change is audited.</span></div>
+        <div style="padding:10px;display:flex;flex-direction:column;gap:8px">
+          <sc-for list="{{ limits }}" as="l" hint-placeholder-count="3"><div style="border:1px solid #e6e8ec;border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:6px"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13px;font-weight:500">{{ l.param }}</span><span style="margin-left:auto;font-size:13px;font-family:'Geist Mono',monospace">{{ l.cur }}</span></div><span style="font-size:12px;color:#8a93a3">{{ l.meta }}</span><sc-if value="{{ l.hasPending }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 10px;border-radius:8px;background:#fffaeb;border:1px solid #fedf89"><span style="font-size:12px;color:#7a2e0e;flex:1">Pending: {{ l.pending }}</span><button onClick="{{ l.approve }}" style="height:28px;padding:0 10px;border-radius:7px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:12px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">Approve (QA)</button></div></sc-if></div></sc-for>
+        </div>
+        <div style="padding:6px 18px 16px;display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><div style="display:flex;gap:2px;padding:2px;border-radius:8px;background:#f2f4f7"><sc-for list="{{ lim.opts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.go }}" style="height:28px;padding:0 10px;border-radius:6px;border:0;cursor:pointer;font-size:12.5px;background:{{ o.bg }};color:{{ o.fg }};box-shadow:{{ o.sh }}">{{ o.v }}</button></sc-for></div><input value="{{ lim.lsl }}" onChange="{{ lim.onL }}" placeholder="LSL" style="width:76px;height:32px;padding:0 10px;border-radius:7px;border:1px solid #d5d9e0;font-size:13px"><input value="{{ lim.usl }}" onChange="{{ lim.onU }}" placeholder="USL" style="width:76px;height:32px;padding:0 10px;border-radius:7px;border:1px solid #d5d9e0;font-size:13px"></div>
+          <div style="display:flex;gap:6px"><input value="{{ lim.reason }}" onChange="{{ lim.onR }}" placeholder="Reason for change, required" style="flex:1;min-width:0;height:32px;padding:0 10px;border-radius:7px;border:1px solid #d5d9e0;font-size:13px"><button onClick="{{ lim.propose }}" style="height:32px;padding:0 12px;border-radius:7px;background:#4f5bd5;color:#fff;border:1px solid #4350c4;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#4350c4">Propose</button></div>
+        </div>
+      </section>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ tab.roles }}" hint-placeholder-val="{{ false }}">
+    <section style="background:#fff;border:1px solid #e6e8ec;border-radius:12px;overflow:hidden">
+      <div style="padding:14px 18px;border-bottom:1px solid #eef0f3;display:flex;flex-direction:column;gap:2px"><h3 style="font-size:14px">Roles and permissions</h3><span style="font-size:12px;color:#8a93a3">Enforced by the evaluation service, including direct API calls. Administrators receive no automatic QA authority.</span></div>
+      <div style="overflow-x:auto"><div style="min-width:860px">
+        <div style="display:grid;grid-template-columns:1.8fr repeat(6,1fr);gap:8px;padding:9px 18px;background:#f9fafb;border-bottom:1px solid #eef0f3;font-size:12px;color:#8a93a3;font-weight:500"><span>Capability</span><span>Operator</span><span>Process engineer</span><span>QA</span><span>Customer</span><span>Management</span><span>Administrator</span></div>
+        <sc-for list="{{ matrix }}" as="m" hint-placeholder-count="10"><div style="display:grid;grid-template-columns:1.8fr repeat(6,1fr);gap:8px;padding:10px 18px;border-bottom:1px solid #f2f4f7;font-size:12.5px;align-items:center"><span>{{ m.k }}</span><sc-for list="{{ m.c }}" as="c" hint-placeholder-count="6"><span style="display:flex;align-items:center;gap:6px;color:{{ c.col }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" style="display:{{ c.ic }}"><path d="M20 6 9 17l-5-5"></path></svg>{{ c.v }}</span></sc-for></div></sc-for>
+      </div></div>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ tab.audit }}" hint-placeholder-val="{{ false }}">
+    <section style="background:#fff;border:1px solid #e6e8ec;border-radius:12px;overflow:hidden">
+      <div style="padding:14px 18px;border-bottom:1px solid #eef0f3;display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h3 style="font-size:14px">Audit trail</h3><span style="font-size:12px;color:#8a93a3">Append-only through application APIs. {{ auditCount }} entries.</span><button onClick="{{ editAudit }}" style="margin-left:auto;height:30px;padding:0 10px;border-radius:7px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:12.5px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">Try editing an entry</button><button onClick="{{ dlAudit }}" style="height:30px;padding:0 10px;border-radius:7px;background:#fff;color:#0d1321;border:1px solid #d5d9e0;font-size:12.5px;font-weight:500;cursor:pointer" style-hover="background:#f6f7f9">Export CSV</button></div>
+      <sc-if value="{{ noAudit }}" hint-placeholder-val="{{ false }}"><div style="padding:16px 18px;font-size:13px;color:#8a93a3">No entries since reset.</div></sc-if>
+      <div style="overflow-x:auto;max-height:520px;overflow-y:auto"><div style="min-width:860px"><sc-for list="{{ audit }}" as="a" hint-placeholder-count="6"><div style="display:grid;grid-template-columns:44px 120px 1fr 1.2fr 2fr 90px;gap:10px;padding:8px 18px;border-bottom:1px solid #f2f4f7;font-size:12px;align-items:start"><span style="color:#8a93a3;font-family:'Geist Mono',monospace">{{ a.n }}</span><span style="color:#4a5263">{{ a.t }}</span><span>{{ a.actor }}</span><span style="font-weight:500">{{ a.action }}</span><span style="color:#4a5263;line-height:1.45">{{ a.detail }}</span><span style="display:{{ a.fd }};align-items:center;height:20px;padding:0 7px;border-radius:999px;font-size:11px;font-weight:500;justify-self:start;background:#fef3f2;color:#b42318;border:1px solid #fecdca">Rejected</span></div></sc-for></div></div>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ tab.pilot }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <section style="background:#fff;border:1px solid #e6e8ec;border-radius:12px;overflow:hidden">
+        <div style="padding:14px 18px;border-bottom:1px solid #eef0f3;display:flex;flex-direction:column;gap:2px"><h3 style="font-size:14px">Process gaps to validate with the plant</h3><span style="font-size:12px;color:#8a93a3">Observations from the supplied flow diagrams, not evidence that each control ran on the affected batch.</span></div>
+        <sc-for list="{{ gaps }}" as="g" hint-placeholder-count="8"><div style="display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1.4fr) 110px 170px;gap:12px;padding:11px 18px;border-bottom:1px solid #f2f4f7;font-size:12.5px;align-items:center"><span>{{ g.obs }}</span><span style="color:#4a5263">{{ g.resp }}</span><span style="color:#8a93a3">{{ g.where }}</span><span style="display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:999px;font-size:11.5px;font-weight:500;justify-self:start;background:{{ g.p.bg }};color:{{ g.p.fg }};border:1px solid {{ g.p.bd }}"><span style="flex:none;width:5px;height:5px;border-radius:50%;background:{{ g.p.dot }}"></span>{{ g.p.label }}</span></div></sc-for>
+      </section>
+      <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+        <section style="flex:2 1 460px;min-width:0;background:#fff;border:1px solid #e6e8ec;border-radius:12px">
+          <div style="padding:14px 18px;border-bottom:1px solid #eef0f3"><h3 style="font-size:14px">Customer data request before pilot</h3></div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));padding:6px 18px 12px;column-gap:20px"><sc-for list="{{ pilot }}" as="p" hint-placeholder-count="12"><div style="display:flex;gap:10px;padding:9px 0;border-bottom:1px solid #f2f4f7;font-size:13px"><span style="width:16px;height:16px;border-radius:4px;border:1.5px solid #c0c6d0;flex:none;margin-top:2px"></span><span>{{ p }}</span></div></sc-for></div>
+        </section>
+        <section style="flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:16px">
+          <div style="background:#fff;border:1px solid #e6e8ec;border-radius:12px"><div style="padding:14px 18px;border-bottom:1px solid #eef0f3"><h3 style="font-size:14px">Confirm before pilot</h3></div><div style="padding:4px 18px 10px"><sc-for list="{{ confirm }}" as="p" hint-placeholder-count="7"><div style="padding:8px 0;border-bottom:1px solid #f2f4f7;font-size:13px">{{ p }}</div></sc-for></div></div>
+          <div style="border-radius:12px;background:#0d1321;color:#fff;padding:18px;display:flex;flex-direction:column;gap:8px"><span style="font-size:12px;color:#a4b0ff;font-weight:500">Pilot boundary</span><span style="font-size:13.5px;line-height:1.55;color:#e4e7ec">Level 2 pilot uses real exports and barcode capture with no dependency on live machine APIs. Bare-board fabrication, automatic machine control and ERP replacement are out of scope. The evaluation build does not wait for these inputs.</span></div>
+        </section>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { tab: 'imports', lid: 'L-PASTE', lsl: '85', usl: '112', reason: '' };
+  componentDidMount() { const go = () => { if (window.PG) { this.u = PG.subscribe(() => this.forceUpdate()); this.forceUpdate(); } else this.t = setTimeout(go, 40); }; go(); }
+  componentWillUnmount() { this.u && this.u(); clearTimeout(this.t); }
+  renderVals() { try { return this.rv(); } catch (e) { console.log('RV-ERR ' + e.message); return { ready: false }; } }
+  rv() {
+    const P = window.PG; if (!P) return { ready: false };
+    const st = P.st, f = st.F, S = this.state, s = P.importStats();
+    const stats = [['Data completeness', (s.valid / s.expected * 100).toFixed(1) + '%', `${s.valid} valid of ${s.expected} expected`, 0], ['Accepted events', s.accepted, 'This session', 0], ['Late', s.late, 'Event time far before ingestion', s.late ? 1 : 0], ['Invalid', s.invalid, 'Quarantined', s.invalid ? 1 : 0], ['Conflicts', s.conflicts, 'Need review', s.conflicts ? 2 : 0], ['Import runs', s.imports, 'Checksums retained', 0]].map(x => ({ k: x[0], v: x[1], s: x[2], c: x[3] === 1 ? '#b42318' : x[3] === 2 ? '#b54708' : '#0d1321', bd: x[3] === 1 ? '#fecdca' : x[3] === 2 ? '#fedf89' : '#e6e8ec' }));
+    const HINT = { aoi: 'Twelve valid U3 orientation results. Import twice to prove that a replay changes no counts.', spi: 'Six valid rows plus a missing serial, a wrong unit, an unknown revision, an impossible timestamp and a conflicting duplicate.', late: 'FT-02 records from 1 Oct, including a critical failure on MB-F-0088 after SHP-3101 was released.' };
+    const files = Object.keys(P.FILES).map(k => { const F = P.FILES[k], n = f.imports.filter(i => i.file === F.name).length; return { name: F.name, src: F.source, rows: F.rows().length, hint: HINT[k], p: n ? P.pill('Imported ' + n + (n > 1 ? ' times' : ' time'), 'ok') : P.pill('Not imported', 'neutral'), preview: () => P.act('previewF', { file: k }), commit: () => P.act('commitF', { file: k }) }; });
+    const CLS = { new: ['New', 'ok'], duplicate: ['Duplicate', 'neutral'], quarantine: ['Quarantine', 'crit'], conflict: ['Conflict', 'warn'], 'late-critical': ['Late critical', 'crit'] };
+    let pv = {};
+    if (f.preview) { const F = P.FILES[f.preview.file]; pv = { name: F.name, map: F.map.map(m => ({ a: m[0], b: m[1] })), rows: P.classify(F.rows()).map(r => ({ line: r.row.line, id: r.row.event_id, p: P.pill(CLS[r.cls][0], CLS[r.cls][1]), reason: r.reason || `${r.row.board_serial}, ${r.row.ctq}, ${r.row.value} ${r.row.unit}` })) }; }
+    const quarantine = f.quarantine.map(q => ({ id: q.event_id, line: q.line, file: q.file, reason: q.reason }));
+    const review = f.review.map(r => ({ id: r.event_id, line: r.line, reason: r.reason, status: r.status, open: r.status === 'Review', resolve: () => P.act('resolveConflictF', { id: r.event_id }) }));
+    const incidents = f.incidents.map(i => ({ id: i.id, text: i.text }));
+    const runs = f.imports.slice().reverse().map(r => ({ id: r.id, file: r.file, sum: r.checksum, counts: `${r.counts.rows} rows: ${r.counts.new} new, ${r.counts.duplicate} duplicate, ${r.counts.quarantine} quarantined, ${r.counts.conflict} conflict, ${r.counts['late-critical']} late`, by: P.uname(r.by), at: P.fmtT(r.at) }));
+    const RT = { 'Missing': 'crit', 'Proxy': 'warn', 'Synthetic demo': 'info', 'Not applicable': 'neutral', 'Manual verified data': 'ok' };
+    const readiness = P.READINESS.map(r => Object.assign({}, r, { p: P.pill(r.status, RT[r.status] || 'neutral') }));
+    const conns = P.CONNECTORS.map(c => Object.assign({}, c, { p: P.pill(c.status, c.status === 'Live' ? 'ok' : c.status === 'Stale' || c.status === 'Not connected' ? 'crit' : 'warn') }));
+    const levels = [['Level 1, evaluation (current)', 'Synthetic records, CSV upload and forms.', 1], ['Level 2, pilot', 'Real exports and barcode capture with no dependency on live machine APIs.'], ['Level 3, integration', 'Validated read-only machine, ERP and tester connectors negotiated per vendor.']].map(x => ({ k: x[0], v: x[1], bg: x[2] ? '#fafbff' : '#fff', bd: x[2] ? '#c7cdf5' : '#e6e8ec', fg: x[2] ? '#3640a8' : '#0d1321' }));
+    const dip = st.config.dipYes, aoi = st.config.aoiPos;
+    const route = ['Specification alignment', 'Incoming material and setup', 'Paste print and SPI', 'SMT placement', aoi === 'pre-reflow' ? 'AOI, pre-reflow' : 'Reflow', aoi === 'pre-reflow' ? 'Reflow' : 'AOI, post-reflow', 'X-ray, all hidden joints', dip === 'insertion' ? 'DIP insertion and wave, when DIP is present' : 'Depanel and clean, when DIP is present (as drawn)', 'Post-DIP inspection', 'Depanel and cleaning', 'Agreed electrical and functional test', 'Final QA release', 'Dispatch'].map((n, i) => { const flag = /pre-reflow/.test(n) ? 'Not proposed' : /as drawn/.test(n) ? 'Labels look reversed' : /SPI/.test(n) ? 'Added, confirm' : /Post-DIP/.test(n) ? 'Added gate' : ''; return { n: i + 1, name: n, note: flag, nc: /reversed|Not proposed/.test(flag) ? '#b42318' : '#8a93a3', cBg: /reversed|Not proposed/.test(flag) ? '#fef3f2' : '#eef0fc', cFg: /reversed|Not proposed/.test(flag) ? '#b42318' : '#3640a8' }; });
+    const seg = (cur, v) => ({ bg: cur === v ? '#fff' : 'transparent', fg: cur === v ? '#0d1321' : '#4a5263', sh: cur === v ? '0 1px 2px rgba(16,24,40,.1)' : 'none' });
+    const cfg = (key, opts, cur) => opts.map(o => Object.assign({ v: o[1], go: () => P.act('setConfig', { key, value: o[0] }) }, seg(cur, o[0])));
+    const limits = st.config.limits.map(l => ({ param: l.param.replace(' · ', ', '), cur: `${l.lsl} to ${l.usl} ${l.unit}`, meta: `Revision ${l.rev}, ${l.by}`, hasPending: !!l.pending, pending: l.pending ? `${l.pending.lsl} to ${l.pending.usl} ${l.unit}, "${l.pending.reason}", ${P.uname(l.pending.by)}` : '', approve: () => P.act('approveLimit', { id: l.id }) }));
+    const Y = 'Yes', N = 'No';
+    const matrix = [['Enter and scan data, execute checks', [Y, N, N, N, N, N]], ['Propose CTQs, programs and process changes', [N, Y, N, N, N, N]], ['Sign engineering approval', [N, Y, N, N, N, N]], ['Sign QA approval, dispositions and holds', [N, N, Y, N, N, N]], ['Approve concessions and Not applicable', [N, N, Y, 'Own only', N, N]], ['Effectiveness review and CAPA closure', [N, N, Y, N, N, N]], ['Sign customer approval', [N, N, N, 'Own products', N, N]], ['Read dashboards', [Y, Y, Y, 'Own products', Y, Y]], ['Import files, configure routes and users', [N, N, N, N, N, Y]], ['Reset scenarios', ['Presenter only', 'Presenter only', 'Presenter only', N, N, 'Presenter only']]].map(m => ({ k: m[0], c: m[1].map(v => ({ v: v === Y ? '' : v, ic: v === Y ? 'block' : 'none', col: v === N ? '#c0c6d0' : v === Y ? '#12b76a' : '#4a5263' })) }));
+    const gaps = P.GAPS.map(g => ({ obs: g.obs, resp: g.resp, where: g.where.replace(' · ', ', '), p: P.pill(g.status, g.status === 'Implemented' ? 'ok' : 'warn') }));
+    const audit = st.audit.slice().reverse().slice(0, 80).map(a => ({ n: a.n, t: P.fmtT(a.t), actor: a.actor, action: a.action + (a.scen ? ', ' + a.scen : ''), detail: a.detail + (a.before || a.after ? ` (${a.before} to ${a.after})` : ''), fd: a.rejected ? 'inline-flex' : 'none' }));
+    const TL = [['imports', 'Imports', s.invalid + s.conflicts], ['ready', 'Readiness and connectors', P.READINESS.filter(r => r.status === 'Missing').length], ['route', 'Route and limits', 0], ['roles', 'Roles', 0], ['audit', 'Audit trail', 0], ['pilot', 'Plant gaps and pilot', 0]];
+    const tab = {}; TL.forEach(t => tab[t[0]] = S.tab === t[0]);
+    return {
+      ready: true, scenNote: st.scen === 'F' ? '' : 'Import data belongs to Scenario F, WO-24702.', tabs: TL.map(t => ({ label: t[1], count: t[2], cd: t[2] ? 'inline-flex' : 'none', go: () => this.setState({ tab: t[0] }), fg: S.tab === t[0] ? '#0d1321' : '#8a93a3', bd: S.tab === t[0] ? '#4f5bd5' : 'transparent' })), tab,
+      stats, files, hasPreview: !!f.preview, pv, quarantine, noQ: !quarantine.length, review, incidents, noR: !review.length && !incidents.length, runs, noRuns: !runs.length, dlQ: () => P.download('quarantine'),
+      readiness, conns, levels, route, dipOpts: cfg('dipYes', [['insertion', 'Insertion and wave (proposed)'], ['depanel', 'Depanel and clean (as drawn)']], dip), aoiOpts: cfg('aoiPos', [['post-reflow', 'Post-reflow (proposed)'], ['pre-reflow', 'Pre-reflow']], aoi),
+      limits, lim: { lsl: S.lsl, usl: S.usl, reason: S.reason, opts: [['L-PASTE', 'Paste volume'], ['L-PEAK', 'Reflow peak'], ['L-TAL', 'TAL']].map(o => Object.assign({ v: o[1], go: () => this.setState({ lid: o[0] }) }, seg(S.lid, o[0]))), onL: e => this.setState({ lsl: e.target.value }), onU: e => this.setState({ usl: e.target.value }), onR: e => this.setState({ reason: e.target.value }), propose: () => P.act('proposeLimit', { id: S.lid, lsl: S.lsl, usl: S.usl, reason: S.reason }) },
+      matrix, gaps, audit, noAudit: !audit.length, auditCount: st.audit.length, dlAudit: () => P.download('audit'), editAudit: () => P.act('editAudit'), pilot: P.PILOT_REQ, confirm: P.PILOT_CONFIRM
+    };
+  }
+}
+</script>
+</body>
+</html>
